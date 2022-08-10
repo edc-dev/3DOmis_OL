@@ -264,7 +264,7 @@ modelFeatures.forEach((feature) => {
   });
   const olcsModelFunction = () => {
     const coordinates = feature.getGeometry().getCoordinates();
-    const center = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+    const center = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
     const rotation = /** @type {number} */ (feature.get('rotation'));
     return {
       cesiumOptions: {
@@ -463,11 +463,11 @@ const map = new ol.Map({
 });
 
 dragAndDropInteraction.on('addfeatures', (event) => {
-  const vectorSource = new olSourceVector({
+  const vectorSource = new ol.source.Vector({
     features: event.features,
     projection: event.projection
   });
-  map.getLayers().push(new olLayerVector({
+  map.getLayers().push(new ol.layer.Vector({
     source: vectorSource,
     style: styleFunction
   }));
@@ -478,7 +478,7 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 
 
 Cesium.Ion.defaultAccessToken = OLCS_ION_TOKEN;
-const ol3d = new OLCesium({map, target: 'map3d'});
+const ol3d = new olcs.OLCesium({map, target: 'map3d'});
 const scene = ol3d.getCesiumScene();
 scene.terrainProvider = Cesium.createWorldTerrain();
 ol3d.setEnabled(true);
@@ -512,12 +512,12 @@ window['addOrRemoveOneFeature'] = function() {
   }
 };
 
-let oldStyle = new olStyleStyle({
-  stroke: new olStyleStroke({
+let oldStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({
     color: 'blue',
     width: 2
   }),
-  fill: new olStyleFill({
+  fill: new ol.style.Fill({
     color: 'green'
   })
 });
