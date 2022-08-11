@@ -28,37 +28,13 @@
   </head>
   <body>
 
-
-
-
-
-
-
-
  
 
-
-    
-     <div id="map2d" style="width:600px;height:400px;float:left;"></div>
-        <div id="map3d" style="width:600px;height:400px;float:left;position:relative;"></div>
-        <div><input id="enable" type="button" value="Enable/disable Cesium" /></div>
-        <div><input type="button" value="Toggle depth test"
-          onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()" /></div>
-        <div><input type="button" value="Toggle circle style"
-          onclick="javascript:toggleStyle()" /></div>
-        <div><input type="button" value="Add/remove one vector layer"
-          onclick="javascript:addOrRemoveOneVectorLayer()" /></div>
-        <div><input type="button" value="Add/remove one feature"
-          onclick="javascript:addOrRemoveOneFeature()" /></div>
-        <div><input type="button" value="Toggle clampToGround mode"
-          onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()" /></div>
-        <div>
-          <input id="framerate" type="number" min="0" step="10" value="10"/>
-          <input type="button" value="Set the target rendering frame rate"
-            onclick="javascript:setTargetFrameRate()" />
-        </div>
-        <div>Vectors are synchronized from the OpenLayers map to the Cesium scene.
-          <br/>3D positioning and some styling is supported.<br />The render loop is automatically stopped when idle.</div>
+        <!--
+          Vectors are synchronized from the OpenLayers map to the Cesium scene. 
+          3D positioning and some styling is supported.
+          The render loop is automatically stopped when idle.
+        -->
  
  
    
@@ -82,7 +58,7 @@
 
 
 
-  <!-- 
+   
 
 
     <div id="mapContainer" class="fullSize">
@@ -97,6 +73,22 @@
           value="2D/3D"
         />
       </div>
+      <div><input id="enable" type="button" value="Enable/disable Cesium" /></div>
+      <div><input type="button" value="Toggle depth test"
+        onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()" /></div>
+      <div><input type="button" value="Toggle circle style"
+        onclick="javascript:toggleStyle()" /></div>
+      <div><input type="button" value="Add/remove one vector layer"
+        onclick="javascript:addOrRemoveOneVectorLayer()" /></div>
+      <div><input type="button" value="Add/remove one feature"
+        onclick="javascript:addOrRemoveOneFeature()" /></div>
+      <div><input type="button" value="Toggle clampToGround mode"
+        onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()" /></div>
+      <div>
+        <input id="framerate" type="number" min="0" step="10" value="10"/>
+        <input type="button" value="Set the target rendering frame rate"
+          onclick="javascript:setTargetFrameRate()" />
+      </div> 
 
       <div id="viewRight"></div>
       <div class="toolbar-right" id="toolbar-right">
@@ -111,7 +103,7 @@
 
     </div>
     
-         -->
+    
  
     
     
@@ -460,7 +452,7 @@ const map = new ol.Map({
     vectorLayer,
     vectorLayer2
   ],
-  target: 'map2d',
+  target: 'viewLeft',
   controls: ol.control.defaults({
     attributionOptions: {
       collapsible: false
@@ -488,7 +480,7 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 
 
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
-const ol3d = new olcs.OLCesium({map, target: 'map3d'});
+const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 const scene = ol3d.getCesiumScene();
 scene.terrainProvider = Cesium.createWorldTerrain();
 ol3d.setEnabled(true);
