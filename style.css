@@ -21,15 +21,15 @@
 .toolbar-left {
   display: block;
   position: absolute;
-  top: 5px;
+  top: 50px;
   left: 5px;
 }
 
 .toolbar-right {
   display: block;
   position: absolute;
-  top: 5px;
-  left: 50%;
+  top: 50px;
+  left: 5px;
 }
 
 #viewLeft {
