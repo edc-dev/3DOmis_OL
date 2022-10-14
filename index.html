@@ -103,8 +103,15 @@
     
     switch (btnCounter) {
       case 0:
+      document.getElementById("btnPogledR").remove();
+        let btnPogledL = document.createElement("input");
+        btnPogledL.type = "button";
+        btnPogledL.id = "btnPogledR";
         btnPogledL.value = "2D/3D";
-        viewLeft.style.display = "inline-flex";
+        btnPogledL.onclick = function () {
+          buttonChange();
+        };
+       viewLeft.style.display = "inline-flex";
         viewRight.style.display = "inline-flex";
        viewStyle.style.display = "none";
         break;
@@ -135,7 +142,6 @@
         viewLeft.style.display = "none";
         viewRight.style.display = "inline-flex";
         viewStyle.style.display = "inline-flex";
-        document.getElementById("btnPogledR").remove();
       }}
 
        
