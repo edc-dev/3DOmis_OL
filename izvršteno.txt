@@ -152,6 +152,8 @@ const cartographicRectangle2 = new ol.Feature({
 
 cartographicRectangle2.setStyle(cartographicRectangleStyle);
 
+vectorSource.addFeature(theCircle);
+
 const vectorSource2 = new ol.source.Vector({
   features: [iconFeature, textFeature, cervinFeature, ...modelFeatures, cartographicRectangle,
     cartographicRectangle2]
@@ -160,6 +162,18 @@ const vectorLayer2 = new ol.layer.Vector({
   source: vectorSource2
 });
 
+window['toggleClampToGround'] = function() {
+  let altitudeMode;
+  if (!vectorLayer.get('altitudeMode')) {
+    altitudeMode = 'clampToGround';
+  }
+  vectorLayer.set('altitudeMode', altitudeMode);
+  //vectorLayer2.set('altitudeMode', altitudeMode);
+  map.removeLayer(vectorLayer);
+  //map.removeLayer(vectorLayer2);
+  map.addLayer(vectorLayer);
+  //map.addLayer(vectorLayer2);
+};
 
 
 
