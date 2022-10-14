@@ -1,0 +1,206 @@
+const iconFeature = new ol.Feature({
+  geometry: new ol.geom.Point([700000, 200000, 100000])
+});
+
+const textFeature = new ol.Feature({
+  geometry: new ol.geom.Point([1000000, 3000000, 500000])
+});
+
+const cervinFeature = new ol.Feature({
+  geometry: new ol.geom.Point([852541, 5776649])
+});
+cervinFeature.getGeometry().set('altitudeMode', 'clampToGround');
+
+const modelFeatures = [-1, -1 / 2, 0, 1 / 2, 1, 3 / 2].map(
+    factor => new ol.Feature({
+      geometry: new ol.geom.Point([852641, 5776749, 4500]),
+      'rotation': factor * Math.PI
+    })
+);
+
+const iconStyle = new ol.style.Style({
+  image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+    anchor: [0.5, 46],
+    anchorXUnits: 'fraction',
+    anchorYUnits: 'pixels',
+    opacity: 0.75,
+    src: 'data/icon.png'
+  })),
+  text: new ol.style.Text({
+    text: 'Some text',
+    textAlign: 'center',
+    textBaseline: 'middle',
+    stroke: new ol.style.Stroke({
+      color: 'magenta',
+      width: 3
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 0, 155, 0.3)'
+    })
+  })
+});
+
+const textStyle = [new ol.style.Style({
+  text: new ol.style.Text({
+    text: 'Only text',
+    textAlign: 'center',
+    textBaseline: 'middle',
+    stroke: new ol.style.Stroke({
+      color: 'red',
+      width: 3
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 0, 155, 0.3)'
+    })
+  })
+}), new ol.style.Style({
+  geometry: new ol.geom.Circle([1000000, 3000000, 10000], 2e6),
+  stroke: new ol.style.Stroke({
+    color: 'blue',
+    width: 2
+  }),
+  fill: new ol.style.Fill({
+    color: 'rgba(0, 0, 255, 0.2)'
+  })
+})];
+
+iconFeature.setStyle(iconStyle);
+
+textFeature.setStyle(textStyle);
+
+cervinFeature.setStyle(iconStyle);
+
+let iCase = 0;
+modelFeatures.forEach((feature) => {
+  ++iCase;
+  const modelStyle = new ol.style.Style({
+    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      opacity: 0.75,
+      src: 'data/icon.png'
+    }))
+  });
+  const olcsModelFunction = () => {
+    const coordinates = feature.getGeometry().getCoordinates();
+    const center = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+    const rotation = /** @type {number} */ (feature.get('rotation'));
+    return {
+      cesiumOptions: {
+        url: 'data/arrow5.glb',
+        modelMatrix: olcs.core.createMatrixAtCoordinates(center, rotation),
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        minimumPixelSize: 64
+      }
+    };
+  };
+    let host = feature;
+  switch (iCase % 3) {
+    case 0:
+      host = feature.getGeometry();
+      break;
+    case 1:
+      modelStyle.setGeometry(feature.getGeometry().clone());
+      host = modelStyle.getGeometry();
+      break;
+    default:
+      host = feature;
+  }
+  host.set('olcs_model', olcsModelFunction);
+  feature.setStyle(modelStyle);
+});
+
+const theCircle = new ol.Feature(new ol.geom.Circle([5e6, 7e6, 5e5], 1e6));
+
+// Add a Cesium rectangle, via setting the property olcs.polygon_kind
+const cartographicRectangleStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: 'rgba(255, 69, 0, 0.7)'
+  }),
+  stroke: new ol.style.Stroke({
+    color: 'rgba(255, 69, 0, 0.9)',
+    width: 1
+  })
+});
+
+const cartographicRectangleGeometry = new ol.geom.Polygon([[[-5e6, 11e6],
+  [4e6, 11e6], [4e6, 10.5e6], [-5e6, 10.5e6], [-5e6, 11e6]]]);
+cartographicRectangleGeometry.set('olcs.polygon_kind', 'rectangle');
+const cartographicRectangle = new ol.Feature({
+  geometry: cartographicRectangleGeometry
+});
+
+cartographicRectangle.setStyle(cartographicRectangleStyle);
+
+// Add two Cesium rectangles with height and the property olcs.polygon_kind
+const cartographicRectangleGeometry2 = new ol.geom.MultiPolygon([
+  [[
+    [-5e6, 12e6, 0], [4e6, 12e6, 0], [4e6, 11.5e6, 0], [-5e6, 11.5e6, 0],
+    [-5e6, 12e6, 0]
+  ]],
+  [[
+    [-5e6, 11.5e6, 1e6], [4e6, 11.5e6, 1e6], [4e6, 11e6, 1e6],
+    [-5e6, 11e6, 1e6], [-5e6, 11.5e6, 1e6]
+  ]]
+]);
+
+cartographicRectangleGeometry2.set('olcs.polygon_kind', 'rectangle');
+const cartographicRectangle2 = new ol.Feature({
+  geometry: cartographicRectangleGeometry2
+});
+
+cartographicRectangle2.setStyle(cartographicRectangleStyle);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
