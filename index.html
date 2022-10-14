@@ -50,6 +50,11 @@
     <div class="toolbar-right" id="toolbar-right">
     </div>
     
+    <div id="viewStyle" style="width:600px;height:400px;float:left;position:relative;display:none">
+    </div>
+     <div class="toolbar-right" id="toolbar-right">
+     </div>
+
     <div><input id="enable" type="button" value="Enable/disable Cesium" />
     </div>
     <div><input type="button" value="Toggle depth test" onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()" />
@@ -84,7 +89,7 @@
     let toolbarRight = document.getElementById("toolbar-right");
     let toolbarLeft = document.getElementById("toolbar-left");
     let viewRight = document.getElementById("viewRight");
-    //let viewStyle = document.getElementById("viewStyle")
+    let viewStyle = document.getElementById("viewStyle")
 
 
     if (btnCounter >= 3) {
@@ -101,20 +106,21 @@
         btnPogledL.value = "2D/3D";
         viewLeft.style.display = "inline-flex";
         viewRight.style.display = "inline-flex";
-       // viewStyle.style.display = "none";
+       viewStyle.style.display = "none";
         break;
       case 1:
         btnPogledL.value = "2D";
         viewLeft.style.display = "inline-flex";
         viewRight.style.display = "none";
-        //viewStyle.style.display = "none";
+        viewStyle.style.display = "none";
         toolbarLeft.className = "toolbar-left";
          break;
       case 2:
         viewLeft.style.display = "none";
         viewRight.style.display = "inline-flex";
-        //viewStyle.style.display = "none";
+        viewStyle.style.display = "none";
         toolbarRight.className = "toolbar-right";
+        document.getElementById("btnPogledL").remove();
         let btnPogledR = document.createElement("input");
         btnPogledR.type = "button";
         btnPogledR.id = "btnPogledR";
