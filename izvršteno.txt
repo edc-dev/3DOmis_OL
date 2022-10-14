@@ -152,7 +152,13 @@ const cartographicRectangle2 = new ol.Feature({
 
 cartographicRectangle2.setStyle(cartographicRectangleStyle);
 
-
+const vectorSource2 = new ol.source.Vector({
+  features: [iconFeature, textFeature, cervinFeature, ...modelFeatures, cartographicRectangle,
+    cartographicRectangle2]
+});
+const vectorLayer2 = new ol.layer.Vector({
+  source: vectorSource2
+});
 
 
 
