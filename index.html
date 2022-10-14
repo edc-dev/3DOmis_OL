@@ -114,14 +114,14 @@
         viewLeft.style.display = "none";
         viewRight.style.display = "inline-flex";
         //viewStyle.style.display = "none";
-        toolbarRight.className = "toolbar-left";
-      //  let btnPogledR = document.createElement("input");
-      //  btnPogledR.type = "button";
-      //  btnPogledR.id = "btnPogledR";
-        btnPogledL.value = "3D";
-      //  btnPogledR.onclick = function () {
-     //     buttonChange();
-      //  };
+        toolbarRight.className = "toolbar-right";
+        let btnPogledR = document.createElement("input");
+        btnPogledR.type = "button";
+        btnPogledR.id = "btnPogledR";
+        btnPogledR.value = "3D";
+        btnPogledR.onclick = function () {
+          buttonChange();
+        };
         toolbarRight.append(btnPogledR);
         break;
       case 3:
