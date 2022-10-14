@@ -84,7 +84,7 @@
     let toolbarRight = document.getElementById("toolbar-right");
     let toolbarLeft = document.getElementById("toolbar-left");
     let viewRight = document.getElementById("viewRight");
-    let viewStyle = document.getElementById("viewStyle")
+    //let viewStyle = document.getElementById("viewStyle")
 
 
     if (btnCounter >= 3) {
@@ -113,15 +113,15 @@
       case 2:
         viewLeft.style.display = "none";
         viewRight.style.display = "inline-flex";
-        viewStyle.style.display = "none";
+        //viewStyle.style.display = "none";
         toolbarRight.className = "toolbar-left";
-        let btnPogledR = document.createElement("input");
-        btnPogledR.type = "button";
-        btnPogledR.id = "btnPogledR";
-        btnPogledR.value = "3D";
-        btnPogledR.onclick = function () {
-          buttonChange();
-        };
+      //  let btnPogledR = document.createElement("input");
+      //  btnPogledR.type = "button";
+      //  btnPogledR.id = "btnPogledR";
+        btnPogledL.value = "3D";
+      //  btnPogledR.onclick = function () {
+     //     buttonChange();
+      //  };
         toolbarRight.append(btnPogledR);
         break;
       case 3:
