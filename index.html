@@ -100,11 +100,10 @@
 
       case 0:
 
-    let viewLeft = document.getElementById("viewLeft");
-    let toolbarRight = document.getElementById("toolbar-right");
-    let toolbarLeft = document.getElementById("toolbar-left");
-    let viewRight = document.getElementById("viewRight");
-    let viewStyle = document.getElementById("viewStyle")
+   
+   
+   
+
       document.getElementById("btnPogledR").remove();
         let btnPogledL = document.createElement("input");
         btnPogledL.type = "button";
@@ -113,24 +112,22 @@
         btnPogledL.onclick = function () {
           buttonChange();
         };
-        toolbarLeft.append(btnPogledL);
-       viewLeft.style.display = "inline-flex";
-        viewRight.style.display = "inline-flex";
-       viewStyle.style.display = "none";
+        document.getElementById("toolbar-left").append(btnPogledL);
+        document.getElementById("viewLeft").style.display = "inline-flex";
+        document.getElementById("viewRight").style.display = "inline-flex";
+        document.getElementById("viewStyle").style.display = "none";
         break;
       case 1:
         btnPogledL.value = "2D";
-        viewLeft.style.display = "inline-flex";
-        viewRight.style.display = "none";
-        viewStyle.style.display = "none";
-        toolbarLeft.className = "toolbar-left";
+        document.getElementById("viewLeft").style.display = "inline-flex";
+        document.getElementById("viewRight").style.display = "none";
+        document.getElementById("viewStyle").style.display = "none";
          break;
       case 2:
-        viewLeft.style.display = "none";
-        viewRight.style.display = "inline-flex";
-        viewStyle.style.display = "none";
-        toolbarRight.className = "toolbar-right";
-        document.getElementById("btnPogledL").remove();
+      document.getElementById("viewLeft").style.display = "none";
+      document.getElementById("viewRight").style.display = "inline-flex";
+      document.getElementById("viewStyle").style.display = "none";
+      document.getElementById("btnPogledL").remove();
         let btnPogledR = document.createElement("input");
         btnPogledR.type = "button";
         btnPogledR.id = "btnPogledR";
@@ -138,13 +135,13 @@
         btnPogledR.onclick = function () {
           buttonChange();
         };
-        toolbarRight.append(btnPogledR);
+        document.getElementById("toolbar-right").append(btnPogledR);
         break;
       case 3:
-        btnPogledR.value = "3D/Style";
-        viewLeft.style.display = "none";
-        viewRight.style.display = "inline-flex";
-        viewStyle.style.display = "inline-flex";
+      document.getElementById("btnPogledR").value = "3D/Style";
+      document.getElementById("viewLeft").style.display = "none";
+      document.getElementById("viewRight").style.display = "inline-flex";
+      document.getElementById("viewStyle").style.display = "inline-flex";
       }}
 
        
