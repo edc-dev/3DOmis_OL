@@ -84,12 +84,7 @@
   
       
   function buttonChange() {
-    let btnPogledL = document.getElementById("btnPogledL");
-    let viewLeft = document.getElementById("viewLeft");
-    let toolbarRight = document.getElementById("toolbar-right");
-    let toolbarLeft = document.getElementById("toolbar-left");
-    let viewRight = document.getElementById("viewRight");
-    let viewStyle = document.getElementById("viewStyle")
+
 
 
     if (btnCounter >= 3) {
@@ -102,7 +97,14 @@
 
     
     switch (btnCounter) {
+
       case 0:
+
+    let viewLeft = document.getElementById("viewLeft");
+    let toolbarRight = document.getElementById("toolbar-right");
+    let toolbarLeft = document.getElementById("toolbar-left");
+    let viewRight = document.getElementById("viewRight");
+    let viewStyle = document.getElementById("viewStyle")
       document.getElementById("btnPogledR").remove();
         let btnPogledL = document.createElement("input");
         btnPogledL.type = "button";
