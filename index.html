@@ -151,26 +151,26 @@ const OLCS_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZWVhYmU
 const SHIME_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZDIxNzFlNS0wYWQ2LTQ5NTYtYTBmNy1iMWRkNGQ2MWRlYWEiLCJpZCI6OTUxNjcsImlhdCI6MTY1MzQ4MTEwNH0.oLUjSWc9t2PWYdfrKrg67-HMgXa3RtiUDcBtpWXFB7w';
      
 
-const iconFeature = new ol.Feature({
+/**const iconFeature = new ol.Feature({
   geometry: new ol.geom.Point([700000, 200000, 100000])
-});
+});*/
 
-const textFeature = new ol.Feature({
+/**const textFeature = new ol.Feature({
   geometry: new ol.geom.Point([1000000, 3000000, 500000])
-});
+});*/
 
-const cervinFeature = new ol.Feature({
+/**const cervinFeature = new ol.Feature({
   geometry: new ol.geom.Point([852541, 5776649])
 });
-cervinFeature.getGeometry().set('altitudeMode', 'clampToGround');
+cervinFeature.getGeometry().set('altitudeMode', 'clampToGround');*/
 
 
-const modelFeatures = [-1, -1 / 2, 0, 1 / 2, 1, 3 / 2].map(
+/**const modelFeatures = [-1, -1 / 2, 0, 1 / 2, 1, 3 / 2].map(
     factor => new ol.Feature({
       geometry: new ol.geom.Point([852641, 5776749, 4500]),
       'rotation': factor * Math.PI
     })
-);
+);*/
 
 
 
@@ -220,16 +220,16 @@ const textStyle = [new ol.style.Style({
   })
 })];
 
-iconFeature.setStyle(iconStyle);
+/**iconFeature.setStyle(iconStyle);*/
 
-textFeature.setStyle(textStyle);
+/**textFeature.setStyle(textStyle);*/
 
-cervinFeature.setStyle(iconStyle);
+/**cervinFeature.setStyle(iconStyle);*/
 let iCase = 0;
 modelFeatures.forEach((feature) => {
   ++iCase;
   const modelStyle = new ol.style.Style({
-    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+   image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
       anchor: [0.5, 46],
       anchorXUnits: 'fraction',
       anchorYUnits: 'pixels',
