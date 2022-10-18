@@ -176,14 +176,22 @@ window['toggleClampToGround'] = function() {
 };
 
 
+    <div><input type="button" value="Add/remove one feature" onclick="javascript:addOrRemoveOneFeature()" />
+    </div>
 
 
 
 
 
 
-
-
+window['addOrRemoveOneFeature'] = function() {
+  const found = vectorSource2.getFeatures().indexOf(iconFeature);
+  if (found === -1) {
+    vectorSource2.addFeature(iconFeature);
+  } else {
+    vectorSource2.removeFeature(iconFeature);
+  }
+};
 
 
 

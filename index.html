@@ -62,8 +62,6 @@
     </div>
     <div><input type="button" value="Add/remove one vector layer" onclick="javascript:addOrRemoveOneVectorLayer()" />
     </div>
-    <div><input type="button" value="Add/remove one feature" onclick="javascript:addOrRemoveOneFeature()" />
-    </div>
     <div><input type="button" value="Toggle clampToGround mode" onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()" />
     </div>
     <div><input id="framerate" type="number" min="0" step="10" value="10"/>
@@ -255,9 +253,9 @@ const vectorSource = new ol.source.Vector({
 
 const vectorLayer = new ol.layer.Vector({
   style: styleFunction,
-  source: vectorSource
+  source: vectorSource,
 });
-
+vectorLayer.set('altitudeMode', 'clampToGround');
 
 
 const dragAndDropInteraction = new ol.interaction.DragAndDrop({
@@ -309,7 +307,9 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
 const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 const scene = ol3d.getCesiumScene();
-scene.terrainProvider = Cesium.createWorldTerrain();
+//scene.terrainProvider = Cesium.createWorldTerrain();
+scene.terrainProvider = new Cesium.CesiumTerrainProvider({
+          url: Cesium.IonResource.fromAssetId(1103401)});
 ol3d.setEnabled(true);
 
 const csLabels = new Cesium.LabelCollection();
@@ -318,6 +318,8 @@ csLabels.add({
   text: 'Pre-existing primitive'
 });
 scene.primitives.add(csLabels);
+
+
 
 // Adding a feature after the layer has been synchronized.
 
@@ -329,16 +331,10 @@ window['addOrRemoveOneVectorLayer'] = function() {
     map.getLayers().insertAt(1, vectorLayer);
   }
   hasTheVectorLayer = !hasTheVectorLayer;
+
 };
 
-window['addOrRemoveOneFeature'] = function() {
-  const found = vectorSource2.getFeatures().indexOf(iconFeature);
-  if (found === -1) {
-    vectorSource2.addFeature(iconFeature);
-  } else {
-    vectorSource2.removeFeature(iconFeature);
-  }
-};
+
 
 let oldStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({
