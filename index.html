@@ -410,9 +410,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log (mousePosition);
         var ray = scene.camera.getPickRay(mousePosition);
         console.log(ray);
-        var selectedLocation = scene.terrainProvider.pick(ray, scene);
+        //var selectedLocation = scene.pick(ray, scene);
         
-        //const selectedLocation = scene.pickPosition(mousePosition);
+        const selectedLocation = scene.pickPosition(mousePosition);
 
    
         console.log (selectedLocation);
