@@ -411,9 +411,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log (mousePosition);
         var ray = scene.camera.getPickRay(mousePosition);
         console.log(ray);
-        var position = scene.globe.pick(ray, scene);
-        console.log(position);
-        const selectedLocation = scene.pickPosition(mousePosition);
+        var selectedLocation = scene.globe.pick(ray, scene);
+        console.log(selectedLocation);
+        //const selectedLocation = scene.pickPosition(mousePosition);
         console.log (selectedLocation);
         toDegrees(selectedLocation);
 
