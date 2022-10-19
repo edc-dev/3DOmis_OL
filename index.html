@@ -403,16 +403,16 @@ function toDegrees(cartesian3Pos) {
 scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
 
-        const mousePosition = new Cesium.Cartesian2(
+        let mousePosition = new Cesium.Cartesian2(
           event.clientX,
           event.clientY
         );
         console.log (mousePosition);
-        var ray = scene.camera.getPickRay(mousePosition);
+        let ray = scene.camera.getPickRay(mousePosition);
         console.log(ray);
         //var selectedLocation = scene.pick(ray, scene);
         
-        const selectedLocation = scene.pickPosition(mousePosition);
+        let selectedLocation = scene.pickPosition(mousePosition);
 
    
         console.log (selectedLocation);
