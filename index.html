@@ -379,9 +379,8 @@ window['setTargetFrameRate'] = function() {
   }
 };
 
-//window['ol3d'] = ol3d;
-//window['scene'] = scene;
-document.getElementById('enable').addEventListener('click', () => ol3d.setEnabled(!ol3d.getEnabled()));
+
+
 
 
 
@@ -411,9 +410,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log (mousePosition);
         var ray = scene.camera.getPickRay(mousePosition);
         console.log(ray);
-        var selectedLocation = scene.globe.pick(ray, scene);
+        //var selectedLocation = scene.globe.pick(ray, scene);
         console.log(selectedLocation);
-        //const selectedLocation = scene.pickPosition(mousePosition);
+        const selectedLocation = scene.pickPosition(mousePosition);
         console.log (selectedLocation);
         toDegrees(selectedLocation);
 
@@ -423,6 +422,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
 ol3d.enableAutoRenderLoop();
 
 
+document.getElementById('enable').addEventListener('click', () => ol3d.setEnabled(!ol3d.getEnabled()));
+window['ol3d'] = ol3d;
+window['scene'] = scene;
 
     </script>
   
@@ -445,7 +447,7 @@ ol3d.enableAutoRenderLoop();
   
 
  
-    </script>
+  
 
  
     <!--kad zgotovim, počistiti stilove i scriptove...--> 
