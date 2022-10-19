@@ -58,8 +58,7 @@
     </div>
     <div><input type="button" value="Toggle depth test" onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()" />
     </div>
-    <div><input type="button" value="Toggle circle style" onclick="javascript:toggleStyle()" />
-    </div>
+   
     <div><input type="button" value="Add/remove one vector layer" onclick="javascript:addOrRemoveOneVectorLayer()" />
     </div>
     <div><input type="button" value="Toggle clampToGround mode" onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()" />
@@ -307,10 +306,16 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
 const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 const scene = ol3d.getCesiumScene();
-//scene.terrainProvider = Cesium.createWorldTerrain();
+scene.terrainProvider = Cesium.createWorldTerrain();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(1103401)});
 ol3d.setEnabled(true);
+
+//radi RADI RADIIIIII !!!
+
+
+
+
 
 const csLabels = new Cesium.LabelCollection();
 csLabels.add({
@@ -374,9 +379,46 @@ window['setTargetFrameRate'] = function() {
   }
 };
 
-window['ol3d'] = ol3d;
-window['scene'] = scene;
+//window['ol3d'] = ol3d;
+//window['scene'] = scene;
 document.getElementById('enable').addEventListener('click', () => ol3d.setEnabled(!ol3d.getEnabled()));
+
+
+
+function toDegrees(cartesian3Pos) {
+        let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
+        let lng = (pos.longitude / Math.PI) * 180;
+        let ltt = (pos.latitude / Math.PI) * 180;
+        let height = pos.height;
+        let lon = lng.toFixed(6);
+        let lat = ltt.toFixed(6);
+        let elev = height.toFixed(6);
+        alert(lat + "\n" + lon + "\n" + elev);
+      }
+
+
+
+    
+
+//zašto bez ol3d ??
+scene.canvas.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+
+        const mousePosition = new Cesium.Cartesian2(
+          event.clientX,
+          event.clientY
+        );
+        console.log (mousePosition);
+        var ray = scene.camera.getPickRay(mousePosition);
+        console.log(ray);
+        var position = scene.globe.pick(ray, scene);
+        console.log(position);
+        const selectedLocation = scene.pickPosition(mousePosition);
+        console.log (selectedLocation);
+        toDegrees(selectedLocation);
+
+      });
+
 
 ol3d.enableAutoRenderLoop();
 

@@ -176,8 +176,13 @@ window['toggleClampToGround'] = function() {
 };
 
 
+
+
+ <div><input type="button" value="Toggle circle style" onclick="javascript:toggleStyle()" />
+    </div>
     <div><input type="button" value="Add/remove one feature" onclick="javascript:addOrRemoveOneFeature()" />
     </div>
+	
 
 
 
