@@ -304,7 +304,7 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 
 
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
-const ol3d = new olcs.OLCesium({map, target: 'viewRight', baseLayerPicker:true });
+const ol3d = new olcs.OLCesium({map, target: 'viewRight', baseLayerPicker: 'true' });
 
 const scene = ol3d.getCesiumScene();
 //scene.terrainProvider = Cesium.createWorldTerrain();
