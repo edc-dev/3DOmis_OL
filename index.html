@@ -305,10 +305,12 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
 const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
+
 const scene = ol3d.getCesiumScene();
 //scene.terrainProvider = Cesium.createWorldTerrain();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(1103401)});
+          scene.globe.depthTestAgainstTerrain=true;
 ol3d.setEnabled(true);
 
 //radi RADI RADIIIIII !!!
