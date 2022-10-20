@@ -429,12 +429,14 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     if (!cartesian) {
       return;
     }
+    console.log(cartesian);
     const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
     let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
-
+console.log(cartographic);
     const height = scene.globe.getHeight(cartographic);
     if (height) {
       coords = coords.concat([height]);
+      console.log(height);
     }
 
     const transformedCoords = transform(coords, getProjection('EPSG:4326'), 'EPSG:3857');
