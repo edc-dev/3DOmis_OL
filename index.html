@@ -461,6 +461,7 @@ function pickGlobe(ol3d, mousePosition, result) {
 
     var cart = Cesium.Cartesian3.clone(rayIntersection, result);
     return cart;
+    console.log(cart);
 }
 
 scene.canvas.addEventListener("contextmenu", (event) => {
@@ -474,7 +475,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
 testMe(mousePosition);
  
 
-console.log(cart);
+
 
       });
 
