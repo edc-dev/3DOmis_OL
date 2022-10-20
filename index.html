@@ -419,8 +419,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
 var scratchZoomPickRay = new Cesium.Ray();
 var scratchPickCartesian = new Cesium.Cartesian3();
 function testMe(mousePosition) {
+  console.log(scene.mode)
     if (Cesium.defined(scene.globe)) { 
-      console.log(scene.mode)
+      
         if(scene.mode !== 2) {
             pickedPosition = pickGlobe(viewer, mousePosition, scratchPickCartesian);
             console.log("2"+pickedPosition)
