@@ -427,7 +427,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     const ray = scene.camera.getPickRay(mousePosition);
     console.log(ray);
     console.log(scene);
-    const cartTeren = scene.globe.pick(ray, scene); //custom terrain pick ??
+    const cartTeren = scene.globe.pick(ray, scene); //custom terrain pick ?? kao uzima moj teren u obzir ali je rezultat šumast...
     if (!cartTeren) {
       console.log("Nemože");
       return;
