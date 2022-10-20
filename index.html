@@ -408,15 +408,20 @@ function toDegrees(cartesian3Pos) {
 
 
 function testMe(mousePosition) {
+
+  let pickedPosition;
+let scratchZoomPickRay = new Cesium.Ray();
+let scratchPickCartesian = new Cesium.Cartesian3();
+
   console.log(scene.mode)
     if (Cesium.defined(scene.globe)) { 
       
         if(scene.mode !== 2) {
             pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
-            console.log("2"+pickedPosition)
+            console.log("3"+pickedPosition)
         } else {
             pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
-            console.log("3"+pickedPosition)
+            console.log("2"+pickedPosition)
         }
     }
 }
@@ -426,6 +431,13 @@ function pickGlobe(viewer, mousePosition, result) {
 
 var globe = scene.globe;
 var camera = scene.camera;
+
+
+console.log (pickedPosition);
+
+var pickGlobeScratchRay = new Cesium.Ray();
+var scratchDepthIntersection = new Cesium.Cartesian3();
+var scratchRayIntersection = new Cesium.Cartesian3(); 
 
 if (!Cesium.defined(globe)) {
     return undefined;
@@ -473,21 +485,15 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log (mousePosition);
 testMe(mousePosition);
   
-let pickedPosition;
-let scratchZoomPickRay = new Cesium.Ray();
-let scratchPickCartesian = new Cesium.Cartesian3();
 
-console.log (pickedPosition);
 
-var pickGlobeScratchRay = new Cesium.Ray();
-var scratchDepthIntersection = new Cesium.Cartesian3();
-var scratchRayIntersection = new Cesium.Cartesian3();    
+   
 
 
 
 pickGlobe(viewer, mousePosition, result)
 
-conole.log(result);
+console.log(result);
 
       });
 
