@@ -406,72 +406,61 @@ function toDegrees(cartesian3Pos) {
 
 //zašto bez ol3d ??
 
-let pickedPosition;
-
+var pickedPosition;
+var scratchZoomPickRay = new Cesium.Ray();
+var scratchPickCartesian = new Cesium.Cartesian3();
 function testMe(mousePosition) {
-
-
-const scratchZoomPickRay = new Cesium.Ray();
-const scratchPickCartesian = new Cesium.Cartesian3();
-
-
     if (Cesium.defined(scene.globe)) { 
-      
-        if(scene.mode !== 2) {
-         pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
-            console.log("3"+" "+pickedPosition)
+        if(scene.mode !== Cesium.SceneMode.SCENE2D) {
+            pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
         } else {
-          pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
-            console.log("2"+pickedPosition)
+            pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
         }
     }
 }
 
-
-function pickGlobe(viewer, mousePosition, result) {
-
-var globe = scene.globe;
-var camera = scene.camera;
-
-
 var pickGlobeScratchRay = new Cesium.Ray();
 var scratchDepthIntersection = new Cesium.Cartesian3();
-var scratchRayIntersection = new Cesium.Cartesian3(); 
+var scratchRayIntersection = new Cesium.Cartesian3();    
+function pickGlobe(ol3d, mousePosition, result) {
 
-if (!Cesium.defined(globe)) {
-    return undefined;
-}
+    var globe = scene.globe;
+    var camera = scene.camera;
 
-var depthIntersection;
-if (scene.pickPositionSupported) {
-    depthIntersection = scene.pickPosition(mousePosition, scratchDepthIntersection);
-}
+    if (!Cesium.defined(globe)) {
+        return undefined;
+    }
 
-var ray = camera.getPickRay(mousePosition, pickGlobeScratchRay);
-var rayIntersection = globe.pick(ray, scene, scratchRayIntersection);
+    var depthIntersection;
+    if (scene.pickPositionSupported) {
+        depthIntersection = scene.pickPosition(mousePosition, scratchDepthIntersection);
+    }
 
-var pickDistance;
-if(Cesium.defined(depthIntersection)) {
-    pickDistance = Cesium.Cartesian3.distance(depthIntersection, camera.positionWC);
-} else {
-    pickDistance = Number.POSITIVE_INFINITY;
-}
+    var ray = camera.getPickRay(mousePosition, pickGlobeScratchRay);
+    var rayIntersection = globe.pick(ray, scene, scratchRayIntersection);
 
-var rayDistance;
-if(Cesium.defined(rayIntersection)) {
-    rayDistance = Cesium.Cartesian3.distance(rayIntersection, camera.positionWC);
-} else {
-    rayDistance = Number.POSITIVE_INFINITY;
-}
+    var pickDistance;
+    if(Cesium.defined(depthIntersection)) {
+        pickDistance = Cesium.Cartesian3.distance(depthIntersection, camera.positionWC);
+    } else {
+        pickDistance = Number.POSITIVE_INFINITY;
+    }
 
-var scratchCenterPosition = new Cesium.Cartesian3();
-if (pickDistance < rayDistance) {
-    var cart = Cesium.Cartesian3.clone(depthIntersection, result);
+    var rayDistance;
+    if(Cesium.defined(rayIntersection)) {
+        rayDistance = Cesium.Cartesian3.distance(rayIntersection, camera.positionWC);
+    } else {
+        rayDistance = Number.POSITIVE_INFINITY;
+    }
+
+    var scratchCenterPosition = new Cesium.Cartesian3();
+    if (pickDistance < rayDistance) {
+        var cart = Cesium.Cartesian3.clone(depthIntersection, result);
+        return cart;
+    }
+
+    var cart = Cesium.Cartesian3.clone(rayIntersection, result);
     return cart;
-}
-
-var cart = Cesium.Cartesian3.clone(rayIntersection, result);
-return cart;
 }
 
 scene.canvas.addEventListener("contextmenu", (event) => {
