@@ -429,8 +429,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     console.log(scene);
     const cartTeren = scene.globe.pick(ray, scene);
     if (!cartTeren) {
-      return;
       console.log("Nemože");
+      return;
+  
     }
     console.log("CART: "+cartTeren);
     const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartTeren);
@@ -442,8 +443,7 @@ console.log(cartographic);
       console.log(height);
     }
 
-    const transformedCoords = transform(coords, getProjection('EPSG:4326'), 'EPSG:3857');
-    const hdms = toStringHDMS(coords);
+
 
 
 
