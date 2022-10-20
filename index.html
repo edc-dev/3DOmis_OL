@@ -420,10 +420,13 @@ var scratchZoomPickRay = new Cesium.Ray();
 var scratchPickCartesian = new Cesium.Cartesian3();
 function testMe(mousePosition) {
     if (Cesium.defined(scene.globe)) { 
-        if(scene.mode !== Cesium.SceneMode.SCENE2D) {
+      console.log(scene.mode)
+        if(scene.mode !== 2) {
             pickedPosition = pickGlobe(viewer, mousePosition, scratchPickCartesian);
+            console.log("2"+pickedPosition)
         } else {
             pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
+            console.log("3"+pickedPosition)
         }
     }
 }
