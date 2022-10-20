@@ -412,10 +412,11 @@ var scratchPickCartesian = new Cesium.Cartesian3();
 function testMe(mousePosition) {
     if (Cesium.defined(scene.globe)) { 
         if(scene.mode !== Cesium.SceneMode.SCENE2D) {
-          console.log(scene.mode)
+          console.log(mousePosition+";3;"+scene.mode)
             pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
         } else {
             pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
+            console.log(mousePosition+";2;"+scene.mode)
         }
     }
 }
