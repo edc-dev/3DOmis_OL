@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ol@6.15.1/proj/transforms.js"></script>
     <script src="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Cesium.js"></script>
     <script src="./openlayers-ol-cesium-ee97068/olcesium.js"></script>
-    <script src="./openlayers-6.15.1/src/ol/proj"></script>
+    <script src="./openlayers-6.15.1/src/ol/proj/proj4.js"></script>
     <script src="config.js"></script>
 
     <link rel="stylesheet" href="w3.css" type="text/css"/>
@@ -443,7 +443,7 @@ console.log(cartographic);
       console.log(height);
     }
 
-    const transformedCoords = transform(coords, transform('EPSG:4326'), 'EPSG:3857');
+    const transformedCoords = transform(coords, getProjection('EPSG:4326'), 'EPSG:3857');
     const hdms = toStringHDMS(coords);
 
 
