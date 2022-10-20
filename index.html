@@ -427,7 +427,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     const ray = scene.camera.getPickRay(mousePosition);
     console.log(ray);
     console.log(scene);
-    const cartTeren = scene.globe.pick(ray, scene);
+    const cartTeren = scene.globe.pick(ray, scene); //custom terrain pick ??
     if (!cartTeren) {
       console.log("Nemože");
       return;
