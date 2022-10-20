@@ -429,6 +429,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     const cartesian = scene.globe.pick(ray, scene);
     if (!cartesian) {
       return;
+      console.log(scene.globe.pick(ray, scene));
     }
     console.log(cartesian);
     const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
