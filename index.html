@@ -431,7 +431,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
       return;
       console.log(scene.globe.pick(ray, scene));
     }
-    console.log(cartesian);
+    console.log("CART: "+cartesian);
     const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
     let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
 console.log(cartographic);
