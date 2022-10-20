@@ -417,7 +417,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
        // let selectedLocation = scene.globe.pick(ray, scene); //mora biti u world koordinatama
         
        // let selectedLocation = scene.pickPosition(mousePosition);
-        var selectedLocation = ol3d.camera.pickEllipsoid(point, scene.globe.ellipsoid);
+        var selectedLocation = ol3d.camera_.pickEllipsoid(point, scene.globe.ellipsoid);
    
         console.log (selectedLocation);
         toDegrees(selectedLocation);
