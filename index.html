@@ -308,6 +308,7 @@ const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 
 const scene = ol3d.getCesiumScene();
 const camera = ol3d.getCamera();
+
 //scene.terrainProvider = Cesium.createWorldTerrain();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(1103401)});
@@ -408,6 +409,9 @@ function toDegrees(cartesian3Pos) {
 
 
 
+  
+
+
 
 scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
@@ -418,7 +422,32 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         );
         console.log (mousePosition);
 
-var elips = scene.globe.ellipsoid;
+
+    const ray = scene.camera.getPickRay(mousePosition);
+    console.log(ray);
+    const cartesian = scene.globe.pick(ray, scene);
+    if (!cartesian) {
+      return;
+    }
+    const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+    let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
+
+    const height = scene.globe.getHeight(cartographic);
+    if (height) {
+      coords = coords.concat([height]);
+    }
+
+    const transformedCoords = transform(coords, getProjection('EPSG:4326'), 'EPSG:3857');
+    const hdms = toStringHDMS(coords);
+
+
+
+
+
+
+
+
+        /*var elips = scene.globe.ellipsoid;
 console.log (elips);
 var terrainProvider = scene.terrainProvider;
 console.log (terrainProvider);
@@ -426,7 +455,7 @@ console.log (terrainProvider);
 const selectedLocation = scene._picking.pickPosition(mousePosition);
         
 console.log(selectedLocation);
-toDegrees(selectedLocation);
+toDegrees(selectedLocation);*/
       });
 
 
