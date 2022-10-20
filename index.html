@@ -418,12 +418,12 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         );
         console.log (mousePosition);
 
-var ellipsoid = scene.globe.ellipsoid;
+var elips = scene.globe.ellipsoid;
 console.log (ellipsoid);
 var terrainProvider = scene.terrainProvider;
 console.log (terrainProvider);
 
-const selectedLocation = scene._picking.pickPosition(ellipsoid,mousePosition);
+const selectedLocation = scene._picking.pickPosition(elips,mousePosition);
         
 console.log(selectedLocation);
 toDegrees(selectedLocation);
