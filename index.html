@@ -406,67 +406,8 @@ function toDegrees(cartesian3Pos) {
 
 //zašto bez ol3d ??
 
-var pickedPosition;
-var scratchZoomPickRay = new Cesium.Ray();
-var scratchPickCartesian = new Cesium.Cartesian3();
-function testMe(mousePosition) {
-    if (Cesium.defined(scene.globe)) { 
-        if(scene.mode !== Cesium.SceneMode.SCENE2D) {
-           pickedPosition = pickGlobe(viewer, mousePosition, scratchPickCartesian);
-           console.log(mousePosition+";3;"+scene.mode)
-           console.log(pickedPosition);
-        } else {
-            pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
-            console.log(mousePosition+";2;"+scene.mode)
-            console.log(pickedPosition);
-        }
-    }
-}
 
-var pickGlobeScratchRay = new Cesium.Ray();
-var scratchDepthIntersection = new Cesium.Cartesian3();
-var scratchRayIntersection = new Cesium.Cartesian3();    
-function pickGlobe(ol3d, mousePosition, result) {
 
-    var globe = scene.globe;
-    var camera = scene.camera;
-
-    if (!Cesium.defined(globe)) {
-        return undefined;
-    }
-
-    var depthIntersection;
-    if (scene.pickPositionSupported) {
-        depthIntersection = scene.pickPosition(mousePosition, scratchDepthIntersection);
-    }
-
-    var ray = camera.getPickRay(mousePosition, pickGlobeScratchRay);
-    var rayIntersection = globe.pick(ray, scene, scratchRayIntersection);
-
-    var pickDistance;
-    if(Cesium.defined(depthIntersection)) {
-        pickDistance = Cesium.Cartesian3.distance(depthIntersection, camera.positionWC);
-    } else {
-        pickDistance = Number.POSITIVE_INFINITY;
-    }
-
-    var rayDistance;
-    if(Cesium.defined(rayIntersection)) {
-        rayDistance = Cesium.Cartesian3.distance(rayIntersection, camera.positionWC);
-    } else {
-        rayDistance = Number.POSITIVE_INFINITY;
-    }
-
-    var scratchCenterPosition = new Cesium.Cartesian3();
-    if (pickDistance < rayDistance) {
-        var cart = Cesium.Cartesian3.clone(depthIntersection, result);
-        return cart;
-    }
-
-    var cart = Cesium.Cartesian3.clone(rayIntersection, result);
-    return cart;
-    console.log(cart);
-}
 
 scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
@@ -478,8 +419,10 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log (mousePosition);
 testMe(mousePosition);
  
-
-
+var ellipsoid = scene.globe.ellipsoid;
+console.log (ellipsoid);
+var terrainProvider = scene.terrainProvider;
+console.log (terrainProvider);
 
       });
 
