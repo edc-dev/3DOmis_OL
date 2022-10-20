@@ -423,9 +423,10 @@ console.log (ellipsoid);
 var terrainProvider = scene.terrainProvider;
 console.log (terrainProvider);
 
-const selectedLocation = scene.pickPosition(ellipsoid,mousePosition);
-        toDegrees(selectedLocation);
+const selectedLocation = scene.picking.pickPosition(ellipsoid,mousePosition);
+        
 console.log(selectedLocation);
+toDegrees(selectedLocation);
       });
 
 
