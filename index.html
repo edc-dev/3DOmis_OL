@@ -421,7 +421,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
           event.clientY,
           event.clientZ,
         );
-        console.log (scene._picking.pickPosition(mousePosition));
+        console.log (scene.pickPosition(mousePosition));
 
 
     const ray = scene.camera.getPickRay(mousePosition);
