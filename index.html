@@ -417,9 +417,9 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log(ray);
        // let selectedLocation = scene.globe.pick(ray, scene); //mora biti u world koordinatama
         
-       // let selectedLocation = scene.pickPosition(mousePosition);
+        let selectedLocation = scene.pickPosition(Cesium.Ellipsoid.WGS84,mousePosition);
         
-       let selectedLocation = camera.cam_.pickEllipsoid(mousePosition, scene.globe.ellipsoid);
+       //let selectedLocation = camera.cam_.pickEllipsoid(mousePosition, scene.globe.ellipsoid);
    
         console.log (selectedLocation);
         toDegrees(selectedLocation);
