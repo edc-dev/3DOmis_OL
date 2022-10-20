@@ -307,6 +307,7 @@ Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
 const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 
 const scene = ol3d.getCesiumScene();
+const camera = ol3d.getCamera();
 //scene.terrainProvider = Cesium.createWorldTerrain();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(1103401)});
@@ -417,7 +418,8 @@ scene.canvas.addEventListener("contextmenu", (event) => {
        // let selectedLocation = scene.globe.pick(ray, scene); //mora biti u world koordinatama
         
        // let selectedLocation = scene.pickPosition(mousePosition);
-        var selectedLocation = ol3d.camera_.pickEllipsoid(mousePosition, scene.globe.ellipsoid);
+        
+       let selectedLocation = camera.pickEllipsoid(mousePosition, scene.globe.ellipsoid);
    
         console.log (selectedLocation);
         toDegrees(selectedLocation);
