@@ -409,18 +409,18 @@ function toDegrees(cartesian3Pos) {
 
 function testMe(mousePosition) {
 
-  let pickedPosition;
-let scratchZoomPickRay = new Cesium.Ray();
-let scratchPickCartesian = new Cesium.Cartesian3();
+
+const scratchZoomPickRay = new Cesium.Ray();
+const scratchPickCartesian = new Cesium.Cartesian3();
 
   console.log(scene.mode)
     if (Cesium.defined(scene.globe)) { 
       
         if(scene.mode !== 2) {
-            pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
+         const   pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
             console.log("3"+pickedPosition)
         } else {
-            pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
+          const  pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
             console.log("2"+pickedPosition)
         }
     }
