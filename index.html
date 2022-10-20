@@ -406,6 +406,7 @@ function toDegrees(cartesian3Pos) {
 
 //zašto bez ol3d ??
 
+const pickedPosition={};
 
 function testMe(mousePosition) {
 
@@ -417,10 +418,10 @@ const scratchPickCartesian = new Cesium.Cartesian3();
     if (Cesium.defined(scene.globe)) { 
       
         if(scene.mode !== 2) {
-         const   pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
+         pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
             console.log("3"+pickedPosition)
         } else {
-          const  pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
+          pickedPosition = camera.getPickRay(mousePosition, scratchZoomPickRay).origin;
             console.log("2"+pickedPosition)
         }
     }
