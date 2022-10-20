@@ -412,7 +412,7 @@ var scratchPickCartesian = new Cesium.Cartesian3();
 function testMe(mousePosition) {
     if (Cesium.defined(scene.globe)) { 
         if(scene.mode !== Cesium.SceneMode.SCENE2D) {
-           pickedPosition = pickGlobe(ol3d, mousePosition, scratchPickCartesian);
+           pickedPosition = pickGlobe(viewer, mousePosition, scratchPickCartesian);
            console.log(mousePosition+";3;"+scene.mode)
            console.log(pickedPosition);
         } else {
