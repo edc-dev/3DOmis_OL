@@ -442,7 +442,7 @@ console.log(cartographic);
       console.log(height);
     }
 
-    const transformedCoords = getProjection(coords, getProjection('EPSG:4326'), 'EPSG:3857');
+    const transformedCoords = transform(coords, transform('EPSG:4326'), 'EPSG:3857');
     const hdms = toStringHDMS(coords);
 
 
