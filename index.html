@@ -425,6 +425,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
 
     const ray = scene.camera.getPickRay(mousePosition);
     console.log(ray);
+    console.log(scene);
     const cartesian = scene.globe.pick(ray, scene);
     if (!cartesian) {
       return;
