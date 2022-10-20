@@ -426,13 +426,13 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     const ray = scene.camera.getPickRay(mousePosition);
     console.log(ray);
     console.log(scene);
-    const cartesian = scene.globe.pick(ray, scene);
-    if (!cartesian) {
+    const cartTeren = scene.globe.pick(ray, scene);
+    if (!cartTeren) {
       return;
-      console.log(scene.globe.pick(ray, scene));
+      console.log("Nemože");
     }
-    console.log("CART: "+cartesian);
-    const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+    console.log("CART: "+cartTeren);
+    const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartTeren);
     let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
 console.log(cartographic);
     const height = scene.globe.getHeight(cartographic);
