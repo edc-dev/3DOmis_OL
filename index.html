@@ -419,7 +419,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         
        // let selectedLocation = scene.pickPosition(mousePosition);
         
-       let selectedLocation = camera.cam.pickEllipsoid(mousePosition, scene.globe.ellipsoid);
+       let selectedLocation = camera.cam_.pickEllipsoid(mousePosition, scene.globe.ellipsoid);
    
         console.log (selectedLocation);
         toDegrees(selectedLocation);
