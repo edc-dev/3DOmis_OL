@@ -416,7 +416,7 @@ scene.canvas.addEventListener("contextmenu", (event) => {
         console.log(ray);
        // let selectedLocation = scene.globe.pick(ray, scene); //mora biti u world koordinatama
         
-        let selectedLocation = scene._picking.sampleHeight(mousePosition);
+        let selectedLocation = ol3d.scene_.pickPosition(mousePosition);
 
    
         console.log (selectedLocation);
