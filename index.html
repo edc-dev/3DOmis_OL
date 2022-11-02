@@ -1,5 +1,8 @@
+<!DOCTYPE HTML>
 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hr" lang="hr">
 
+<?xml version='1.0' encoding='UTF-8'?>
 <!--To do:
   Vlastiti teren
   ostali layeri
@@ -8,10 +11,6 @@
   podaci
   query sa lociranjem-->
 
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hr" lang="hr">
- 
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -25,6 +24,8 @@
     <script src="./openlayers-ol-cesium-ee97068/olcesium.js"></script>
     <script src="./proj4js-2.8.0/dist/proj4.js"></script>
 -->
+<script type="module" src="modules.js"></script>
+
     <script src="config.js"></script>
 
     <link rel="stylesheet" href="w3.css" type="text/css"/>
@@ -73,43 +74,8 @@
     -->
  
   
-    
-  <script>
 
-/**
- * @module omis3D
- */
-import OLCesium from 'olcs/OLCesium.js';
-import olView from 'ol/View.js';
-import {defaults as olControlDefaults} from 'ol/control.js';
-import olSourceOSM from 'ol/source/OSM.js';
-import olLayerTile from 'ol/layer/Tile.js';
-import olStyleText from 'ol/style/Text.js';
-import olStyleIcon from 'ol/style/Icon.js';
-import olStyleStyle from 'ol/style/Style.js';
-import olGeomPoint from 'ol/geom/Point.js';
-import olFeature from 'ol/Feature.js';
-import olStyleStroke from 'ol/style/Stroke.js';
-import {defaults as interactionDefaults} from 'ol/interaction.js';
-import olStyleFill from 'ol/style/Fill.js';
-import olMap from 'ol/Map.js';
-import olGeomCircle from 'ol/geom/Circle.js';
-import olFormatTopoJSON from 'ol/format/TopoJSON.js';
-import olStyleCircle from 'ol/style/Circle.js';
-import olFormatKML from 'ol/format/KML.js';
-import olSourceVector from 'ol/source/Vector.js';
-import olFormatIGC from 'ol/format/IGC.js';
-import olFormatGeoJSON from 'ol/format/GeoJSON.js';
-import olFormatGPX from 'ol/format/GPX.js';
-import olGeomPolygon from 'ol/geom/Polygon.js';
-import olInteractionDragAndDrop from 'ol/interaction/DragAndDrop.js';
-import olGeomMultiPolygon from 'ol/geom/MultiPolygon.js';
-import olLayerVector from 'ol/layer/Vector.js';
-import {transform} from 'ol/proj.js';
-import olcsCore from 'olcs/core.js';
-
-
-
+<script>
 
   
      var btnCounter = 0;
