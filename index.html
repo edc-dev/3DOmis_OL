@@ -22,8 +22,15 @@
     <title>IMAGIS Vodovod Omiš 3D</title>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" crossorigin="anonymous" type="text/css">
 
     <script src="ol-cesium-v2.13//olcesium.js"></script>
     <link rel="stylesheet" href="ol-cesium-v2.13/olcs.css" type="text/css">
@@ -38,7 +45,7 @@
     <link rel="stylesheet" href="w3.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css" />
    <!--<link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Widgets/widgets.css" type="text/css" />-->
-    <link rel="stylesheet" href="https://sandcastle.cesium.com/templates/bucket.css" type="text/css" />
+      <!--<<link rel="stylesheet" href="https://sandcastle.cesium.com/templates/bucket.css" type="text/css" />-->
 
     <style>.cesium-credit-textContainer { display: inline-block; font-size: 50%; line-height: 100%;}</style>
     
@@ -421,16 +428,9 @@ function toDegrees(cartesian3Pos) {
 
 
 
-scene.canvas.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-
-        let mousePosition = new Cesium.Cartesian2(
-          event.clientX,
-          event.clientY
-        );
-        console.log (mousePosition);
 
 
+/*
     const ray = scene.camera.getPickRay(mousePosition);
     console.log(ray);
     console.log(scene);
@@ -442,8 +442,41 @@ scene.canvas.addEventListener("contextmenu", (event) => {
     }
     console.log("CART: "+cartTeren);
     toDegrees(cartTeren);
-    
+    */
    
+
+
+
+
+
+
+    scene.canvas.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+
+        let mousePosition = new Cesium.Cartesian2(
+          event.clientX,
+          event.clientY
+        );
+        console.log ("mouse: ",mousePosition);
+
+     const cartographic =   convertScreenPixelToLocation(mousePosition);
+
+console.log (cartographic);
+let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
+      const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
+      const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
+
+         //  console.log({lat: Number(latitudeString),lng: Number(longitudeString)});
+    const height = scene.globe.getHeight(cartographic);
+    if (height) {
+      let coords=[longitudeString,latitudeString];
+      coords = coords.concat([height]);
+      console.log(coords);
+
+    }
+      });
+
+
 /*
     const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartTeren);
     let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
@@ -456,24 +489,20 @@ console.log(cartographic);
 */
 
 
+      function convertScreenPixelToLocation(mousePosition) {
+    const terrPro = scene.terrainProvider;
+    const ellipsoid =  scene.globe.ellipsoid;
+    const cartesian = scene.camera.pickEllipsoid(mousePosition, ellipsoid);
+    if (cartesian) {
+      const cartographic = ellipsoid.cartesianToCartographic(cartesian);
 
+      return cartographic;
+   
+    } else {
+      return null;
+    }
 
-
-
-
-
-
-        /*var elips = scene.globe.ellipsoid;
-console.log (elips);
-var terrainProvider = scene.terrainProvider;
-console.log (terrainProvider);
-
-const selectedLocation = scene._picking.pickPosition(mousePosition);
-        
-console.log(selectedLocation);
-toDegrees(selectedLocation);*/
-      });
-
+} 
 
 ol3d.enableAutoRenderLoop();
 
