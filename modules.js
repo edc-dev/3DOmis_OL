@@ -3,7 +3,7 @@
  */
 import OLCesium from 'olcs/OLCesium.js';
 import olView from 'node_modules/ol/View.js';
-import {defaults as olControlDefaults} from '/node_modules/ol/control.js';
+import {defaults as olControlDefaults} from 'node_modules/ol/control.js';
 import olSourceOSM from 'node_modules/ol/source/OSM.js';
 import olLayerTile from 'node_modules/ol/layer/Tile.js';
 import olStyleText from 'node_modules/ol/style/Text.js';
