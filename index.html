@@ -1,8 +1,51 @@
+
+    <style>
+      #map { height: 300px; width: 500px }
+    </style>
+
+
+
+
+    <!-- In production you should use the minified Cesium for better performances -->
+    
+  </head>
+  <body>
+    <p>Old-fashioned example</p>
+    <input id="enable" type="button" value="Enable/disable" />
+    <div id="map"></div>
+  </body>
+  <script>
+    var ol2d = new ol.Map({
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        })
+      ],
+      target: 'map',
+      view: new ol.View({
+        center: ol.proj.transform([25, 20], 'EPSG:4326', 'EPSG:3857'),
+        zoom: 3
+      })
+    });
+  
+    var ol3d = new olcs.OLCesium({
+      map: ol2d,
+    });
+    ol3d.setEnabled(true);
+  
+    var setEnabled = function() {ol3d.setEnabled(!ol3d.getEnabled())};
+    document.getElementById('enable').addEventListener('click', setEnabled);
+  </script>
+  </html>
+
+
+
+
 <!DOCTYPE HTML>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hr" lang="hr">
 
-<?xml version='1.0' encoding='UTF-8'?>
+
 <!--To do:
   Vlastiti teren
   ostali layeri
@@ -19,21 +62,25 @@
 
     <title>IMAGIS Vodovod Omiš 3D</title>
 
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
-    <script src="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Cesium.js"></script>
-    <script src="./openlayers-ol-cesium-ee97068/olcesium.js"></script>
-    <script src="./proj4js-2.8.0/dist/proj4.js"></script>
 
-<script type="module" src="modules.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
+
+    <script src="ol-cesium-v2.13//olcesium.js"></script>
+    <link rel="stylesheet" href="ol-cesium-v2.13/olcs.css" type="text/css">
+    
+   
+    <script src="https://cdn.jsdelivr.net/npm/cesium@1.81.0/Build/CesiumUnminified/Cesium.js" crossorigin="anonymous"></script>
+
+   <!-- <script src="./proj4js-2.8.0/dist/proj4.js"></script>-->
 
     <script src="config.js"></script>
 
     <link rel="stylesheet" href="w3.css" type="text/css"/>
     <link rel="stylesheet" href="style.css" type="text/css" />
-    <link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Widgets/widgets.css" type="text/css" />
+   <!--<link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Widgets/widgets.css" type="text/css" />-->
     <link rel="stylesheet" href="https://sandcastle.cesium.com/templates/bucket.css" type="text/css" />
-    <link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/olcs.css" type="text/css">
-    <link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/ol/ol.css" type="text/css"></link>
+
     <style>.cesium-credit-textContainer { display: inline-block; font-size: 50%; line-height: 100%;}</style>
     
 
