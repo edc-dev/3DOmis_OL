@@ -461,20 +461,40 @@ function toDegrees(cartesian3Pos) {
 
      const cartographic =   convertScreenPixelToLocation(mousePosition);
 
-console.log (cartographic);
+//console.log (cartographic);
 let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
       const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
       const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
 
          //  console.log({lat: Number(latitudeString),lng: Number(longitudeString)});
-    const height = scene.globe.getHeight(cartographic);
+    let height = scene.globe.getHeight(cartographic);
+
+    const promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographic.longitude, cartographic.latitude, 0)]);
+        Cesium.when(promise, (updatedPositions) => {
+          console.log(updatedPositions[0].height)
+            observer.next(updatedPositions[0].height);
+            observer.complete();
+        });
+
     if (height) {
       let coords=[longitudeString,latitudeString];
       coords = coords.concat([height]);
-      console.log(coords);
+      console.log("koordinate: ",coords);
+      
+     
+
+
 
     }
-      });
+
+});
+
+
+
+
+
+
+  
 
 
 /*
