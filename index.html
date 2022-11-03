@@ -319,11 +319,11 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 
 
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
-const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
+const ol3d = new olcs.OLCesium({map, target: 'viewRight', requestRenderMode: true});
 
 const scene = ol3d.getCesiumScene();
-const camera = ol3d.getCamera();
-
+//const camera = ol3d.getCamera(); // ova kamera (olcs) i scene.camera (cesium) nisu iste... :-(
+//console.log(camera);
 //scene.terrainProvider = Cesium.createWorldTerrain();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(1103401)});
@@ -405,16 +405,7 @@ window['setTargetFrameRate'] = function() {
 
 
 
-function toDegrees(cartesian3Pos) {
-        let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
-        let lng = (pos.longitude / Math.PI) * 180;
-        let ltt = (pos.latitude / Math.PI) * 180;
-        let height = pos.height;
-        let lon = lng.toFixed(6);
-        let lat = ltt.toFixed(6);
-        let elev = height.toFixed(6);
-        alert(lat + "\n" + lon + "\n" + elev);
-      }
+
 
 
 
@@ -458,10 +449,67 @@ function toDegrees(cartesian3Pos) {
           event.clientY
         );
         console.log ("mouse: ",mousePosition);
+       
+       
+        scene.requestRender();
 
-     const cartographic =   convertScreenPixelToLocation(mousePosition);
+        scene.terrainProvider.readyPromise.then(function () {
 
-//console.log (cartographic);
+
+          var ray = scene.camera.getPickRay(mousePosition);
+
+
+var cartesianRay = scene.globe.pick(ray, scene);
+
+var cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
+
+const longitudeString = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(15);
+      const latitudeString = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(15);
+
+const promiseRay = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographicRay.longitude, cartographicRay.latitude, 0)]);
+        Cesium.when(promiseRay, (updatedPositionsRay) => {
+        //  console.log("promiseRayHeight: ", updatedPositionsRay[0].height)
+
+          let coordRays=[longitudeString,latitudeString];
+      coordsRay = coordsRay.concat([updatedPositionsRay[0].height]);
+      console.log("koordinateRay: ",coordsRay);
+
+      const cartographic =   convertScreenPixelToLocation(mousePosition);
+      let height = scene.globe.getHeight(cartographic);
+
+       if (height) {
+      let coords=[longitudeString,latitudeString];
+      coords = coords.concat([height]);
+      console.log("koordinate: ",coords);
+          }
+
+        });
+
+
+});
+
+
+
+
+
+
+//let heightRay = scene.globe.getHeight(cartographicRay);
+//console.log("pickedHeight: ", heightRay)
+
+
+      //  const longitudeString = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(15);
+    //  const latitudeString = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(15);
+
+     //   if (heightRay) {
+    //  let coords=[longitudeString,latitudeString];
+   //   coords = coords.concat([heightRay]);
+   //   console.log("koordinateRay: ",coords);
+  //        }
+
+
+/*
+const cartographic =   convertScreenPixelToLocation(mousePosition);
+
 let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
       const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
       const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
@@ -471,30 +519,62 @@ let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegre
 
     const promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographic.longitude, cartographic.latitude, 0)]);
         Cesium.when(promise, (updatedPositions) => {
-          console.log(updatedPositions[0].height)
-            observer.next(updatedPositions[0].height);
-            observer.complete();
+          console.log("promise: ", updatedPositions[0].height)
         });
+
+
 
     if (height) {
       let coords=[longitudeString,latitudeString];
       coords = coords.concat([height]);
       console.log("koordinate: ",coords);
-      
-     
+          }
 
+*/
 
-
-    }
+        
 
 });
 
 
+function toDegrees(cartesian3Pos) {
+        let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
+        let lng = (pos.longitude / Math.PI) * 180;
+        let ltt = (pos.latitude / Math.PI) * 180;
+        let height = pos.height;
+        let lon = lng.toFixed(6);
+        let lat = ltt.toFixed(6);
+        let elev = height.toFixed(6);
+        alert(lat + "\n" + lon + "\n" + elev);
+      }
+
+
+   
+function convertScreenPixelToLocation(mousePosition) {
+    const terrPro = scene.terrainProvider;
+    const ellipsoid =  scene.globe.ellipsoid;
+    const cartesian = scene.camera.pickEllipsoid(mousePosition, ellipsoid);
+    if (cartesian) {
+      const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+
+      return cartographic;
+   
+    } else {
+      return null;
+    }
+
+} 
 
 
 
+/*
+var ray = viewer.camera.getPickRay(click.position);
+var cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+var cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian);
 
-  
+var long2 = Cesium.Math.toDegrees(cartographic.longitude);
+var lat2 = Cesium.Math.toDegrees(cartographic.latitude);
+  */
 
 
 /*
@@ -509,20 +589,7 @@ console.log(cartographic);
 */
 
 
-      function convertScreenPixelToLocation(mousePosition) {
-    const terrPro = scene.terrainProvider;
-    const ellipsoid =  scene.globe.ellipsoid;
-    const cartesian = scene.camera.pickEllipsoid(mousePosition, ellipsoid);
-    if (cartesian) {
-      const cartographic = ellipsoid.cartesianToCartographic(cartesian);
 
-      return cartographic;
-   
-    } else {
-      return null;
-    }
-
-} 
 
 ol3d.enableAutoRenderLoop();
 
