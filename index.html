@@ -444,7 +444,7 @@ window['setTargetFrameRate'] = function() {
     scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
 
-        let mousePosition = new Cesium.Cartesian2(
+        const mousePosition = new Cesium.Cartesian2(
           event.clientX,
           event.clientY
         );
@@ -455,13 +455,13 @@ window['setTargetFrameRate'] = function() {
 
         scene.terrainProvider.readyPromise.then(function () {
 
-
+console.log('bing');
           var ray = scene.camera.getPickRay(mousePosition);
 
 
-var cartesianRay = scene.globe.pick(ray, scene);
+const cartesianRay = scene.globe.pick(ray, scene);
 
-var cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
+const cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
 
 const longitudeString = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(15);
       const latitudeString = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(15);
@@ -470,11 +470,11 @@ const promiseRay = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new 
         Cesium.when(promiseRay, (updatedPositionsRay) => {
         //  console.log("promiseRayHeight: ", updatedPositionsRay[0].height)
 
-          let coordRays=[longitudeString,latitudeString];
+          let coordsRay=[longitudeString,latitudeString];
       coordsRay = coordsRay.concat([updatedPositionsRay[0].height]);
       console.log("koordinateRay: ",coordsRay);
 
-      const cartographic =   convertScreenPixelToLocation(mousePosition);
+      const cartographic = convertScreenPixelToLocation(mousePosition);
       let height = scene.globe.getHeight(cartographic);
 
        if (height) {
