@@ -475,6 +475,7 @@ function convertScreenPixelToLocation(mousePosition) {
           event.clientY
         );
       
+        console.log('mouse: ', mousePosition)
       //  scene.requestRender();
 
         scene.terrainProvider.readyPromise.then(function () {
