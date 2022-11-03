@@ -475,7 +475,7 @@ function convertScreenPixelToLocation(mousePosition) {
           event.clientY
         );
       
-        scene.requestRender();
+      //  scene.requestRender();
 
         scene.terrainProvider.readyPromise.then(function () {
           
@@ -495,9 +495,12 @@ Cesium.when(promiseRay, (updatedPositionsRay) => {
           let coordsRay=[longitudeStringRay,latitudeStringRay];
       coordsRay = coordsRay.concat([updatedPositionsRay[0].height]);
       console.log("koordinateRay: ",coordsRay);
+        });
 
-      const cartographic = convertScreenPixelToLocation(mousePosition);
-      let height = scene.globe.getHeight(cartographic);
+        const cartographic = convertScreenPixelToLocation(mousePosition);
+        const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
+      const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
+      const height = scene.globe.getHeight(cartographic);
 
        if (height) {
       let coords=[longitudeString,latitudeString];
@@ -505,8 +508,6 @@ Cesium.when(promiseRay, (updatedPositionsRay) => {
       console.log("koordinate: ",coords);
       console.log ('magnit: ',scene.camera.distanceToBoundingSphere());
           }
-
-        });
 
 
 });
