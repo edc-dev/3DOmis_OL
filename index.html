@@ -472,17 +472,21 @@ function convertScreenPixelToLocation(mousePosition) {
  scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
      scene.requestRender();
-        const mousePosition = new Cesium.Cartesian2(
+
+
+
+        scene.terrainProvider.readyPromise.then(function () {
+
+          
+
+          const mousePosition = new Cesium.Cartesian2(
           event.clientX,
           event.clientY
         );
       
+       console.log('mouse: ', mousePosition)
 
 
-       // console.log('mouse: ', mousePosition)
-
-
-        scene.terrainProvider.readyPromise.then(function () {
           
         const ray = scene.camera.getPickRay(mousePosition);
 
@@ -491,9 +495,9 @@ const cartesianRay = scene.globe.pick(ray, scene);
 
 const cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
 console.log(cartographicRay);
-const longitudeStringRay = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(15);
-      const latitudeStringRay = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(15);
-      const heightStringRay = Cesium.Math.toDegrees(cartographicRay.height).toFixed(15);
+const longitudeStringRay = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(7);
+      const latitudeStringRay = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(7);
+      const heightStringRay = cartographicRay.height.toFixed(2);
       let coordsRay=[longitudeStringRay,latitudeStringRay, heightStringRay];
       alert (coordsRay);
 
