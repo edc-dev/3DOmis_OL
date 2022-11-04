@@ -319,7 +319,7 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 
 
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
-const ol3d = new olcs.OLCesium({map, target: 'viewRight', requestRenderMode: true});
+const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 
 const scene = ol3d.getCesiumScene();
 //const camera = ol3d.getCamera(); // ova kamera (olcs) i scene.camera (cesium) nisu iste... :-(
@@ -328,7 +328,7 @@ const scene = ol3d.getCesiumScene();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
           url: Cesium.IonResource.fromAssetId(1103401)});
           scene.globe.depthTestAgainstTerrain=true;
-
+//scene.requestRendeMode=true;
 ol3d.setEnabled(true);
 //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
 
@@ -469,14 +469,16 @@ function convertScreenPixelToLocation(mousePosition) {
 
  scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
-
+     //   scene.requestRender();
         const mousePosition = new Cesium.Cartesian2(
           event.clientX,
           event.clientY
         );
       
-        console.log('mouse: ', mousePosition)
-        scene.requestRender();
+
+
+       // console.log('mouse: ', mousePosition)
+
 
         scene.terrainProvider.readyPromise.then(function () {
           
