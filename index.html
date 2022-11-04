@@ -490,18 +490,25 @@ function convertScreenPixelToLocation(mousePosition) {
 const cartesianRay = scene.globe.pick(ray, scene);
 
 const cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
-
+console.log(cartographicRay);
 const longitudeStringRay = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(15);
       const latitudeStringRay = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(15);
+      const heightStringRay = Cesium.Math.toDegrees(cartographicRay.height).toFixed(15);
+      let coordsRay=[longitudeStringRay,latitudeStringRay, heightStringRay];
+      alert (coordsRay);
 
-const promiseRay = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographicRay.longitude, cartographicRay.latitude, 0)]);
-       
+/* pitanje je li ovo treba jer sampliranje terena niš puno ne donosi u odnosu na height iz prodora
+const promiseRay = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographicRay.longitude, cartographicRay.latitude, 0)]);  
 Cesium.when(promiseRay, (updatedPositionsRay) => {
           let coordsRay=[longitudeStringRay,latitudeStringRay];
       coordsRay = coordsRay.concat([updatedPositionsRay[0].height]);
       console.log("koordinateRay: ",coordsRay);
-
         });
+*/
+
+
+
+
 /*
         const cartographic = convertScreenPixelToLocation(mousePosition);
         const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
