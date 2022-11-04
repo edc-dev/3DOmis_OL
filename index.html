@@ -53,31 +53,33 @@
   </head>
   <body>
    
-     <div id="viewLeft" style="width:50%;height:100%;float:left;">
+     <div id="viewLeft" style="width:800px;height:600px;float:left;">
     </div>
      <div class="toolbar-left" id="toolbar-left">
       <input id="btnPogledL" type="button" onclick="buttonChange()" value="2D/3D"/>
     </div>
    
-    <div id="viewRight" style="width:50%;height:100%;float:left;position:relative;">
+    <div id="viewRight" style="width:800px;height:600px;float:left;position:relative;">
    </div>
 
     
-    <div id="viewStyle" style="width:50%;height:100%;float:left;position:relative;display:none">
-    </div>
-     <div class="toolbar-right" id="toolbar-right">
+    <div id="viewStyle" style="width:800px;height:600px;float:left;position:relative;display:none">
+
       <div><input id="enable" type="button" value="Enable/disable Cesium" />
       </div>
       <div><input type="button" value="Toggle depth test" onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()" />
       </div>
-     
       <div><input type="button" value="Add/remove one vector layer" onclick="javascript:addOrRemoveOneVectorLayer()" />
       </div>
       <div><input type="button" value="Toggle clampToGround mode" onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()" />
       </div>
       <div><input id="framerate" type="number" min="0" step="10" value="10"/>
       <input type="button" value="Set the target rendering frame rate" onclick="javascript:setTargetFrameRate()" /></div>
-     </div>
+    </div>
+
+    <div class="toolbar-right" id="toolbar-right">    </div>
+    
+
 
 
        <!--
@@ -152,7 +154,7 @@
       document.getElementById("btnPogledR").value = "3D/Style";
       document.getElementById("viewLeft").style.display = "none";
       document.getElementById("viewRight").style.display = "inline-flex";
-      document.getElementById("viewStyle").style.display = "inline-flex";
+      document.getElementById("viewStyle").style.display = "inline-block";
       }}
 
        
@@ -485,7 +487,7 @@ function convertScreenPixelToLocation(mousePosition) {
         const ray = scene.camera.getPickRay(mousePosition);
 
 
-const cartesianRay = scene.globe.pick(ray, scene);
+const cartesianRay = scene.terrainProvider.pick(ray, scene);
 
 const cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
 
@@ -498,8 +500,9 @@ Cesium.when(promiseRay, (updatedPositionsRay) => {
           let coordsRay=[longitudeStringRay,latitudeStringRay];
       coordsRay = coordsRay.concat([updatedPositionsRay[0].height]);
       console.log("koordinateRay: ",coordsRay);
-        });
 
+        });
+/*
         const cartographic = convertScreenPixelToLocation(mousePosition);
         const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
       const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
@@ -509,9 +512,8 @@ Cesium.when(promiseRay, (updatedPositionsRay) => {
       let coords=[longitudeString,latitudeString];
       coords = coords.concat([height]);
       console.log("koordinate: ",coords);
-      console.log ('magnit: ',scene.camera.distanceToBoundingSphere());
           }
-
+*/
 
 });
 
