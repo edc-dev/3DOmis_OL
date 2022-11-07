@@ -490,7 +490,7 @@ function convertScreenPixelToLocation(mousePosition) {
 
        console.log('cartographic: ', cartographic)
           
-        const ray = scene.camera.getPickRay(cartographic);//ray bi trebal bit od točke prema centru zemlje, a ne od kamere prema točci ?
+        const ray = scene.camera.getPickRay(mousePosition);//ray bi trebal bit od točke prema centru zemlje, a ne od kamere prema točci ?
       //  const ray =new Cesium.Ray(mousePosition, direction) // i šta je sa pretvaranjem koordinata ekrana u svjetske ??? možda TO prvo ??!!
 
 console.log('ray: ', ray) 
