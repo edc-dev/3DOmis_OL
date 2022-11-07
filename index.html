@@ -486,10 +486,12 @@ function convertScreenPixelToLocation(mousePosition) {
       
        console.log('mouse: ', mousePosition)
 
+       const cartographic = convertScreenPixelToLocation(mousePosition);
 
+       console.log('cartographic: ', cartographic)
           
-        //const ray = scene.camera.getPickRay(mousePosition);//ray bi trebal bit od točke prema centru zemlje, a ne od kamere prema točci ?
-        const ray =new Cesium.Ray(mousePosition, direction) // i šta je sa pretvaranjem koordinata ekrana u svjetske ??? možda TO prvo ??!!
+        const ray = scene.camera.getPickRay(cartographic);//ray bi trebal bit od točke prema centru zemlje, a ne od kamere prema točci ?
+      //  const ray =new Cesium.Ray(mousePosition, direction) // i šta je sa pretvaranjem koordinata ekrana u svjetske ??? možda TO prvo ??!!
 
 console.log('ray: ', ray) 
 
@@ -516,7 +518,7 @@ Cesium.when(promiseRay, (updatedPositionsRay) => {
 
 
 /*
-        const cartographic = convertScreenPixelToLocation(mousePosition);
+        
         const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
       const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
       const height = scene.globe.getHeight(cartographic);
