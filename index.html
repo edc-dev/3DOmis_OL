@@ -413,29 +413,10 @@ window['setTargetFrameRate'] = function() {
 
     
 
-//zašto bez ol3d ??
-
-
-
-  
 
 
 
 
-
-/*
-    const ray = scene.camera.getPickRay(mousePosition);
-    console.log(ray);
-    console.log(scene);
-    const cartTeren = scene.globe.pick(ray, scene); //custom terrain pick ?? kao uzima moj teren u obzir ali je rezultat šumast...
-    if (!cartTeren) {
-      console.log("Nemože");
-      return;
-  
-    }
-    console.log("CART: "+cartTeren);
-    toDegrees(cartTeren);
-    */
    
 
 
@@ -452,12 +433,12 @@ window['setTargetFrameRate'] = function() {
 
 
    
-function convertScreenPixelToLocation(mousePosition) {
+function convertScreenPixelToLocation(canvasPosition) { //canvas position dobiti eventom clicka miša ili drukčije
     const terrPro = scene.terrainProvider;
     const ellipsoid =  scene.globe.ellipsoid;
-    const cartesian = scene.camera.pickEllipsoid(mousePosition, ellipsoid);
-    if (cartesian) {
-      const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+    const mousePosition = scene.camera.pickEllipsoid(canvasPosition, ellipsoid);
+    if (mousePosition) {
+      const cartographic = ellipsoid.cartesianToCartographic(mousePosition);
 
       return cartographic;
    
@@ -467,7 +448,30 @@ function convertScreenPixelToLocation(mousePosition) {
 
 } 
 
+var lhtext
 
+var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+
+handler.setInputAction(function (event) {
+  scene.terrainProvider.readyPromise.then(function () {
+  var ray = scene.camera.getPickRay(event.endPosition);
+  var mousePosition = scene.globe.pick(ray, scene);
+    if (Cesium.defined(mousePosition)) {
+        var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
+        var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(6);
+        var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(6);
+        var heightString = cartographic.height.toFixed(2);
+         lhtext =
+            `Lat: ${(latitudeString).slice(-9)}, Lon: ${(longitudeString).slice(-9)}, Alt: ${(heightString).slice(-7)}`;
+
+       // console.log(lhtext);
+     //  console.log(mousePosition); //svijet
+      // console.log(cartographic); //radian
+    //   console.log(scene.camera.position.z); //visina
+    }
+  });
+
+}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
  scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
@@ -475,171 +479,18 @@ function convertScreenPixelToLocation(mousePosition) {
 
 
 
-        scene.terrainProvider.readyPromise.then(function () {
+if (scene.camera.position.z<4364500 && scene.camera.position.z > 0 ){
+alert(lhtext);
+}
 
-
-
-          const mousePosition = new Cesium.Cartesian2(
-          event.clientX,
-          event.clientY
-        );
-      
-       console.log('mouse: ', mousePosition)
-
-       const cartographic = convertScreenPixelToLocation(mousePosition);
-
-       console.log('cartographic: ', cartographic)
-          
-        const ray = scene.camera.getPickRay(mousePosition);//ray bi trebal bit od točke prema centru zemlje, a ne od kamere prema točci ?
-      //  const ray =new Cesium.Ray(mousePosition, direction) // i šta je sa pretvaranjem koordinata ekrana u svjetske ??? možda TO prvo ??!!
-
-console.log('ray: ', ray) 
-
-const cartesianRay = scene.globe.pick(ray, scene);
-console.log('cartesianray: ', cartesianRay)
-const cartographicRay = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianRay);
-console.log(cartographicRay);
-const longitudeStringRay = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(7);
-      const latitudeStringRay = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(7);
-      const heightStringRay = cartographicRay.height.toFixed(2);
-      let coordsRay=[longitudeStringRay,latitudeStringRay, heightStringRay];
-      alert (coordsRay);
-
-/* pitanje je li ovo treba jer sampliranje terena niš puno ne donosi u odnosu na height iz prodora
-const promiseRay = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographicRay.longitude, cartographicRay.latitude, 0)]);  
-Cesium.when(promiseRay, (updatedPositionsRay) => {
-          let coordsRay=[longitudeStringRay,latitudeStringRay];
-      coordsRay = coordsRay.concat([updatedPositionsRay[0].height]);
-      console.log("koordinateRay: ",coordsRay);
-        });
-*/
-
-
-
-
-/*
-        
-        const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
-      const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
-      const height = scene.globe.getHeight(cartographic);
-
-       if (height) {
-      let coords=[longitudeString,latitudeString];
-      coords = coords.concat([height]);
-      console.log("koordinate: ",coords);
-          }
-*/
 
 });
 
-});
-/*
-
-
-exports.pickOnTerrainOrEllipsoid = function(scene, pixel) {
-  const ray = scene.camera.getPickRay(pixel);
-  const target = scene.globe.pick(ray, scene);
-  return target || scene.camera.pickEllipsoid(pixel);
-};
-
-
-/**
- * Get the 3D position of the point at the bottom-center of the screen.
-
- var ray = viewer.camera.getPickRay(new Cesium.Cartesian2(x, y));
-        var intersection = globe.pick(ray, viewer.scene);
-			
-        if (typeof intersection !== "undefined") {
-            row[x] = Cesium.Cartesian3.distance(viewer.camera.position, intersection);
-        }
-
-
-var cartographicPositions = Cesium.Ellipsoid.WGS84.cartesianArrayToCartographicArray(points);
-// points are an array of positions(x,y,0)
-                var HeightCheck=setInterval(function(){
-                        if (cesiumTerrainProviderHeightmaps.ready)
-                        {
-                            clearInterval(HeightCheck);
-                            $("#info2a").html("ok wait :)" );
-                            var promise = Cesium.sampleTerrain(cesiumTerrainProviderHeightmaps, 11, cartographicPositions);
-                            Cesium.when(promise, function(cartographicPositions) {
-                                    $("#info2a").html("ok got the altitudes" );
-
-                                });
-                        } else {
-                            $("#info2a").html("Waiting for height data of terrain...." );
-                        }
-                    },1000);
-
-*/
-//let heightRay = scene.globe.getHeight(cartographicRay);
-//console.log("pickedHeight: ", heightRay)
-
-
-      //  const longitudeString = Cesium.Math.toDegrees(cartographicRay.longitude).toFixed(15);
-    //  const latitudeString = Cesium.Math.toDegrees(cartographicRay.latitude).toFixed(15);
-
-     //   if (heightRay) {
-    //  let coords=[longitudeString,latitudeString];
-   //   coords = coords.concat([heightRay]);
-   //   console.log("koordinateRay: ",coords);
-  //        }
-
-
-/*
-const cartographic =   convertScreenPixelToLocation(mousePosition);
-
-let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
-      const longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(15);
-      const latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(15);
-
-         //  console.log({lat: Number(latitudeString),lng: Number(longitudeString)});
-    let height = scene.globe.getHeight(cartographic);
-
-    const promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, [new Cesium.Cartographic(cartographic.longitude, cartographic.latitude, 0)]);
-        Cesium.when(promise, (updatedPositions) => {
-          console.log("promise: ", updatedPositions[0].height)
-        });
-
-
-
-    if (height) {
-      let coords=[longitudeString,latitudeString];
-      coords = coords.concat([height]);
-      console.log("koordinate: ",coords);
-          }
-
-*/
-
-        
 
 
 
 
 
-
-
-
-/*
-var ray = viewer.camera.getPickRay(click.position);
-var cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-var cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian);
-
-var long2 = Cesium.Math.toDegrees(cartographic.longitude);
-var lat2 = Cesium.Math.toDegrees(cartographic.latitude);
-  */
-
-
-/*
-    const cartographic = scene.globe.ellipsoid.cartesianToCartographic(cartTeren);
-    let coords = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];
-console.log(cartographic);
-    const height = scene.globe.getHeight(cartographic);
-    if (height) {
-      coords = coords.concat([height]);
-      console.log(height);
-    }
-*/
 
 
 
