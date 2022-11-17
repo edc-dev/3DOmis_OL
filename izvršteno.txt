@@ -198,7 +198,12 @@ window['addOrRemoveOneFeature'] = function() {
   }
 };
 
-
+const csLabels = new Cesium.LabelCollection();
+csLabels.add({
+  position: Cesium.Cartesian3.fromRadians(20, 20, 0),
+  text: 'Pre-existing primitive'
+});
+scene.primitives.add(csLabels);
 
 
 

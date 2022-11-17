@@ -1,16 +1,12 @@
-
-
 <!DOCTYPE HTML>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hr" lang="hr">
 
 
 <!--To do:
-  Vlastiti teren
-  ostali layeri
-  stilizacija
+  	  stilizacija
   mjerenje visine
-  podaci
+  prikaz podataka
   query sa lociranjem-->
 
 <head>
@@ -169,6 +165,10 @@ const image = new ol.style.Circle({
   stroke: new ol.style.Stroke({color: 'red', width: 1})
 });
 
+
+
+
+
 const styles = {
   'Point': [new ol.style.Style({
     image
@@ -241,49 +241,120 @@ const styles = {
   })]
 };
 
+
+
+//kako napraviti listu stilova, programski prepoznati ili zadati klasu objekta u layeru i adekvatno stilizirati prema listi stilova
+
 const styleFunction = function(feature, resolution) {
   const geo = feature.getGeometry();
+  //console.log(feature.);
   // always assign a style to prevent feature skipping
   return geo ? styles[geo.getType()] : styles['Point'];
 };
 
+
+
 var vectorSource=[];
+var vectorLayer=[];
 
-if (dataSources){ //loader za podatke
-for (let i = 0; i < Object.values(dataSources).length; i++) {
-  console.log (Object.values(dataSources)[i]);
-  console.log (Object.keys(dataSources)[i]);
-  vectorSource = new ol.source.Vector({
+
+
+
+
+vectorSource[0] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[0],
-  class:Object.values(dataSources)[1]
+  
 });
+vectorLayer[0] = new ol.layer.Vector({
+  style: new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'blue',
+      lineDash: [4],
+      width: 3
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 0, 255, 0.1)'
+    })
+  }),
+  source: vectorSource[0],
+});
+vectorLayer[0].set('altitudeMode', 'clampToGround');
 
-}
-}
-
-
-/*
-const vectorSource = new ol.source.Vector({
+vectorSource[1] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[0],
-  class:'Mjerna Zona'
+  url: Object.values(dataSources)[1],
 });
-
-*/
-
-
-
-
-
-
-
-
-const vectorLayer = new ol.layer.Vector({
+vectorLayer[1] = new ol.layer.Vector({
   style: styleFunction,
-  source: vectorSource,
+  source: vectorSource[1],
 });
-vectorLayer.set('altitudeMode', 'clampToGround');
+vectorLayer[1].set('altitudeMode', 'clampToGround');
+
+vectorSource[2] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[2],
+});
+vectorLayer[2] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[2],
+});
+vectorLayer[2].set('altitudeMode', 'clampToGround');
+
+vectorSource[3] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[3],
+});
+vectorLayer[3] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[3],
+});
+vectorLayer[3].set('altitudeMode', 'clampToGround');
+
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
+vectorLayer[4].set('altitudeMode', 'clampToGround');
+
+vectorSource[5] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[5],
+});
+vectorLayer[5] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[5],
+});
+vectorLayer[5].set('altitudeMode', 'clampToGround');
+
+vectorSource[6] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[6],
+});
+vectorLayer[6] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[6],
+});
+vectorLayer[6].set('altitudeMode', 'clampToGround');
+
+vectorSource[7] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[7],
+});
+vectorLayer[7] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[7],
+});
+vectorLayer[7].set('altitudeMode', 'clampToGround');
+
+
+
+
+
 
 
 const dragAndDropInteraction = new ol.interaction.DragAndDrop({
@@ -302,8 +373,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer,
- //   vectorLayer2
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],vectorLayer[4],vectorLayer[5],vectorLayer[6],vectorLayer[7],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
@@ -316,6 +386,13 @@ const map = new ol.Map({
     zoom: 2
   })
 });
+
+
+
+
+
+
+
 
 dragAndDropInteraction.on('addfeatures', (event) => {
   const vectorSource = new ol.source.Vector({
@@ -352,12 +429,7 @@ ol3d.setEnabled(true);
 
 
 
-const csLabels = new Cesium.LabelCollection();
-csLabels.add({
-  position: Cesium.Cartesian3.fromRadians(20, 20, 0),
-  text: 'Pre-existing primitive'
-});
-scene.primitives.add(csLabels);
+
 
 
 

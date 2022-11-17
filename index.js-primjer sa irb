@@ -1,0 +1,1262 @@
+// TODO:  početi uređivati (gumb za gps npr.), rutine za unos i edit podataka,
+var agentUrl = 'https://gis.edc.hr/mapguide/mapagent/mapagent.fcgi?'; // ok
+var restUrl = 'https://gis.edc.hr/mapguide/rest/'; // ok
+var libUrl = 'library/irb-cim/Data/irbcimsqlite.FeatureSource/'; // ok
+var usrnm = 'Anonymous'; // ok
+var pwd = ''; // ok
+var sessionId; // ok
+var outGeoArray = []; // ok
+var props = []; // ok
+var projektEPSG = "4326"; // da li se isplati mijenjati instance u kodu ?
+var dataEPSG = "3857"; // težiti istome kao projekt, a svakako ne stavljati više različitih EPSG
+var glbfeatures = [];
+var controls = {};
+var interactions = [];
+var aktivKlas;
+var selectKlas;
+createSession();
+
+async function createSession() {
+    let response = await fetch(agentUrl + "OPERATION=CREATESESSION&VERSION=1.0.0&CLIENTAGENT=MapGuide+Developer&username=" + usrnm + "&password=" + pwd); // nije JSON nego xml StringCollection :-)
+
+
+    sessionId = await response.text();
+    console.log(sessionId);
+
+
+    loadClasses();
+
+}
+
+setInterval(function () { // timer za keepalive a može i za druge stvari
+    var timeoutpoll = agentUrl + "OPERATION=GETSESSIONTIMEOUT&VERSION=2.2&SESSION=" + sessionId + "&LOCALE=en&CLIENTAGENT=MapGuide+Developer";;
+    $.ajax({
+        url: timeoutpoll,
+        context: document.body,
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}, 60000);
+
+async function loadClasses() {
+    let response = await fetch(restUrl + libUrl + "classes.json/Default?session=" + sessionId);
+
+
+    featClasses = await response.json();
+
+
+    loadFeatures();
+}
+
+
+async function loadFeatures() {
+
+    for (var i = 0; i < featClasses.StringCollection.Item.length; i++) {
+        let featureClass = featClasses.StringCollection.Item[i].replace('Default:', ''); // mičem shemu iz naziva klase
+
+        let response = await fetch(restUrl + libUrl + "features.geojson/Default/" + featureClass + "?" + sessionId);
+
+        let json = await response.json();
+
+        // console.log (json);
+
+        eval("var src" + featureClass + " = new ol.source.Vector({features: (new ol.format.GeoJSON()).readFeatures(" + JSON.stringify(json) + ", { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' })})");
+        eval("src" + featureClass + ".set('title',src" + featureClass + ")"); //radi al nekaj smrdi
+        eval("var lay" + featureClass + " = new ol.layer.Vector({projection: 'EPSG:3857', zIndex:2, featClass: '" + featureClass + "' ,title:'" + featureClass + "', source:src" + featureClass + "})");
+
+        //   izmjena sve bez eval, drukčiji koncept, loader za src!!! i to zbog refresh funkcije
+
+        var sourceLL = new ol.source.Vector({ features: (new ol.format.GeoJSON()).readFeatures(JSON.stringify(json), { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }), title: '"+featureClass+"' });
+        var layerLL = new ol.layer.Vector({ projection: 'EPSG:3857', zIndex: 2, title: featureClass, source: sourceLL });
+
+
+        //izmjena
+        var layergroups = (map.getLayerGroup().getLayers());
+
+        layergroups.forEach(function (layGroup) {
+            if (layGroup.get('title') === 'Radni') {
+                var laySubGroups = layGroup.get('layers');
+                if (featureClass.includes("BioloskiPodaci") || featureClass.includes("Obala")) { // koje su podgrupe, ostali su članovi grupe
+                    laySubGroups.forEach(function (laySubGroup) {
+                        if (laySubGroup.get('title') === 'Obala') {
+                            if (featureClass.includes("Obala")) {
+                                eval("laySubGroup.get('layers').push(lay" + featureClass + ")");
+                            }
+                        } else if (laySubGroup.get('title') === 'Biološki podaci') {
+                            if (featureClass.includes("BioloskiPodaci")) {
+                                eval("laySubGroup.get('layers').push(lay" + featureClass + ")");
+                            }
+                        }
+
+                    });
+                }
+
+
+
+                else if (featureClass.includes("VodnoTijelo") || featureClass.includes("OkolisniFaktori")) {
+
+
+                    eval("layGroup.get('layers').push(lay" + featureClass + ")");
+
+
+                    var layers = layGroup.get('layers');
+                    layers.forEach(function (layer) {
+                        if (layer.get('title') === 'VodnoTijelo') {
+                            layer.set('title', 'Vodno Tijelo');
+                        }
+                        if (layer.get('title') === 'OkolisniFaktori') {
+                            layer.set('title', 'Okolišni Faktori');
+                        }
+                    });
+                }
+
+
+            }
+            // ovo skrkat u jedan prolaz bez eval što znači nadalje pisat sve preko "map.get()" a da ne govorimo o tome da sam funkciju napisal naopačke, neznam kak radi :-)
+            // kod ucrtavanja, wizard mora pitat jel točka linija ili poligon...
+
+
+
+            else if (layGroup.get('title') === 'Pomoćni') {
+                if (featureClass.includes("GPS_linije") || featureClass.includes("proslePutanje")) { // koje su podgrupe, ostali su članovi grupe
+                    eval("layGroup.get('layers').push(lay" + featureClass + ")");
+
+                }
+                var layersPomocni = layGroup.get('layers');
+                layersPomocni.forEach(function (layer) {
+                    if (layer.get('title') === 'proslePutanje') {
+                        layer.set('title', 'Prošle putanje');
+                        layer.setVisible(false);
+                    }
+                    if (layer.get('title') === 'GPS_linije') {
+                        layer.set('title', 'GPS linije');
+                        layer.setVisible(false);
+
+
+                    }
+                });
+
+
+            }
+        });
+
+
+    }
+
+
+}
+
+
+var layAerial = new ol.layer.Tile({
+    baseLayer: 'true',
+    visible: true,
+    title: "Satelit",
+    preload: Infinity,
+    zIndex: 0,
+    source: new ol.source.BingMaps(
+        {
+            key: 'AhVHxM48j1D2H9_42jlOC9XKXgcFeNn7fUqRiPFgqOaGHJ-DuwVAqKJmtP87WLe9', imagerySet: 'Aerial',
+            // use maxZoom 19 to see stretched tiles instead of the BingMaps
+            // "no photos at this zoom level" tiles
+            // maxZoom: 19
+        }
+    )
+});
+
+var layAerialWithLabelsOnDemand = new ol.layer.Tile({
+    baseLayer: 'true',
+    visible: false,
+    title: "Satelit +",
+    preload: Infinity,
+    zIndex: 0,
+    source: new ol.source.BingMaps(
+        {
+            key: 'AhVHxM48j1D2H9_42jlOC9XKXgcFeNn7fUqRiPFgqOaGHJ-DuwVAqKJmtP87WLe9', imagerySet: 'AerialWithLabelsOnDemand',
+            // use maxZoom 19 to see stretched tiles instead of the BingMaps
+            // "no photos at this zoom level" tiles
+            // maxZoom: 19
+        }
+    )
+});
+
+var layDGUDOF = new ol.layer.Tile({
+    baseLayer: 'true',
+    visible: false,
+    title: "DOF",
+    preload: Infinity,
+    zIndex: 0,
+    source: new ol.source.TileWMS(
+        {
+            url: 'https://geoportal.dgu.hr/wms',
+            params: {
+                'LAYERS': 'DOF'
+            },
+            type: 'wms',
+            crossOrigin: 'anonymous'
+        }
+    )
+});
+
+
+var layOpenStreetMap = new ol.layer.Tile({
+    baseLayer: 'true',
+    visible: false,
+    title: "OSM",
+    preload: Infinity,
+    zIndex: 1,
+    source: new ol.source.OSM(),
+    crossOriginKeyword: 'anonymous'
+});
+
+var layBezPodloge = new ol.layer.Tile({
+    baseLayer: 'true',
+    visible: false,
+    title: "Prazno",
+    preload: Infinity,
+    zIndex: 0,
+    source: new ol.source.TileWMS(),
+    crossOriginKeyword: 'anonymous'
+});
+
+
+var layOpenSeaMap = new ol.layer.Tile({
+    visible: true,
+    title: "Open Sea Map",
+    preload: Infinity,
+    zIndex: 1,
+    source: new ol.source.OSM(
+        {
+            attributions: [
+                'All maps © <a href="http://www.openseamap.org/">OpenSeaMap</a>', ol.source.OSM.ATTRIBUTION
+            ],
+            opaque: false,
+            url: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+            crossOriginKeyword: 'anonymous'
+        }
+    )
+});
+
+
+var layTemperatura = new ol.layer.Tile({
+    visible: false,
+    zIndex: 1,
+    title: "Temperatura",
+    source: new ol.source.XYZ(
+        { url: 'https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=52f3342b9e990b8a482ece8a07d0e7f6', crossOriginKeyword: 'anonymous' }
+    )
+});
+
+var layVjetar = new ol.layer.Tile({
+    visible: false,
+    zIndex: 1,
+    title: "Vjetar",
+    source: new ol.source.XYZ(
+        { url: 'https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=52f3342b9e990b8a482ece8a07d0e7f6', crossOriginKeyword: 'anonymous' }
+    )
+});
+
+var layEditing = new ol.layer.Vector({ zIndex: 3, title: 'Editor', source: new ol.source.Vector() });
+
+
+var Xattribution = new ol.control.Attribution({ collapsible: true, collapsed: true });
+
+var view = new ol.View({
+    center: [
+        1518564.886313, 5634560.317356
+    ],
+    zoom: 13
+});
+
+var map = new ol.Map({
+    layers: [
+        new ol.layer.Group(
+            {
+                title: 'Podloge',
+                // type: 'base',
+                visible: 'true',
+                collapsible: 'true',
+                layers: [
+                    layAerial,
+                    layAerialWithLabelsOnDemand,
+                    layDGUDOF,
+                    layOpenStreetMap,
+                    layBezPodloge
+                ]
+            }
+        ),
+        new ol.layer.Group(
+            {
+                title: 'Posebni',
+                type: 'baseLayer',
+                visible: 'false',
+                layers: [layOpenSeaMap, layTemperatura, layVjetar]
+            }
+        ),
+        new ol.layer.Group(
+            {
+                title: 'Radni',
+                type: '',
+                visible: 'true',
+                layers: [
+                    new ol.layer.Group(
+                        { title: 'Obala', type: '', visible: 'true', layers: [] }
+                    ),
+                    new ol.layer.Group(
+                        { title: 'Biološki podaci', type: '', visible: 'true', layers: [] }
+                    ),
+
+                    layEditing
+                ]
+            }
+        ),
+        new ol.layer.Group(
+            {
+                title: 'Pomoćni',
+                type: '',
+                visible: 'false',
+                layers: []
+            }
+        ),
+    ],
+    target: 'map',
+    controls: ol.control.defaults(
+        { attribution: false }
+    ).extend([Xattribution]),
+    view: view
+});
+
+var pos = map.getView().getCenter();
+// do daljnjeg izbačeno u div
+var pin = new ol.Overlay({ position: pos, element: document.getElementById('center'), positioning: 'center-center' });
+map.addOverlay(pin);
+
+
+// toolbar
+var mainbar = new ol.control.Bar();
+mainbar.setPosition('left');
+map.addControl(mainbar);
+
+mainbar.addControl(new ol.control.ZoomToExtent({
+    extent: [1500535.302266234, 5626582.202528735, 1536594.470359766, 5642538.432183265]
+}));
+// Edit control bar
+var controlBar = new ol.control.Bar({
+    toggleOne: true, // one control active at the same time
+    group: false // group controls together
+});
+
+
+mainbar.addControl(controlBar);
+
+
+// https://gis.edc.hr/mapguide/rest/library/irb-cim/Data/irbcimsqlite.FeatureSource/features.json/Default/VodnoTijelo?session=3f5dd226-f27c-11ea-8000-00262d0d89a6_en_MTI3LjAuMC4x0AFC0AFB0AFA&filter=FeatId=2
+var sbar = new ol.control.Bar();
+sbar.addControl(new ol.control.Button({
+    html: '<i class="fa fa-times"></i>',
+    title: "Obriši",
+    handleClick: function () {
+        var features = selectCtrl.getInteraction().getFeatures();
+        if (!features.getLength())
+            alert("Izaberite objekt(e)!");
+
+
+
+        // Div sa info?? else
+        console.log(features.getLength() + " objekata izabrano!");
+
+
+        // ispitni blok
+        // console.log(selectCtrl.getInteraction().getLayer(features.item(0)));
+        // console.log(features.item(0).getProperties()); //tu izvuč svojstva
+        // console.log(features.item(0).getKeys()); //tu izvuč svojstva
+        // console.log(features.item(0).get('Ime')); //tu izvuč svojstva
+        // console.log(features.item(0).getId());
+        // ispitni blok end
+
+        var ob = 0;
+        for (var i = 0, f; f == features.item(i); i++) {
+
+            var selLayer = selectCtrl.getInteraction().getLayer(f);
+            var selSource = selLayer.getSource();
+            var selClass = selLayer.get("featClass");
+            var FeatId = f.getId();
+            // console.log(selSource);
+
+            if (confirm("Brišemo: " + selLayer.get('title') + " / " + f.getGeometry().getType() + " / " + f.get('Ime') + " ?")) {
+                ob++;
+                console.log(ob);
+                fetch(restUrl + libUrl + "features.json/Default/" + selClass + "?session=" + sessionId + "&filter=FeatId=" + FeatId, { method: 'DELETE' });
+                selSource.removeFeature(f);
+
+
+
+            } else { }
+
+
+        }
+        alert(ob + " objekata obrisano!");
+        selectCtrl.getInteraction().getFeatures().clear();
+
+
+    }
+}));
+
+
+
+
+sbar.addControl(new ol.control.Button({
+    html: '<i class="fa fa-info"></i>',
+    title: "Pokaži podatke",
+    handleClick: function () {
+        var f;
+
+        // console.log (selectCtrl.getInteraction().getFeatures().getLength());
+        switch (selectCtrl.getInteraction().getFeatures().getLength()) {
+            case 0:
+                alert("Izaberite objekt!");
+                zatvoriInfo();
+                break;
+            default: f = selectCtrl.getInteraction().getFeatures();
+
+
+                f.forEach(function (selectedItem) { // console.log (selectedItem.getProperties());
+                    var selLayer = selectCtrl.getInteraction().getLayer(selectedItem);
+                    var selSource = selLayer.getSource();
+                    var selClass = selLayer.get("featClass");
+                    var FeatId = selectedItem.getId();
+                    selectedItem.set("featClass", selClass);
+                    // selFeatures.push(selectedItem);
+
+
+
+
+                    $("#info").attr('style', 'visibility:visible');
+
+                    $("#info").append('<p>Izabrano je: ' + selectedItem.getGeometry().getType() + ' tip geometrije, klasa: ' + selClass + '.</p>'); // $("#info").html("Selection is a " + f.getGeometry().getType());
+                    $("#info").append('<p>Id: ' + selectedItem.getId() + '</p>');
+                    for (var i in selectedItem.getProperties()) {
+                        if (i != 'geometry')
+                            $("#info").append('<p>' + i + ': ' + selectedItem.getProperties()[i] + '</p>');
+                        else { }
+
+                    }
+
+                    // $("#info").append('<p>Geometrija: ' + (JSON.stringify(selectedItem.getGeometry())) + '</p>');
+                    // $("#info").append('<p>'+JSON.stringify(selectedItem.getGeometry().getProperties())+'<p>');
+                    $("#info").append('<hr>');
+                });
+                // console.log (JSON.stringify(selFeatures));
+
+                //var jsonSel = new ol.format.GeoJSON().writeFeaturesObject(selFeatures);
+
+                // console.log(jsonSel); //export selektiranih objekata npr, biće dobro i za modul editiranje siguran sam
+                $("#info").append('<p style="text-align:center;text-indent:0%"><button onclick="zatvoriInfo()" class="buttonZatvoriInfo">Zatvori</button></p>');
+                // console.log(selFeatures);
+                break;
+
+        }
+
+    }
+
+}));
+
+
+
+
+
+
+
+
+
+
+function selectDistinct(value, index, self) {
+    return self.indexOf(value) === index;
+}
+
+
+sbar.addControl(new ol.control.Button({
+    html: '<i class="fa fa-pencil-square-o"></i>',
+    title: "Uredi podatke",
+    handleClick: function () {
+        var fUpdate;
+        var selFeatIdi = [];
+        var selKlase = []; //napraviti array u kome su selektirane klase tako da se u izborniku izabere klasa koja se updejta
+var selFeatures=[];
+        switch (selectCtrl.getInteraction().getFeatures().getLength()) {
+            case 0:
+                alert("Izaberite objekt!");
+                zatvoriInfo();
+                break;
+            default: fUpdate = selectCtrl.getInteraction().getFeatures();
+                //console.log ("fu",fUpdate);
+
+                fUpdate.forEach(function (selectedItem) {
+                    var selLayer = selectCtrl.getInteraction().getLayer(selectedItem);
+                    var selSource = selLayer.getSource();
+                    var selClass = selLayer.get("featClass");
+                   // var FeatId = selectedItem.getId();
+                    selectedItem.set("featClass", selClass);
+                    selFeatures.push(selectedItem);
+                    selKlase.push(selClass);
+                    
+                    var jsonSel = new ol.format.GeoJSON().writeFeaturesObject(selFeatures);
+                    //      console.log (selectedItem);                    
+
+
+
+                });
+
+                break;
+
+        }
+        var unique = selKlase.filter(selectDistinct);
+
+
+        if (unique.length > 1) {
+            var kljucevi = [];
+            var dataList=[];
+            //var sviKljucevi = [];
+
+            $("#info").html('<h2>Info</h2>');
+            $("#info").attr('style', 'visibility:visible');
+            $("#info").append('<div id="infoheader" class="infoheader"> </div>');
+            $("#infoheader").append('<p>Izabrali ste objekte u nekoliko klasa.</p><p>Odaberite klasu za uređivanje podataka.</p>');
+            $("#infoheader").append('<p><select name="izborKlase" id="izborKlase"></select></p><hr>');
+            var options = "";
+            for (var j = 0; j < unique.length; j++) {
+                options += '<option value="' + unique[j] + '">' + unique[j] + '</option>';
+                $("#izborKlase").html(options);
+            }
+
+
+            selectKlas = document.getElementById('izborKlase');
+            selectKlas.addEventListener('focusout', onChangeSelect);
+
+            aktivKlas = selectKlas.value;
+
+            let selFeaturesAktiv = selFeatures.filter(feature => feature.get("featClass") === aktivKlas);
+           // console.log(selFeatures);
+           // console.log(aktivKlas);
+           // console.log(selFeaturesAktiv);
+
+           kljucevi=selFeaturesAktiv[0].getKeys();
+
+
+for (i=0;i<kljucevi.length;i++){
+    var tempArray=[];
+    selFeaturesAktiv.forEach(function (featAktiv) {
+
+tempArray.push(featAktiv.get(kljucevi[i]));
+ 
+             });
+
+           if  (tempArray.every( (val, i, arr) => val === arr[0] )){dataList.push(tempArray[0]);}else {dataList.push('razno');}
+            }
+console.log (dataList);
+            selFeaturesAktiv.forEach(function (featAktiv) {
+                 selFeatIdi.push(featAktiv.getId());
+                             });
+          
+            $("#info").append('<p>Geometrija: ' + selFeaturesAktiv[0].getGeometry().getType() + '</p>'); // $("#info").html("Selection is a " + f.getGeometry().getType());
+            $("#info").append('<p>Klasa: ' + aktivKlas + '</p>');
+            $("#info").append('<p>Id: ' + selFeatIdi + '</p>');
+            for (var p=0; p<selFeaturesAktiv[0].getKeys().length;p++) {
+                if (p != 'geometry') {
+                    $("#info").append('<p>' + p +'  '+ selFeaturesAktiv[0].getKeys()[p]  + ': <input type="text" id="' + aktivKlas + ";" + selFeatIdi + ";" + p + '" name="atributiIzmjena" value="'  + dataList[p] + '"</p>');
+                } else { }
+
+            }
+
+            $("#info").append('<hr>');
+            $("#info").append('<p   style="text-align:center;text-indent:0%"><button onclick="zatvoriInfo()" class="buttonZatvoriInfo">Zatvori</button><button onclick="snimiInfo()" class="buttonSnimiInfo">Snimi</button></p>');
+
+
+
+        } else {
+            aktivKlas = unique[0];
+
+
+            $("#info").append('<p   style="text-align:center;text-indent:0%"><button onclick="zatvoriInfo()" class="buttonZatvoriInfo">Zatvori</button><button onclick="snimiInfo()" class="buttonSnimiInfo">Snimi</button></p>');
+
+
+        }
+
+
+    }
+    
+    //tu proć kroz sve elemente izabrane klase, i stavit "razno" tam di se properties razlikuju
+
+}));
+
+function onChangeSelect() {
+    aktivKlas = selectKlas.value;
+
+
+
+
+
+    $("#info").html('<h2>Info</h2>');
+    $("#info").append('<div id="infoheader" class="infoheader"> </div>');
+
+
+
+    $("#info").append('<p   style="text-align:center;text-indent:0%"><button onclick="zatvoriInfo()" class="buttonZatvoriInfo">Zatvori</button><button onclick="snimiInfo()" class="buttonSnimiInfo">Snimi</button></p>');
+
+
+
+
+}
+function zatvoriInfo() {
+    console.log(aktivKlas);
+    selectCtrl.getInteraction().getFeatures().clear();
+    $("#info").html('');
+    $("#info").attr('style', 'visibility:hidden');
+}
+
+
+function snimiInfo() { //ayayayaay
+
+    var con = confirm("Snimamo promjene?");
+    if (con == true) {
+
+        // var jsonPutWriter = new ol.format.GeoJSON();
+        var wktPutWriter = new ol.format.WKT();
+        //var jsonPut = {};
+        var MGproperty = {};
+        updateFeatures = selectCtrl.getInteraction().getFeatures();
+
+        //    jsonPut = jsonPutWriter.writeFeatures(updateFeatures, { featureProjection: 'EPSG:3857' });
+        // za MapGuide NE TREBA ! Jednostavnije je odmah napraviti JSON
+        // console.log (jsonPut);
+
+        updateFeatures.forEach(function (selectedItem) { // console.log (selectedItem.getProperties());
+            var selLayer = selectCtrl.getInteraction().getLayer(selectedItem);
+            var selSource = selLayer.getSource();
+            var selClass = selLayer.get("featClass");
+            var FeatId = selectedItem.getId();
+
+            var featureSel = new ol.Feature({ geometry: selectedItem.getGeometry() });
+
+            featureSel.setId(selectedItem.getId());
+            featureSel.setProperties(selectedItem.getProperties());
+            featureSel.featClass = selClass;
+            selFeatures.push(featureSel);
+
+        });
+        let JSONMg = {
+            "UpdateOperation": {
+                "Filter": filter,
+                "UpdateProperties": {
+                    "Property": [
+                        {
+                            "Name": "string",
+                            "Value": "string"
+                        }
+                    ]
+                }
+            }
+        };
+
+
+
+
+        for (j = 0; j < glbfeatures.length; j++) {
+
+            var wktTemp = wktPutWriter.writeFeature(glbfeatures[j], {
+                featureProjection: 'EPSG:3857',
+                dataProjection: 'EPSG:4326'
+            });
+
+            var wktPut = wktTemp.replace("ZM", ""); // ovisi kakav je geometry layout, ovo je za xyzm
+            MGproperty = {
+                "Property": [
+                    {
+                        "Name": "Geometry",
+                        "Value": wktPut
+                    }
+                ]
+            };
+            glbfeatures[j].getKeys().forEach(function (key) { // console.log(glbfeatures[j]);
+                if (key != "geometry") {
+                    var keyvalue = {
+                        "Name": key,
+                        "Value": (glbfeatures[j].get(key))
+                    };
+                    MGproperty.Property.push(keyvalue);
+                }
+            });
+            MGproperty.Property.push({ "Name": "Ime", "Value": putanjaIme });
+            MGproperty.Property.push({ "Name": "DatumUnosa", "Value": Date.now() });
+            JSONMg.FeatureSet.Features.Feature.push(MGproperty);
+            console.log(MGproperty);
+
+        }
+        //console.log(JSONMg);
+
+        fetch(restUrl + libUrl + "features.json/Default/" + "GPS_linije" + "?session=" + sessionId, {
+            method: 'PUT',
+            body: JSON.stringify(JSONMg)
+        });
+        // glbVector.getSource().clear();
+
+
+        refresh("GPS_linije");
+
+    }
+
+
+
+}
+
+
+
+
+
+/* function tableCreate() {
+    var body = document.getElementsByTagName('body')[0];
+    var tbl = document.createElement('table');
+    tbl.style.width = '100%';
+    tbl.setAttribute('border', '1');
+    var tbdy = document.createElement('tbody');
+    for (var i = 0; i < 3; i++) {
+      var tr = document.createElement('tr');
+      for (var j = 0; j < 2; j++) {
+        if (i == 2 && j == 1) {
+          break
+        } else {
+          var td = document.createElement('td');
+          td.appendChild(document.createTextNode('\u0020'))
+          i == 1 && j == 1 ? td.setAttribute('rowSpan', '2') : null;
+          tr.appendChild(td)
+        }
+      }
+      tbdy.appendChild(tr);
+    }
+    tbl.appendChild(tbdy);
+    body.appendChild(tbl)
+  }
+  tableCreate(); */
+
+
+/* 
+function zatvoriInfo(){selectCtrl.getInteraction().getFeatures().clear();
+    $("#info").html('');
+    $("#info").attr('style','visibility:hidden');
+} */
+
+var selectCtrl = new ol.control.Toggle({
+    html: '<i class="fa fa-hand-pointer-o"></i>',
+    title: "Izaberi",
+    interaction: new ol.interaction.Select(
+        { hitTolerance: 2 }
+    ),
+    bar: sbar,
+    autoActivate: false,
+    // u čemu je razlika?
+    // active:true
+    onToggle: function (active) {
+        (active ? '' : selectCtrl.getInteraction().getFeatures().clear());
+
+    }
+
+});
+controlBar.addControl(selectCtrl);
+
+
+
+
+
+
+var cbar = new ol.control.Bar({ toggleOne: true });
+mainbar.addControl(cbar);
+
+
+var t = ["Point", "LineString", "Polygon", "Circle"];
+var icon = ["fa-map-marker", "fa-share-alt", "fa-bookmark-o fa-rotate-270", "fa-circle-o"];
+
+// A control to the bar
+function addControl(interaction) {
+    var sbar = new ol.control.Bar();
+    switch (interaction.getGeometryType()) {
+        case "Point": {
+            sbar.addControl(new ol.control.Button({
+                html: '<i class="fa fa-check"></i>',
+                title: "Add a point",
+                handleClick: function (e) { interaction.addPoint(); }
+            }));
+            break;
+        }
+        case 'Circle': {
+            sbar.addControl(new ol.control.Button({
+                html: "+",
+                title: "Add a point",
+                handleClick: function (e) { interaction.addPoint(); }
+            }));
+            sbar.addControl(new ol.control.Button({
+                html: '<i class="fa fa-check"></i>',
+                title: "Add a point",
+                handleClick: function (e) { interaction.addPoint(); interaction.finishDrawing(); }
+            }));
+            break;
+        }
+        default: {
+            sbar.addControl(new ol.control.Button({
+                html: "+",
+                title: "Add a point",
+                handleClick: function (e) { interaction.addPoint(); }
+            }));
+            sbar.addControl(new ol.control.Button({
+                html: "−",
+                title: "Remove last point",
+                handleClick: function (e) { interaction.removeLastPoint(); }
+            }));
+            sbar.addControl(new ol.control.Button({
+                html: '<i class="fa fa-check"></i>',
+                title: "Create...",
+                handleClick: function (e) { interaction.finishDrawing(); }
+            }));
+            break;
+        }
+    }
+    controls[i] = new ol.control.Toggle({
+        html: '<i class="fa ' + icon[i] + '"></i>',
+        interaction: interaction,
+        bar: sbar
+    });
+    cbar.addControl(controls[i]);
+}
+
+// Create interactions
+for (var i = 0; i < t.length; i++) {
+    var type = t[i];
+    // The interaction
+    interactions[i] = new ol.interaction.DrawTouch({
+        source: layEditing.getSource(),
+        type: type
+    });
+    addControl(interactions[i]);
+}
+
+// Add a snap interaction
+map.addInteraction(new ol.interaction.Snap({ source: layEditing.getSource(), pixelTolerance: 15 }));
+
+function setTap() {
+    for (var i in interactions) {
+        interactions[i].set("tap", $("#tap").prop("checked"));
+    }
+}
+setTap();
+
+interactions.forEach(element => {
+    element.on('drawstart', () => { console.log('start') })
+});
+
+
+
+
+
+
+
+
+/* Standard Controls */
+
+// mainbar.addControl (new ol.control.Rotate()); // pokazuje se dafultno
+
+mainbar.addControl(new ol.control.FullScreen());
+
+// Add a custom push button with onToggle function
+var buttonGPS = new ol.control.Toggle({
+    html: '<i class="fa fa-compass"></i>',
+    className: "edit",
+    title: "GPS",
+    onToggle: function (active) {
+        (active ? GPSactive() : GPSinact());
+    }
+});
+
+mainbar.addControl(buttonGPS);
+
+
+var buttonSnimiPutanju = new ol.control.Button({
+    html: '<i class="fa fa-life-ring"></i>',
+    className: "edit",
+    title: "Snimanje putanje",
+    handleClick: function snimiPutanju() { // ovo je za markirane linije dobro !
+
+        var putanjaIme = prompt("Snimanje linija markiranih GPS-om?");
+        if (putanjaIme != null && putanjaIme != '') {
+
+            var jsonPutWriter = new ol.format.GeoJSON();
+            var wktPutWriter = new ol.format.WKT();
+            var jsonPut = {};
+            var MGproperty = {};
+            glbfeatures = glbVector.getSource().getFeatures();
+            // console.log("glb", glbfeatures);
+            jsonPut = jsonPutWriter.writeFeatures(glbfeatures, { featureProjection: 'EPSG:3857' });
+            // za MapGuide NE TREBA ! Jednostavnije je odmah napraviti JSON
+            // console.log (jsonPut);
+            let JSONMg = {
+                "FeatureSet": {
+                    "Features": {
+                        "Feature": []
+                    }
+                }
+            };
+
+            for (j = 0; j < glbfeatures.length; j++) {
+
+                var wktTemp = wktPutWriter.writeFeature(glbfeatures[j], {
+                    featureProjection: 'EPSG:3857',
+                    dataProjection: 'EPSG:4326'
+                });
+
+                var wktPut = wktTemp.replace("ZM", ""); // ovisi kakav je geometry layout, ovo je za xyzm
+                MGproperty = {
+                    "Property": [
+                        {
+                            "Name": "Geometry",
+                            "Value": wktPut
+                        }
+                    ]
+                };
+                glbfeatures[j].getKeys().forEach(function (key) { // console.log(glbfeatures[j]);
+                    if (key != "geometry") {
+                        var keyvalue = {
+                            "Name": key,
+                            "Value": (glbfeatures[j].get(key))
+                        };
+                        MGproperty.Property.push(keyvalue);
+                    }
+                });
+                MGproperty.Property.push({ "Name": "Ime", "Value": putanjaIme });
+                MGproperty.Property.push({ "Name": "DatumUnosa", "Value": Date.now() });
+                JSONMg.FeatureSet.Features.Feature.push(MGproperty);
+                // console.log(MGproperty);
+
+            }
+            //console.log(JSONMg);
+
+            fetch(restUrl + libUrl + "features.json/Default/" + "GPS_linije" + "?session=" + sessionId, {
+                method: 'POST',
+                body: JSON.stringify(JSONMg)
+            });
+            // glbVector.getSource().clear();
+
+
+            refresh("GPS_linije");
+
+        }
+
+
+    }
+});
+
+async function refresh() {
+    response = await fetch(restUrl + libUrl + "features.geojson/Default/" + arguments[0] + "?" + sessionId);
+    let json = await response.json();
+    console.log(json); //ostatak funkcije isto raspisati univerzalno za sve sourceove i vidjeti zašto refresh metoda ne funkcionira. povezano je sa loaderom valjda...
+
+    var srcGPS_linije = new ol.source.Vector({ features: (new ol.format.GeoJSON()).readFeatures(JSON.stringify(json), { dataProjection: "EPSG:4326", featureProjection: "EPSG:3857" }) });
+    var layergroups = (map.getLayerGroup().getLayers());
+    layergroups.forEach(function (layGroup) {
+        if (layGroup.get('title') === 'Pomoćni') {
+            var layers = layGroup.get('layers');
+            layers.forEach(function (layer) {
+                if (layer.get('title') === 'GPS linije') {
+                    // console.log("!");
+                    layer.setSource(srcGPS_linije);
+                    //console.log("la",layer);
+                }
+            });
+        }
+    });
+
+
+}
+
+
+
+
+mainbar.addControl(buttonSnimiPutanju);
+
+
+var search = new ol.control.SearchGPS({ label: "Traženje koordinata" });
+map.addControl(search);
+
+// Select feature when click on the reference index
+search.on('select', function (e) { // console.log(e);
+    map.getView().animate({
+        center: e.search.coordinate,
+        zoom: Math.max(map.getView().getZoom(), 5)
+    });
+});
+
+
+// GPS
+var geolocation = new ol.Geolocation({ // enableHighAccuracy must be set to true to have the heading value.
+    trackingOptions: {
+        enableHighAccuracy: true
+    },
+    projection: view.getProjection()
+});
+
+
+var positionFeature = new ol.Feature();
+positionFeature.setStyle(new ol.style.Style({
+    image: new ol.style.Circle(
+        {
+            radius: 6,
+            fill: new ol.style.Fill(
+                { color: '#3399CC' }
+            ),
+            stroke: new ol.style.Stroke(
+                { color: '#fff', width: 2 }
+            )
+        }
+    )
+}));
+
+var accuracyFeature = new ol.Feature();
+
+var layGeolocation = new ol.layer.Vector({
+    map: map,
+    source: new ol.source.Vector(
+        {
+            features: [accuracyFeature, positionFeature]
+        }
+    )
+});
+
+
+// geolocationtrack
+var glbVector = new ol.layer.Vector({ name: 'glbVector', title: 'Trenutna Putanja', source: new ol.source.Vector() });
+var layergroups = (map.getLayerGroup().getLayers());
+layergroups.forEach(function (layGroup) {
+    if (layGroup.get('title') === 'Pomoćni') {
+        var layersPomocni = layGroup.get('layers');
+        layersPomocni.push(glbVector);
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var geolocBar = new ol.control.GeolocationBar({ source: glbVector.getSource(), followTrack: 'auto', minZoom: 4, minAccuracy: 5000 });
+
+map.addControl(geolocBar);
+
+
+geolocBar.getControls()[0].on("change:active", function () {
+    if (geolocBar.getInteraction().getActive() == true) {
+        console.log("active");
+    } else {
+
+        var glbIme = prompt("Snimanje točaka prijeđenog puta?");
+        if (glbIme != null && glbIme != '') {
+            glbpoints = geolocBar.getInteraction().path_;
+
+
+            var putanjaVector = new ol.source.Vector();
+            var jsonPutWriter = new ol.format.GeoJSON();
+            var wktPutWriter = new ol.format.WKT();
+            var jsonPut = {};
+            var MGproperty = {};
+
+            for (var i = 0; i < glbpoints.length; i++) {
+
+
+                var featurePut = new ol.Feature({
+                    geometry: new ol.geom.Point(
+
+                        [
+                            glbpoints[i][0],
+                            glbpoints[i][1]
+                        ]
+
+                    ),
+                    nmv: glbpoints[i][2],
+                    timestamp: glbpoints[i][3],
+                    Ime: glbIme
+                });
+                featurePut.setId(i);
+
+
+                putanjaVector.addFeature(featurePut);
+
+
+            }
+
+            jsonPut = jsonPutWriter.writeFeatures(putanjaVector.getFeatures(), { featureProjection: 'EPSG:3857' });
+            // za MapGuide NE TREBA ! Jednostavnije je odmah napraviti JSON
+            // console.log (jsonPut);
+            let JSONMg = {
+                "FeatureSet": {
+                    "Features": {
+                        "Feature": []
+                    }
+                }
+            };
+
+            for (j = 0; j < putanjaVector.getFeatures().length; j++) {
+
+                wktPutTocka = wktPutWriter.writeFeature(putanjaVector.getFeatures()[j], {
+                    featureProjection: 'EPSG:3857',
+                    dataProjection: 'EPSG:4326'
+                });
+                MGproperty = {
+                    "Property": [
+                        {
+                            "Name": "Geometry",
+                            "Value": wktPutTocka
+                        }
+                    ]
+                };
+                putanjaVector.getFeatures()[j].getKeys().forEach(function (key) {
+                    if (key != "geometry") {
+                        var keyvalue = {
+                            "Name": key,
+                            "Value": (putanjaVector.getFeatures()[j].get(key))
+                        };
+                        MGproperty.Property.push(keyvalue);
+                    }
+                });
+
+                JSONMg.FeatureSet.Features.Feature.push(MGproperty);
+
+            }
+
+
+            fetch(restUrl + libUrl + "features.json/Default/" + "proslePutanje" + "?session=" + sessionId, {
+                method: 'POST',
+                body: JSON.stringify(JSONMg)
+            });
+
+
+        }
+
+
+    }
+});
+
+
+window.map = map; // ukloniti nakon razvoja
+
+
+var GPSActivity;
+
+function GPSactive() {
+    GPSActivity = 'true';
+    if (GPSActivity == 'false') {
+        return;
+    }
+    geolocation.setTracking(true);
+
+    geolocation.on('error', function (error) {
+        if (error.message = "User denied Geolocation") {
+            alert("Uključite GPS / lokacijske usluge!");
+        } else {
+            alert(error.message);
+        }
+
+    });
+
+    geolocation.on('change:accuracyGeometry', function () {
+        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+    });
+
+
+    layGeolocation.setVisible(true);
+
+    geolocation.on('change:position', function () {
+
+        if (GPSActivity == 'false') {
+            return;
+        }
+        var coordinates = geolocation.getPosition();
+        // console.log (coordinates);
+        // alert(coordinates);
+        positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+        map.getView().setCenter(coordinates);
+    });
+
+
+}
+
+function GPSinact() {
+    GPSActivity = 'false';
+    layGeolocation.setVisible(false);
+    // map.getView().setCenter([1518564.886313, 5634560.317356]);
+    // map.getView().setZoom([13]);
+}
+
+
+// synhronizacija nišana //neznam jel bu trebalo
+
+map.on('moveend', onMoveEnd);
+function onMoveEnd(evt) {
+    pin.setPosition(map.getView().getCenter());
+}
+
+
+// layer
+var layerSwitcher = new ol.control.LayerSwitcher({
+    t: 'Legenda', // Optional label for button
+    groupSelectStyle: 'children', // Can be 'children' [default], 'group' or 'none'
+    show_progress: true,
+    reordering: false,
+    extent: false,
+    trash: false,
+
+    /*     oninfo: function (l) {
+        alert(l.get("opis")); //opis layera bih trebao ugurati negdje, treba?
+    } */
+});
+map.addControl(layerSwitcher);
+layerSwitcher.setHeader("Slojevi podataka");
+
+/*   // Add a new button to the list
+  layerSwitcher.on('drawlist', function(e) {
+    var layer = e.layer;
+    $('<div>').text('?')// addClass('layerInfo')
+      .click(function(){
+        alert(layer.get('title'));
+      })
+      .appendTo($('> .ol-layerswitcher-buttons', e.li));
+  }); */
+// samo primjer, postoji "info"
+
+// Add a button to show/hide the layers
+
+
+// funkcija prikazivanja / gašenja svih nije nužna
+/* var button = $('<div class="toggleVisibility" title="show/hide">').text("Sakrij/Prikaži sve").click(function () {
+    var a = map.getLayers().getArray();
+    var b = ! a[0].getVisible();
+    if (b)
+        button.removeClass("show");
+     else
+        button.addClass("show");
+
+    for (var i = 0; i < a.length; i++) {
+        a[i].setVisible(b);
+    }
+});
+layerSwitcher.setHeader($('<div>').append(button).get(0)); */
