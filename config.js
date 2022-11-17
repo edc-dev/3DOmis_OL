@@ -2,7 +2,7 @@
 
 //github
 const dataSources= {
-mjernaZona : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/dma.geojson",
+"Mjerna Zona" : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/dma.geojson",
 vodospremnik : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/tank.geojson",
 pumpa : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/pump.geojson",
 vod : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/pipe.geojson",

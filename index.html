@@ -247,18 +247,30 @@ const styleFunction = function(feature, resolution) {
   return geo ? styles[geo.getType()] : styles['Point'];
 };
 
+var vectorSource=[];
+
+if (dataSources){ //loader za podatke
+for (let i = 0; i < Object.values(dataSources).length; i++) {
+  console.log (Object.values(dataSources)[i]);
+  console.log (Object.keys(dataSources)[i]);
+  vectorSource = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[0],
+  class:Object.values(dataSources)[1]
+});
+
+}
+}
 
 
-
-
-
+/*
 const vectorSource = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[0],
   class:'Mjerna Zona'
 });
 
-
+*/
 
 
 
