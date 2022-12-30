@@ -427,7 +427,11 @@ ol3d.setEnabled(true);
 
 
 
-
+const tileset = scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: Cesium.IonResource.fromAssetId(1234331),
+  })
+);
 
 
 
