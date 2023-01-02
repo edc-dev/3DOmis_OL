@@ -248,7 +248,7 @@ const styles = {
 
 const styleFunction = function(feature, resolution) {
   const geo = feature.getGeometry();
-  console.log (feature.getProperties());
+  console.log (feature.getKeys());
   //console.log(feature.);
   // always assign a style to prevent feature skipping
   return geo ? styles[geo.getType()] : styles['Point'];
