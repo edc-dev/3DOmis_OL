@@ -44,8 +44,8 @@ query sa lociranjem-->
    <!--<link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Widgets/widgets.css" type="text/css" />-->
       <!--<<link rel="stylesheet" href="https://sandcastle.cesium.com/templates/bucket.css" type="text/css" />-->
 
-    <style>.cesium-credit-textContainer { display: inline-block; font-size: 50%; line-height: 100%;}</style>
-    
+<style>.cesium-credit-logoContainer { display: none;}</style>
+<style>.cesium-credit-textContainer { display: inline-block; font-size: 10%; line-height: 10%;}</style>
 
   </head>
   <body>
@@ -427,7 +427,11 @@ ol3d.setEnabled(true);
 
 
 
-
+const tileset = scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: Cesium.IonResource.fromAssetId(1234331),
+  })
+);
 
 
 
