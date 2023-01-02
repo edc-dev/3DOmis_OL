@@ -610,9 +610,7 @@ window['scene'] = scene;
 
 */
 // početni pogled, objekt 'kamera' koji pripada 'sceni' je u pitanju, a pošto radimo na razini scene koja je sinkronizirana između OL i Cesium, pogled radi na oba sustava
-const ppX=16.6821;
-const ppY=43.4303;
-const ppZ = 800;
+
 
 function pocetniPogled (ppX,ppY,ppZ){
       scene.camera.flyTo({
@@ -623,6 +621,8 @@ function pocetniPogled (ppX,ppY,ppZ){
         },
       });
     }
+
+    pocetniPogled (16.6821,43.4303,800);
     </script>
   
   
