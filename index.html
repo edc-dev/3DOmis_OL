@@ -166,8 +166,8 @@ const SHIME_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZDIxNz
 
 
 const image = new ol.style.Circle({
-  radius: 5,
-  fill: null,
+  radius: 20,
+  fill: red,
   stroke: new ol.style.Stroke({color: 'red', width: 3})
 });
 
@@ -323,7 +323,7 @@ vectorSource[4] = new ol.source.Vector({
 });
 vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
-  source: vectorSource[4],
+  source: vectorSource[1],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
 
