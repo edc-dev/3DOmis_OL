@@ -609,14 +609,20 @@ window['scene'] = scene;
       });
 
 */
+// početni pogled, objekt 'kamera' koji pripada 'sceni' je u pitanju, a pošto radimo na razini scene koja je sinkronizirana između OL i Cesium, pogled radi na oba sustava
+const ppX=16.6821;
+const ppY=43.4303;
+const ppZ = 800;
 
+function pocetniPogled (ppX,ppY,ppZ){
       scene.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(16.6821, 43.4303, 800),
+        destination: Cesium.Cartesian3.fromDegrees(ppX,ppY,ppZ),
         orientation: {
           heading: Cesium.Math.toRadians(0.0),
           pitch: Cesium.Math.toRadians(-15.0),
         },
       });
+    }
     </script>
   
   
