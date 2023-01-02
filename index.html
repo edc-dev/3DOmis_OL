@@ -160,7 +160,12 @@ query sa lociranjem-->
 const OLCS_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZWVhYmU0Mi1jNTZkLTQ3OGItYmUxYS00YTMyMDQyZTMwNDkiLCJpZCI6NjQ1LCJpYXQiOjE2MDYxMjE2OTF9.zQibbf5P0-moQ8KiV_K7KMtyLHbR-VlPghj8lyqWduU';      
 const SHIME_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZDIxNzFlNS0wYWQ2LTQ5NTYtYTBmNy1iMWRkNGQ2MWRlYWEiLCJpZCI6OTUxNjcsImlhdCI6MTY1MzQ4MTEwNH0.oLUjSWc9t2PWYdfrKrg67-HMgXa3RtiUDcBtpWXFB7w';
      
-const image = new ol.style.Circle({
+
+
+
+
+
+const pointstyle = new ol.style.Circle({
   radius: 5,
   fill: null,
   stroke: new ol.style.Stroke({color: 'red', width: 3})
@@ -168,17 +173,15 @@ const image = new ol.style.Circle({
 
 
 
-
-
 const styles = {
   'Point': [new ol.style.Style({
-    image
+    pointstyle
   })],
   'LineString': [new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'magenta',
-      lineDash: [12],
-      width: 50
+      color: 'blue',
+      lineDash: [0],
+      width: 3
     })
   })],
   'MultiLineString': [new ol.style.Style({
