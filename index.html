@@ -254,7 +254,18 @@ const styleFunction = function(feature, resolution) {
   return geo ? styles[geo.getType()] : styles['Point'];
 };
 
-
+/*
+  style: new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'blue',
+      lineDash: [4],
+      width: 3
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 0, 255, 0.1)'
+    })
+  }),
+  */
 
 var vectorSource=[];
 var vectorLayer=[];
@@ -269,16 +280,7 @@ vectorSource[0] = new ol.source.Vector({
   
 });
 vectorLayer[0] = new ol.layer.Vector({
-  style: new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'blue',
-      lineDash: [4],
-      width: 3
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 0, 255, 0.1)'
-    })
-  }),
+  style: styleFunction,
   source: vectorSource[0],
 });
 vectorLayer[0].set('altitudeMode', 'clampToGround');
