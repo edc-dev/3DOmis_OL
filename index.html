@@ -423,7 +423,7 @@ const scene = ol3d.getCesiumScene();
 //console.log(camera);
 //scene.terrainProvider = Cesium.createWorldTerrain();
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
-  url:'https://cors-proxy.htmldriven.com/?url=https://gis.edc.hr/vodovodomis/teren3dtest/'});  //url: Cesium.IonResource.fromAssetId(1103401)});
+  url:'https://cors-proxy.htmldriven.com/'&&'?url=https://gis.edc.hr/vodovodomis/teren3dtest/'});  //url: Cesium.IonResource.fromAssetId(1103401)});
           scene.globe.depthTestAgainstTerrain=true;
 scene.requestRenderMode=true; // default već postavljen u cesiumu ??
 ol3d.setEnabled(true);
