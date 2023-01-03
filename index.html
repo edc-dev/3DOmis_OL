@@ -424,8 +424,16 @@ const scene = ol3d.getCesiumScene();
 //scene.terrainProvider = Cesium.createWorldTerrain();
 
 
-const edcResource = new Cesium.Resource({
+const edcTerrain = new Cesium.Resource({
    url: 'https://gis.edc.hr/vodovodomis/teren3dtest/',
+   headers: {
+     'Access-Control-Allow-Origin': '*'
+   },
+   retryAttempts: 5
+});
+
+const edcVSMosor = new Cesium.Resource({
+   url: 'https://gis.dmz.edc.hr/vodovodOmis/VSMosor/',
    headers: {
      'Access-Control-Allow-Origin': '*'
    },
@@ -443,14 +451,14 @@ ol3d.setEnabled(true);
 
 
 
-/*
+
 const tileset = scene.primitives.add(
   new Cesium.Cesium3DTileset({
-    url: Cesium.IonResource.fromAssetId(1234331),
+    url: edcVSMosor,
   })
 );
 
-*/
+
 
 
 // Adding a feature after the layer has been synchronized.
