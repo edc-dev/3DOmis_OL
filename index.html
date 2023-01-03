@@ -173,11 +173,14 @@ const image = new ol.style.Circle({
   stroke: new ol.style.Stroke({color: 'red', width: 1})
 });
 
-
+const pointSimbol = new Cesium.PointGraphics({
+  color:'white',
+  pixelSize:3
+})
 
 const styles = {
   'Point': [new ol.style.Style({
-    image
+   pointSimbol
   })],
   'LineString': [new ol.style.Style({
     stroke: new ol.style.Stroke({
