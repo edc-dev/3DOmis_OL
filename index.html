@@ -426,15 +426,10 @@ const scene = ol3d.getCesiumScene();
 
 const edcResource = new Cesium.Resource({
    url: 'https://gis.edc.hr/vodovodomis/teren3dtest/layer.json',
-   proxy: '',
    headers: {
      'Access-Control-Allow-Origin': '*'
    },
-   queryParameters: {
-     
-   },
-   retryCallback: '',
-   retryAttempts: 1
+   retryAttempts: 5
 });
 
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
