@@ -47,3 +47,10 @@
   width:100%;
   background-color: white
 }
+
+.cesium-credit-textContainer,
+.cesium-credit-logoContainer,
+.cesium-credit-expand-link{ 
+      display:none!important; 
+      visibility:hide!important; 
+      } 
