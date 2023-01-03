@@ -441,7 +441,7 @@ const edcVSMosor = new Cesium.Resource({
 });
 
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
-  url:edcResource});  //url: Cesium.IonResource.fromAssetId(1103401)});
+  url:edcTerrain});  //url: Cesium.IonResource.fromAssetId(1103401)});
           scene.globe.depthTestAgainstTerrain=true;
 scene.requestRenderMode=true; // default već postavljen u cesiumu ??
 ol3d.setEnabled(true);
