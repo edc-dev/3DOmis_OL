@@ -422,8 +422,23 @@ const scene = ol3d.getCesiumScene();
 //const camera = ol3d.getCamera(); // ova kamera (olcs) i scene.camera (cesium) nisu iste... :-(
 //console.log(camera);
 //scene.terrainProvider = Cesium.createWorldTerrain();
+
+
+const edcResource = new Resource({
+   url: 'https://gis.edc.hr/vodovodomis/teren3dtest/',
+   proxy: new DefaultProxy('/proxy/'),
+   headers: {
+     'X-My-Header': 'valueOfHeader'
+   },
+   queryParameters: {
+     
+   },
+   retryCallback: '',
+   retryAttempts: 1
+});
+
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
-  url:'https://cors-proxy.htmldriven.com/'&&'?url=https://gis.edc.hr/vodovodomis/teren3dtest/'});  //url: Cesium.IonResource.fromAssetId(1103401)});
+  url:edcResource});  //url: Cesium.IonResource.fromAssetId(1103401)});
           scene.globe.depthTestAgainstTerrain=true;
 scene.requestRenderMode=true; // default već postavljen u cesiumu ??
 ol3d.setEnabled(true);
