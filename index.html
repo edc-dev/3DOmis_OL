@@ -368,7 +368,12 @@ vectorLayer[4] = new ol.layer.Vector({
   }
   )
 
+  vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
 
+  vectorLayer[4].set('altitudeMode', 'clampToGround');
 
 
 
