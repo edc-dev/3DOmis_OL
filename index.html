@@ -361,10 +361,7 @@ vectorLayer[4] = new ol.layer.Vector({
 	}
 	demo().then(
 	(message) => {
-		console.log ("gotovo:" , vectorSource[4].getFeatures(), "  ", message);
-    if  (vectorSource[4].loading='false'&&vectorSource[4].getFeatures().length>1) {
-  console.log ("gotovo:" , vectorSource[4].getFeatures());
- }
+		console.log ("gotovo:" , ectorSource[4].getFeatures().length, "  ", message);
   }
   )
 
@@ -372,6 +369,7 @@ vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
   source: vectorSource[4],
 });
+
 
   vectorLayer[4].set('altitudeMode', 'clampToGround');
 
