@@ -326,7 +326,7 @@ vectorLayer[3] = new ol.layer.Vector({
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
 
-/*
+
 vectorSource[4] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[4],
@@ -336,18 +336,24 @@ vectorLayer[4] = new ol.layer.Vector({
   source: vectorSource[4],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
-*/
 
+let pmoPromise = new Promise(function() {
 
+vectorSource[4].length != 0;
 
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
 });
 
+pmoPromise.then(
+  console.log ("gotovo:" , vectorSource[4].getFeatures())
+);
 
 
-console.log (vectorSource[4]);
+
+
+
+
+
+
 
 
 /*
@@ -357,7 +363,7 @@ window['addFeatures'] = function() {
   const count = 1000;
   const features = [];
   const e = 18000000;
-  for (let i = 0; i < Object.values(dataSources)[4].length; ++i) {
+  for (let i = 0; i < count; ++i) {
     const feature = new olFeature({
       geometry: new olGeomPoint([
         2 * e * Math.random() - e,
@@ -458,7 +464,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],vectorLayer[4],vectorLayer[5],vectorLayer[6],vectorLayer[7],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
