@@ -367,12 +367,13 @@ vectorLayer[4].set('altitudeMode', 'clampToGround');
   url: Object.values(dataSources)[4],
 });
 
- vectorLayer = new ol.layer.Vector({
+ vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
   source: vectorSource[4],
 });
+vectorLayer[4].set('altitudeMode', 'clampToGround');
 
-map.addLayer(vectorLayer);
+map.addLayer(vectorLayer[4]);
 
 
 
