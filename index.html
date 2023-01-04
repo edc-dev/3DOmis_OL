@@ -326,7 +326,7 @@ vectorLayer[3] = new ol.layer.Vector({
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
 
-
+/*
 vectorSource[4] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[4],
@@ -344,12 +344,29 @@ vectorLayer[4] = new ol.layer.Vector({
 
   vectorLayer[4].set('altitudeMode', 'clampToGround');
 
-
+*/
 
  if  (vectorSource[4].loading='false'&&vectorSource[4].getFeatures().length>1) {
   console.log ("gotovo:" , vectorSource[4].getFeatures());
  }
 
+
+
+	function demo() {
+    vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+	return Promise.resolve("Success");
+	// or
+	// return Promise.reject("Failure");
+	}
+	demo().then(
+	(message) => {
+		console.log ("gotovo:" , vectorSource[4].getFeatures(), "  ", message)
+	
+  }
+  )
 
 
 
