@@ -373,14 +373,14 @@ vectorLayer[4].set('altitudeMode', 'clampToGround');
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
 
-map.addLayer(vectorLayer[4]);
+//map.addLayer(vectorLayer[4]);
 
 
 
 var listenerKey = vectorSource[4].on('change', function(e) {
   if (vectorSource[4].getState() == 'ready') {
 
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length, "  ", message);
+    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
 
     vectorSource[4].unByKey(listenerKey);
 
@@ -502,7 +502,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],vectorLayer[4],vectorLayer[5],vectorLayer[6],vectorLayer[7],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
