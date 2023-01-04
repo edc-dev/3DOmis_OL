@@ -346,15 +346,19 @@ vectorLayer[4] = new ol.layer.Vector({
 
 */
 
-
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
 
 
 
 	function demo() {
-    vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
+    vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
 });
+vectorLayer[4].set('altitudeMode', 'clampToGround');
 	return Promise.resolve("Success");
 	// or
 	// return Promise.reject("Failure");
@@ -362,13 +366,6 @@ vectorLayer[4] = new ol.layer.Vector({
 	demo().then(
 	(message) => {
 		
-
-
-  vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
 map.addLayer(vectorLayer[4]);
 
 console.log ("gotovo:" , vectorSource[4].getFeatures().length, "  ", message);
