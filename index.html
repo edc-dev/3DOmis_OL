@@ -382,7 +382,7 @@ var listenerKey = vectorSource[4].on('change', function(e) {
 
     console.log ("gotovo:" , vectorSource[4].getFeatures().length);
 
-    vectorSource[4].unByKey(listenerKey);
+    ol.Observable.unByKey(listenerKey);
 
   }
 });
