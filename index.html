@@ -279,18 +279,7 @@ var vectorLayer=[];
 
 
 
-const prikljucci = scene.primitives.add(new Cesium.PointPrimitiveCollection());
 
-console.log (Object.values(dataSources)[4]);
-
-points.add({
-  position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
-  color : Cesium.Color.YELLOW
-});
-points.add({
-  position : new Cesium.Cartesian3(4.0, 5.0, 6.0),
-  color : Cesium.Color.CYAN
-});
 
 
 
@@ -442,6 +431,25 @@ const scene = ol3d.getCesiumScene();
 //const camera = ol3d.getCamera(); // ova kamera (olcs) i scene.camera (cesium) nisu iste... :-(
 //console.log(camera);
 //scene.terrainProvider = Cesium.createWorldTerrain();
+
+
+
+
+
+const prikljucci = scene.primitives.add(new Cesium.PointPrimitiveCollection());
+
+console.log (Object.values(dataSources)[4]);
+
+points.add({
+  position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
+  color : Cesium.Color.YELLOW
+});
+points.add({
+  position : new Cesium.Cartesian3(4.0, 5.0, 6.0),
+  color : Cesium.Color.CYAN
+});
+
+
 
 
 const edcTerrain = new Cesium.Resource({
