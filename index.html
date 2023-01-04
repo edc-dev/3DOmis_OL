@@ -340,7 +340,7 @@ vectorSource[4] = new ol.layer.Vector({
      const xhr = new XMLHttpRequest();
      xhr.open('GET', url);
      const onError = function() {
-       vectorSource.removeLoadedExtent(extent);
+       vectorSource[4].removeLoadedExtent(extent);
        failure();
      }
      xhr.onerror = onError;
