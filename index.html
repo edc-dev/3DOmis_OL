@@ -326,7 +326,7 @@ vectorLayer[3] = new ol.layer.Vector({
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
 
-
+/*
 vectorSource[4] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[4],
@@ -336,6 +336,72 @@ vectorLayer[4] = new ol.layer.Vector({
   source: vectorSource[4],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
+*/
+
+
+
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+
+console.log (vectorSource[4]);
+
+/*
+
+window['addFeatures'] = function() {
+  let then = Date.now();
+  const count = 1000;
+  const features = [];
+  const e = 18000000;
+  for (let i = 0; i < Object.values(dataSources)[4].length; ++i) {
+    const feature = new olFeature({
+      geometry: new olGeomPoint([
+        2 * e * Math.random() - e,
+        2 * e * Math.random() - e,
+        e * Math.random()
+      ])
+    });
+    const style = [new olStyleStyle({
+      image: new olStyleCircle({
+        radius: 2,
+        fill: new olStyleFill({color: [
+          Math.random() * 255,
+          Math.random() * 255,
+          Math.random() * 255,
+          Math.random()
+        ]})
+      })
+    })];
+    feature.setStyle(style);
+
+    feature.setId(e * Math.random());
+    features.push(feature);
+  }
+
+  let now = Date.now();
+  created = now - then;
+  then = now;
+
+  const vectorSource = new olSourceVector({});
+  const vector = new olLayerVector({
+    source: vectorSource
+  });
+  vectorSource.addFeatures(features);
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -389,7 +455,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],vectorLayer[4],vectorLayer[5],vectorLayer[6],vectorLayer[7],
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
@@ -438,8 +504,8 @@ const scene = ol3d.getCesiumScene();
 
 
 const prikljucci = scene.primitives.add(new Cesium.PointPrimitiveCollection());
-console.log (scene.primitives.primitives);
-//console.log (Object.values(dataSources)[4]);
+console.log (scene.primitives._primitives[0]._primitives[4]);
+
 
 //points.add({
   //position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
