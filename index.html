@@ -493,6 +493,7 @@ const map = new ol.Map({
 
 function demo() {
     map.addLayer(vectorLayer[4]);
+    map.removeLayer(vectorLayer[4]);
 	return Promise.resolve("Success");
 	// or
 	// return Promise.reject("Failure");
