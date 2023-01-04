@@ -326,55 +326,23 @@ vectorLayer[3] = new ol.layer.Vector({
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
 
-/*
+
 vectorSource[4] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[4],
 });
-*/
 
 
 
-vectorSource[4] = new ol.layer.Vector({
-  format: new ol.format.GeoJSON(),
-  loader: function(extent, resolution, projection, success, failure) {
-     const url = Object.values(dataSources)[4];
-     const xhr = new XMLHttpRequest();
-     xhr.open('GET', url);
-     const onError = function() {
-       vectorSource[4].removeLoadedExtent(extent);
-       failure();
-     }
-     xhr.onerror = onError;
-     xhr.onload = function() {
-       if (xhr.status == 200) {
-         const features = vectorSource[4].getFormat().readFeatures(xhr.responseText);
-         vectorSource[4].addFeatures(features);
-         success(features);
 
-         console.log ("gotovo:" , vectorSource[4].getFeatures());
-         vectorLayer[4] = new ol.layer.Vector({
+
+
+vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
   source: vectorSource[4],
 });
 
   vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-  map.addLayer(vectorLayer[4]);
-
-       } else {
-         onError();
-       }
-     }
-     xhr.send();
-   },
- });
-
-
-function onError() {alert ("bong");}
-
-
-
 
 
 
