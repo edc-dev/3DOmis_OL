@@ -346,7 +346,7 @@ vectorSource[4] = new ol.layer.Vector({
      xhr.onerror = onError;
      xhr.onload = function() {
        if (xhr.status == 200) {
-         const features = vectorSource.getFormat().readFeatures(xhr.responseText);
+         const features = vectorSource[4].getFormat().readFeatures(xhr.responseText);
          vectorSource[4].addFeatures(features);
          success(features);
        } else {
