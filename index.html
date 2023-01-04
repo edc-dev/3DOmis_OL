@@ -349,6 +349,12 @@ vectorSource[4] = new ol.layer.Vector({
          const features = vectorSource[4].getFormat().readFeatures(xhr.responseText);
          vectorSource[4].addFeatures(features);
          success(features);
+
+         vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
+
        } else {
          onError();
        }
@@ -370,10 +376,7 @@ vectorSource[4] = new ol.layer.Vector({
 
 
 
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
+
 
 
 
