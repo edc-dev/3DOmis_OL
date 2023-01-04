@@ -388,7 +388,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],vectorLayer[4],vectorLayer[5],vectorLayer[6],vectorLayer[7],
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
@@ -436,9 +436,9 @@ const scene = ol3d.getCesiumScene();
 
 
 
-//const prikljucci = scene.primitives.add(new Cesium.PointPrimitiveCollection());
+const prikljucci = scene.primitives.add(new Cesium.PointPrimitiveCollection());
 
-//console.log (Object.values(dataSources)[4]);
+console.log (Object.values(dataSources)[4]);
 
 //points.add({
   //position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
