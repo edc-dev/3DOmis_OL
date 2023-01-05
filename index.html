@@ -568,11 +568,11 @@ const prikljCollection3D = scene.primitives.add(
 
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
-                  console.log(entity.get(device_id));
-                  if (typeof entity.properties.device_id == "undefined") {
+                  console.log(entity.get('device_id'));
+                  if (typeof entity.get('device_id') == "undefined") {
                     prikljucakID = -99;
                   } else {
-                    prikljucakID = entity.properties.device_id.getValue();
+                    prikljucakID = entity.get('device_id');
                   }
                   //  entity.billboard = undefined;
 
