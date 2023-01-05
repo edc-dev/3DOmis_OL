@@ -493,7 +493,7 @@ vectorSource[44] = new ol.source.Vector({});
                     prikljucakID = entity.get('device_id');
                   }
 
-console.log('test');
+
  const feature = new ol.Feature({
       geometry: new ol.geom.Point([
         entity.get('geometry'),
@@ -509,7 +509,7 @@ console.log('test');
   }
   vectorSource[44].addFeatures(features);
 
-console.log(vectorSource[44]);
+
 
  /* dodavanje direktno u primitive point collection mijenjamo sa dodavanjem izravno u source koji čini layer zbog olcs
                  
@@ -538,13 +538,23 @@ console.log(vectorSource[44]);
 
  vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
-  source: vectorSource[44],
+  source: vectorSource[4],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
 
+vectorLayer[44] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[44],
+});
+vectorLayer[44].set('altitudeMode', 'clampToGround');
 
 map.addLayer(vectorLayer[4]);
+map.addLayer(vectorLayer[44]);
+map.removeLayer(vectorLayer[4]);
 
+
+console.log(scene._primitives._primitives)
+console.log(vectorLayer[44])
 
 
 dragAndDropInteraction.on('addfeatures', (event) => {
