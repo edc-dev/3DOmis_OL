@@ -463,6 +463,13 @@ const prikljCollection3D = scene.primitives.add(
       );
 */
 
+
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+
+
 vectorSource[44] = new ol.source.Vector({});
   const features = [];
 
@@ -528,11 +535,6 @@ vectorSource[44] = new ol.source.Vector({});
   }
 });
 
-
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
 
  vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
