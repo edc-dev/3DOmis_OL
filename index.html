@@ -562,7 +562,7 @@ const prikljCollection3D = scene.primitives.add(
     console.log ("gotovo:" , vectorSource[4].getFeatures().length);
 
 
-    let entities = vectorSource[4].entities.values;
+    let entities = vectorSource[4].getFeatures();
                 const prikLabCollection = new Cesium.LabelCollection();
                 let prikljucakID;
 
