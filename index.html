@@ -441,7 +441,7 @@ window['addFeatures'] = function() {
   const vector = new olLayerVector({
     source: vectorSource
   });
-  vectorSource.addFeatures(features);
+
 
 */
 
@@ -507,7 +507,7 @@ vectorSource[44] = new ol.source.Vector({});
     feature.setId(prikljucakID);
     features.push(feature);
   }
-
+  vectorSource[44].addFeatures(features);
 
 
 
