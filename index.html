@@ -532,6 +532,16 @@ vectorSource[44] = new ol.source.Vector({});
 //console.log(scene._primitives._primitives)
     ol.Observable.unByKey(listenerKey);
    
+vectorLayer[44] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[44],
+});
+vectorLayer[44].set('altitudeMode', 'clampToGround');
+map.addLayer(vectorLayer[44]);
+map.removeLayer(vectorLayer[4]);
+
+console.log(scene._primitives._primitives)
+console.log(vectorLayer[44])
   }
 });
 
@@ -542,19 +552,11 @@ vectorSource[44] = new ol.source.Vector({});
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
 
-vectorLayer[44] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[44],
-});
-vectorLayer[44].set('altitudeMode', 'clampToGround');
 
 map.addLayer(vectorLayer[4]);
-map.addLayer(vectorLayer[44]);
-map.removeLayer(vectorLayer[4]);
 
 
-console.log(scene._primitives._primitives)
-console.log(vectorLayer[44])
+
 
 
 dragAndDropInteraction.on('addfeatures', (event) => {
