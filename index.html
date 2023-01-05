@@ -469,63 +469,6 @@ map.addLayer(vectorLayer[4]);
 
 
 
-const prikljCollection3D = scene.primitives.add(
-        new Cesium.PointPrimitiveCollection({
-          modelMatrix: Cesium.Matrix4.IDENTITY,
-        })
-      );
-
-      var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
-
-
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
-
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-                 // console.log(entity.get('device_id'));
-                 // console.log(entity.getKeys());
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-console.log(entity.get('geometry').flatCoordinates);
-
-                  prikljCollection3D.add({
-                    position: entity.position.getValue(),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 5,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
- 
-  }
-  
-  
-
-  console.log(vectorSource[prikljCollection3D]);
-
-
-
-    ol.Observable.unByKey(listenerKey);
-   
-
-
-//map.removeLayer(vectorLayer[4]);
-
-console.log(scene._primitives._primitives)
-
-  }
-});
 
 
 
@@ -578,6 +521,91 @@ ol3d.setEnabled(true);
 //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
 
 //radi RADI RADIIIIII !!!
+
+
+
+const prikljCollection3D = scene.primitives.add(
+        new Cesium.PointPrimitiveCollection({
+          modelMatrix: Cesium.Matrix4.IDENTITY,
+        })
+      );
+
+      var listenerKey = vectorSource[4].on('change', function(e) {
+  if (vectorSource[4].getState() == 'ready') {
+
+    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+
+
+    let entities = vectorSource[4].getFeatures();
+                const prikLabCollection = new Cesium.LabelCollection();
+                let prikljucakID;
+
+                for (let i = 0; i < entities.length; i++) {
+                  let entity = entities[i];
+                 // console.log(entity.get('device_id'));
+                 // console.log(entity.getKeys());
+                  if (typeof entity.get('device_id') == "undefined") {
+                    prikljucakID = -99;
+                  } else {
+                    prikljucakID = entity.get('device_id');
+                  }
+console.log(entity.get('geometry').flatCoordinates);
+
+                  prikljCollection3D.add({
+                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
+                    color: Cesium.Color.BLACK,
+                    pixelSize: 500,
+                    disableDepthTestDistance: 1000,
+                    billboard: (entity.billboard = undefined),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    distanceDisplayCondition:
+                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
+                    allowPicking: true,
+                    id: prikljucakID,
+                  });
+ 
+  }
+  
+  
+
+  console.log(vectorSource[prikljCollection3D]);
+
+
+
+    ol.Observable.unByKey(listenerKey);
+   
+
+
+map.removeLayer(vectorLayer[4]);
+
+console.log(scene._primitives._primitives)
+
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
