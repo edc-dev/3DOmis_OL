@@ -377,15 +377,10 @@ vectorLayer[4].set('altitudeMode', 'clampToGround');
 
 
 
-var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
 
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
 
-    ol.Observable.unByKey(listenerKey);
 
-  }
-});
+
 
 
   
@@ -554,10 +549,72 @@ const scene = ol3d.getCesiumScene();
 //scene.terrainProvider = Cesium.createWorldTerrain();
 
 
+const prikljCollection3D = scene.primitives.add(
+        new Cesium.PointPrimitiveCollection({
+          modelMatrix: Cesium.Matrix4.IDENTITY,
+        })
+      );
+
+
+      var listenerKey = vectorSource[4].on('change', function(e) {
+  if (vectorSource[4].getState() == 'ready') {
+
+    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+
+
+    let entities = vectorSource[4].entities.values;
+                const prikLabCollection = new Cesium.LabelCollection();
+                let prikljucakID;
+
+                for (let i = 0; i < entities.length; i++) {
+                  let entity = entities[i];
+                  if (typeof entity.properties.device_id == "undefined") {
+                    prikljucakID = -99;
+                  } else {
+                    prikljucakID = entity.properties.device_id.getValue();
+                  }
+                  //  entity.billboard = undefined;
+
+                  /*    const promiseTer = Cesium.sampleTerrainMostDetailed(view3D.terrainProvider, entity.position);
+                        promiseTer.then (function(updatedPosition) {*/
+
+                  //ovdje se u stvari mora skužit msl geografska visina na točci priključka i dodati na cartesian3.Z
+
+                  prikljCollection3D.add({
+                    position: entity.position.getValue(),
+                    color: Cesium.Color.BLACK,
+                    pixelSize: 5,
+                    disableDepthTestDistance: 1000,
+                    billboard: (entity.billboard = undefined),
+                    distanceDisplayCondition:
+                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
+                    allowPicking: true,
+                    id: prikljucakID,
+                  });
+
+                  //    console.log ("E:",entities[i].position.getValue());
+                  //    console.log ("P:",entity.position.getValue());
+
+                  //    });
+                }
 
 
 
-const prikljucci = scene.primitives.add(new Cesium.PointPrimitiveCollection());
+    ol.Observable.unByKey(listenerKey);
+
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
 //console.log (scene.primitives._primitives[0]._primitives[4]);
 
 
