@@ -494,7 +494,7 @@ const prikljCollection3D = scene.primitives.add(
                   } else {
                     prikljucakID = entity.get('device_id');
                   }
-console.log(entity.get('geometry'));
+console.log(entity.get('geometry').flatCoordinates);
 
                   prikljCollection3D.add({
                     position: entity.position.getValue(),
