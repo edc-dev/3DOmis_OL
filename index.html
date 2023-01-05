@@ -454,24 +454,26 @@ const scene = ol3d.getCesiumScene();
 
 
 
-/* ovo izgleda ne mogu koristiti jer svi podaci moraju biti sinkronizirani preko "map" zbog olcs
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+
+vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
+vectorLayer[4].set('altitudeMode', 'clampToGround');
+
+map.addLayer(vectorLayer[4]);
+
+
 
 const prikljCollection3D = scene.primitives.add(
         new Cesium.PointPrimitiveCollection({
           modelMatrix: Cesium.Matrix4.IDENTITY,
         })
       );
-*/
-
-
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
-
-
-vectorSource[44] = new ol.source.Vector({});
-  const features = [];
 
       var listenerKey = vectorSource[4].on('change', function(e) {
   if (vectorSource[4].getState() == 'ready') {
@@ -494,27 +496,8 @@ vectorSource[44] = new ol.source.Vector({});
                   }
 
 
- const feature = new ol.Feature({
-      geometry: new ol.geom.Point([
-        entity.get('geometry'),
-      ])
-    });
-/*    const style = [new ol.style.Style({
- styleFunction
-    })];
-    feature.setStyle(style);*/
-
-    feature.setId(prikljucakID);
-    features.push(feature);
-  }
-  vectorSource[44].addFeatures(features);
-
-
-
- /* dodavanje direktno u primitive point collection mijenjamo sa dodavanjem izravno u source koji čini layer zbog olcs
-                 
-                    prikljCollection3D.add({
-                    position: entity.get('geometry'),
+                  prikljCollection3D.add({
+                    position: entity.position.getValue(),
                     color: Cesium.Color.BLACK,
                     pixelSize: 5,
                     disableDepthTestDistance: 1000,
@@ -524,36 +507,28 @@ vectorSource[44] = new ol.source.Vector({});
                     allowPicking: true,
                     id: prikljucakID,
                   });
+ 
+  }
+  
+  
+
+  console.log(vectorSource[prikljCollection3D]);
 
 
-                }
-*/
 
-//console.log(scene._primitives._primitives)
     ol.Observable.unByKey(listenerKey);
    
-vectorLayer[44] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[44],
-});
-vectorLayer[44].set('altitudeMode', 'clampToGround');
-map.addLayer(vectorLayer[44]);
-map.removeLayer(vectorLayer[4]);
+
+
+//map.removeLayer(vectorLayer[4]);
 
 console.log(scene._primitives._primitives)
-console.log(vectorLayer[44])
+
   }
 });
 
 
- vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
 
-
-map.addLayer(vectorLayer[4]);
 
 
 
