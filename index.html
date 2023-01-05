@@ -569,6 +569,7 @@ const prikljCollection3D = scene.primitives.add(
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
                   console.log(entity.get('device_id'));
+                  console.log(entity.getKeys());
                   if (typeof entity.get('device_id') == "undefined") {
                     prikljucakID = -99;
                   } else {
@@ -582,7 +583,7 @@ const prikljCollection3D = scene.primitives.add(
                   //ovdje se u stvari mora skužit msl geografska visina na točci priključka i dodati na cartesian3.Z
 
                   prikljCollection3D.add({
-                    position: entity.position.getValue(),
+                    position: entity.get('geometry'),
                     color: Cesium.Color.BLACK,
                     pixelSize: 5,
                     disableDepthTestDistance: 1000,
