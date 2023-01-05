@@ -485,8 +485,8 @@ vectorSource[44] = new ol.source.Vector({});
 
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
-                  console.log(entity.get('device_id'));
-                  console.log(entity.getKeys());
+                 // console.log(entity.get('device_id'));
+                 // console.log(entity.getKeys());
                   if (typeof entity.get('device_id') == "undefined") {
                     prikljucakID = -99;
                   } else {
@@ -538,7 +538,7 @@ vectorSource[44] = new ol.source.Vector({});
 
  vectorLayer[4] = new ol.layer.Vector({
   style: styleFunction,
-  source: vectorSource[4],
+  source: vectorSource[44],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
 
