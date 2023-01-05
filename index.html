@@ -326,42 +326,6 @@ vectorLayer[3] = new ol.layer.Vector({
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
 
-/*
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
-
-
-
-
-
-
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
-
-  vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-*/
-
-
-
-/*
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
-
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-*/
-
  vectorSource[4] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[4],
@@ -372,75 +336,6 @@ vectorLayer[4].set('altitudeMode', 'clampToGround');
   source: vectorSource[4],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-/*
-
-window['addFeatures'] = function() {
-  let then = Date.now();
-  const count = 1000;
-  const features = [];
-  const e = 18000000;
-  for (let i = 0; i < count; ++i) {
-    const feature = new olFeature({
-      geometry: new olGeomPoint([
-        2 * e * Math.random() - e,
-        2 * e * Math.random() - e,
-        e * Math.random()
-      ])
-    });
-    const style = [new olStyleStyle({
-      image: new olStyleCircle({
-        radius: 2,
-        fill: new olStyleFill({color: [
-          Math.random() * 255,
-          Math.random() * 255,
-          Math.random() * 255,
-          Math.random()
-        ]})
-      })
-    })];
-    feature.setStyle(style);
-
-    feature.setId(e * Math.random());
-    features.push(feature);
-  }
-
-  let now = Date.now();
-  created = now - then;
-  then = now;
-
-  const vectorSource = new olSourceVector({});
-  const vector = new olLayerVector({
-    source: vectorSource
-  });
-  vectorSource.addFeatures(features);
-
-*/
-
-
-
-
-
-
-
-
-
 
 
 
@@ -519,6 +414,133 @@ map.addLayer(vectorLayer[4]);
 
 
 
+/*
+
+window['addFeatures'] = function() {
+  let then = Date.now();
+  const count = 1000;
+  const features = [];
+  const e = 18000000;
+  for (let i = 0; i < count; ++i) {
+    const feature = new olFeature({
+      geometry: new olGeomPoint([
+        2 * e * Math.random() - e,
+        2 * e * Math.random() - e,
+        e * Math.random()
+      ])
+    });
+    const style = [new olStyleStyle({
+      image: new olStyleCircle({
+        radius: 2,
+        fill: new olStyleFill({color: [
+          Math.random() * 255,
+          Math.random() * 255,
+          Math.random() * 255,
+          Math.random()
+        ]})
+      })
+    })];
+    feature.setStyle(style);
+
+    feature.setId(e * Math.random());
+    features.push(feature);
+  }
+
+  let now = Date.now();
+  created = now - then;
+  then = now;
+
+  const vectorSource = new olSourceVector({});
+  const vector = new olLayerVector({
+    source: vectorSource
+  });
+  vectorSource.addFeatures(features);
+
+*/
+
+
+
+Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
+const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
+
+const scene = ol3d.getCesiumScene();
+
+
+
+/* ovo izgleda ne mogu koristiti jer svi podaci moraju biti sinkronizirani preko "map" zbog olcs
+
+const prikljCollection3D = scene.primitives.add(
+        new Cesium.PointPrimitiveCollection({
+          modelMatrix: Cesium.Matrix4.IDENTITY,
+        })
+      );
+*/
+
+vectorSource[44] = new olSourceVector({});
+  const features = [];
+
+      var listenerKey = vectorSource[4].on('change', function(e) {
+  if (vectorSource[4].getState() == 'ready') {
+
+    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+
+
+    let entities = vectorSource[4].getFeatures();
+                const prikLabCollection = new Cesium.LabelCollection();
+                let prikljucakID;
+
+                for (let i = 0; i < entities.length; i++) {
+                  let entity = entities[i];
+                  console.log(entity.get('device_id'));
+                  console.log(entity.getKeys());
+                  if (typeof entity.get('device_id') == "undefined") {
+                    prikljucakID = -99;
+                  } else {
+                    prikljucakID = entity.get('device_id');
+                  }
+
+
+ const feature = new olFeature({
+      geometry: new olGeomPoint([
+        entity.get('geometry'),
+      ])
+    });
+    const style = [new olStyleStyle({
+ styleFunction
+    })];
+    feature.setStyle(style);
+
+    feature.setId(prikljucakID);
+    features.push(feature);
+  }
+
+
+
+
+ /* dodavanje direktno u primitive point collection mijenjamo sa dodavanjem izravno u source koji čini layer zbog olcs
+                 
+                    prikljCollection3D.add({
+                    position: entity.get('geometry'),
+                    color: Cesium.Color.BLACK,
+                    pixelSize: 5,
+                    disableDepthTestDistance: 1000,
+                    billboard: (entity.billboard = undefined),
+                    distanceDisplayCondition:
+                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
+                    allowPicking: true,
+                    id: prikljucakID,
+                  });
+
+
+                }
+*/
+
+console.log(scene._primitives._primitives)
+    ol.Observable.unByKey(listenerKey);
+   
+  }
+});
+
 
 
 
@@ -540,94 +562,7 @@ dragAndDropInteraction.on('addfeatures', (event) => {
 });
 
 
-Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
-const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 
-const scene = ol3d.getCesiumScene();
-//const camera = ol3d.getCamera(); // ova kamera (olcs) i scene.camera (cesium) nisu iste... :-(
-//console.log(camera);
-//scene.terrainProvider = Cesium.createWorldTerrain();
-
-
-const prikljCollection3D = scene.primitives.add(
-        new Cesium.PointPrimitiveCollection({
-          modelMatrix: Cesium.Matrix4.IDENTITY,
-        })
-      );
-
-
-      var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
-
-
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
-
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-                  console.log(entity.get('device_id'));
-                  console.log(entity.getKeys());
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-                  //  entity.billboard = undefined;
-
-                  /*    const promiseTer = Cesium.sampleTerrainMostDetailed(view3D.terrainProvider, entity.position);
-                        promiseTer.then (function(updatedPosition) {*/
-
-                  //ovdje se u stvari mora skužit msl geografska visina na točci priključka i dodati na cartesian3.Z
-
-                  prikljCollection3D.add({
-                    position: entity.get('geometry'),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 5,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
-
-                  //    console.log ("E:",entities[i].position.getValue());
-                  //    console.log ("P:",entity.position.getValue());
-
-                  //    });
-                }
-
-
-console.log(scene._primitives._primitives)
-    ol.Observable.unByKey(listenerKey);
-   
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-//console.log (scene.primitives._primitives[0]._primitives[4]);
-
-
-//points.add({
-  //position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
-  //color : Cesium.Color.YELLOW
-//});
-//points.add({
-  //position : new Cesium.Cartesian3(4.0, 5.0, 6.0),
-  //color : Cesium.Color.CYAN
-//});
 
 
 
