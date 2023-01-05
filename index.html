@@ -476,7 +476,7 @@ const prikljCollection3D = scene.primitives.add(
       );
 */
 
-vectorSource[44] = new olSourceVector({});
+vectorSource[44] = new ol.Source.Vector({});
   const features = [];
 
       var listenerKey = vectorSource[4].on('change', function(e) {
@@ -500,12 +500,12 @@ vectorSource[44] = new olSourceVector({});
                   }
 
 
- const feature = new olFeature({
-      geometry: new olGeomPoint([
+ const feature = new ol.Feature({
+      geometry: new ol.GeomPoint([
         entity.get('geometry'),
       ])
     });
-    const style = [new olStyleStyle({
+    const style = [new ol.Style.Style({
  styleFunction
     })];
     feature.setStyle(style);
