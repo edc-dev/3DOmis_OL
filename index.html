@@ -493,7 +493,7 @@ vectorSource[44] = new ol.source.Vector({});
                     prikljucakID = entity.get('device_id');
                   }
 
-
+console.log('test');
  const feature = new ol.Feature({
       geometry: new ol.geom.Point([
         entity.get('geometry'),
@@ -509,7 +509,7 @@ vectorSource[44] = new ol.source.Vector({});
   }
   vectorSource[44].addFeatures(features);
 
-
+console.log(vectorSource[44]);
 
  /* dodavanje direktno u primitive point collection mijenjamo sa dodavanjem izravno u source koji čini layer zbog olcs
                  
