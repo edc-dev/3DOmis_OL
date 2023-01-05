@@ -326,19 +326,6 @@ vectorLayer[3] = new ol.layer.Vector({
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
 
- vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
-
- vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-
-
 
 
 
@@ -407,7 +394,7 @@ const map = new ol.Map({
 });
 
 
-map.addLayer(vectorLayer[4]);
+
 
 
 
@@ -505,7 +492,7 @@ vectorSource[44] = new ol.source.Vector({});
         entity.get('geometry'),
       ])
     });
-    const style = [new ol.Style.Style({
+    const style = [new ol.style.Style({
  styleFunction
     })];
     feature.setStyle(style);
@@ -535,15 +522,26 @@ vectorSource[44] = new ol.source.Vector({});
                 }
 */
 
-console.log(scene._primitives._primitives)
+//console.log(scene._primitives._primitives)
     ol.Observable.unByKey(listenerKey);
    
   }
 });
 
 
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+
+ vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
+vectorLayer[4].set('altitudeMode', 'clampToGround');
 
 
+map.addLayer(vectorLayer[4]);
 
 
 
