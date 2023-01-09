@@ -547,14 +547,16 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
                 let entities = dataSource.entities.values;
                 let prikljucakID;
 console.log(DataSourcesC);
-console.log(entities);
+console.log(entities.length);
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
-                  if (typeof entity.properties.device_id == "undefined") {
+                  console.log("E:",entity);
+               /*   if (typeof entity.properties.device_id == "undefined") {
                     prikljucakID = -99;
                   } else {
                     prikljucakID = entity.properties.device_id.getValue();
-                  }
+                   
+                  }*/
 
 
                   prikljCollection3D.add({
