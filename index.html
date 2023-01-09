@@ -411,55 +411,6 @@ const map = new ol.Map({
 
 
 
-
-
-
-/*
-
-window['addFeatures'] = function() {
-  let then = Date.now();
-  const count = 1000;
-  const features = [];
-  const e = 18000000;
-  for (let i = 0; i < count; ++i) {
-    const feature = new olFeature({
-      geometry: new olGeomPoint([
-        2 * e * Math.random() - e,
-        2 * e * Math.random() - e,
-        e * Math.random()
-      ])
-    });
-    const style = [new olStyleStyle({
-      image: new olStyleCircle({
-        radius: 2,
-        fill: new olStyleFill({color: [
-          Math.random() * 255,
-          Math.random() * 255,
-          Math.random() * 255,
-          Math.random()
-        ]})
-      })
-    })];
-    feature.setStyle(style);
-
-    feature.setId(e * Math.random());
-    features.push(feature);
-  }
-
-  let now = Date.now();
-  created = now - then;
-  then = now;
-
-  const vectorSource = new olSourceVector({});
-  const vector = new olLayerVector({
-    source: vectorSource
-  });
-
-
-*/
-
-
-
 Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
 const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
 
@@ -529,6 +480,9 @@ ol3d.setEnabled(true);
 
 /*
 
+ovo je starija verzija koja čeka source 4 da se loada
+
+
       var listenerKey = vectorSource[4].on('change', function(e) {
   if (vectorSource[4].getState() == 'ready') {
 
@@ -584,7 +538,7 @@ console.log(scene._primitives._primitives)
 
 
 
-ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... 
+ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... ali radi dobro jer je natur cesium, samo u 3d
 
 
 const prikljCollection3D = scene.primitives.add(
