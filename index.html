@@ -529,6 +529,7 @@ const prikljCollection3D = scene.primitives.add(
           modelMatrix: Cesium.Matrix4.IDENTITY,
         })
       );
+      const prikLabCollection = new Cesium.LabelCollection();
 
       var listenerKey = vectorSource[4].on('change', function(e) {
   if (vectorSource[4].getState() == 'ready') {
@@ -537,7 +538,7 @@ const prikljCollection3D = scene.primitives.add(
 
 
     let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
+
                 let prikljucakID;
 
                 for (let i = 0; i < entities.length; i++) {
@@ -553,8 +554,8 @@ console.log(entity.get('geometry').flatCoordinates);
 
                   prikljCollection3D.add({
                     position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 500,
+                    color: Cesium.Color.MAGENTA,
+                    pixelSize: 50000,
                     disableDepthTestDistance: 1000,
                     billboard: (entity.billboard = undefined),
                     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
