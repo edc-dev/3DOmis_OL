@@ -454,18 +454,7 @@ const scene = ol3d.getCesiumScene();
 
 
 
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
 
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-map.addLayer(vectorLayer[4]);
 
 
 
@@ -524,6 +513,12 @@ ol3d.setEnabled(true);
 
 
 
+
+/*
+
+ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... 
+
+
 const prikljCollection3D = scene.primitives.add(
         new Cesium.PointPrimitiveCollection({
           modelMatrix: Cesium.Matrix4.IDENTITY,
@@ -532,36 +527,38 @@ const prikljCollection3D = scene.primitives.add(
       const prikLabCollection = new Cesium.LabelCollection();
 const DataSourcesC =  new Cesium.DataSourceCollection();
 
-      var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
+
     const  promised = Cesium.GeoJsonDataSource.load(
             Object.values(dataSources)[4],
             { clampToGround: true }
           );
-
+          let prikljucakID;
 
   
           promised.then(function (dataSource) {
 
                 DataSourcesC.add(dataSource);
                 let entities = dataSource.entities.values;
-                let prikljucakID;
-console.log(DataSourcesC);
-console.log(entities.length);
+
+//console.log(DataSourcesC);
+//console.log(entities.length);
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
-                  console.log("E:",entity);
-               /*   if (typeof entity.properties.device_id == "undefined") {
+                 
+
+
+                  if (typeof entity.properties.device_id == "undefined") {
                     prikljucakID = -99;
                   } else {
                     prikljucakID = entity.properties.device_id.getValue();
                    
-                  }*/
-
+                  }
+            //     console.log(prikljucakID);
+            //     console.log("P:", entity._position._value);
 
                   prikljCollection3D.add({
-                    position: entity.position.getValue(),
-                    color: Cesium.Color.BLACK,
+                    position: entity._position._value,
+                    color: Cesium.Color.GREEN,
                     pixelSize: 5,
                     disableDepthTestDistance: 1000,
                     billboard: (entity.billboard = undefined),
@@ -570,6 +567,8 @@ console.log(entities.length);
                     allowPicking: true,
                     id: prikljucakID,
                   });
+                  
+                  
 
 
                 }
@@ -579,23 +578,33 @@ console.log(entities.length);
 
   console.log("R",prikljCollection3D);
 
+*/
 
 
-    ol.Observable.unByKey(listenerKey);
    
 
 
-map.removeLayer(vectorLayer[4]);
+//map.removeLayer(vectorLayer[4]);
 
 //console.log(scene._primitives._primitives)
 
-  }
+
+
+
+/*
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
 });
 
+vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
+vectorLayer[4].set('altitudeMode', 'clampToGround');
 
-
-
-
+map.addLayer(vectorLayer[4]);
+*/
 
 
 
