@@ -660,6 +660,7 @@ map.removeLayer(vectorLayer[4]);
 vectorLayer[44] = new ol.layer.Vector({
   style: styleFunctionPrimitive,
   source: vectorSource[44],
+  minZoom: 4,
 });
 vectorLayer[44].set('altitudeMode', 'clampToGround');
 
