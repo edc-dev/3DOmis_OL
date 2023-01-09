@@ -261,6 +261,21 @@ const styleFunction = function(feature, resolution) {
   return geo ? styles[geo.getType()]:'';// : styles['Point'];
 };
 
+const styleFunctionPrimitive = function(feature, resolution) {
+  // always assign a style to prevent feature skipping
+ return  new ol.style.Style({
+  image: new ol.style.Circle({
+  radius: 2,
+  fill: new ol.style.Fill({
+      color: 'red',
+    }),
+  stroke: new ol.style.Stroke({color: 'red', width: 1})
+})
+        })
+
+    
+};
+
 /*
   style: new ol.style.Style({
     stroke: new ol.style.Stroke({
@@ -325,9 +340,7 @@ vectorLayer[3] = new ol.layer.Vector({
 });
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
-
-
-
+// 4 je dolje niže
 
 vectorSource[5] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
@@ -591,22 +604,23 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
 
 
 
-/*
+
 vectorSource[4] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[4],
 });
 
 vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunction,
+  style: styleFunctionPrimitive,
   source: vectorSource[4],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
+vectorLayer[4].set('distanceDisplayCondition','new Cesium.DistanceDisplayCondition(0.0, 500.0)');
 
 map.addLayer(vectorLayer[4]);
-*/
 
 
+console.log(scene._primitives._primitives)
 
 
 
