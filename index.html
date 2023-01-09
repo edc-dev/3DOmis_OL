@@ -529,6 +529,61 @@ ol3d.setEnabled(true);
 
 /*
 
+      var listenerKey = vectorSource[4].on('change', function(e) {
+  if (vectorSource[4].getState() == 'ready') {
+
+    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+
+
+    let entities = vectorSource[4].getFeatures();
+                const prikLabCollection = new Cesium.LabelCollection();
+                let prikljucakID;
+
+                for (let i = 0; i < entities.length; i++) {
+                  let entity = entities[i];
+                 // console.log(entity.get('device_id'));
+                 // console.log(entity.getKeys());
+                  if (typeof entity.get('device_id') == "undefined") {
+                    prikljucakID = -99;
+                  } else {
+                    prikljucakID = entity.get('device_id');
+                  }
+console.log(entity.get('geometry').flatCoordinates);
+
+                  prikljCollection3D.add({
+                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
+                    color: Cesium.Color.BLACK,
+                    pixelSize: 500,
+                    disableDepthTestDistance: 1000,
+                    billboard: (entity.billboard = undefined),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    distanceDisplayCondition:
+                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
+                    allowPicking: true,
+                    id: prikljucakID,
+                  });
+ 
+  }
+  
+  
+
+  console.log(vectorSource[prikljCollection3D]);
+
+
+
+    ol.Observable.unByKey(listenerKey);
+   
+
+
+map.removeLayer(vectorLayer[4]);
+
+console.log(scene._primitives._primitives)
+
+  }
+});
+
+
+
 ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... 
 
 
@@ -610,12 +665,68 @@ vectorSource[4] = new ol.source.Vector({
   url: Object.values(dataSources)[4],
 });
 
+
+vectorSource[44] = new ol.source.Vector({});
+
+
+var listenerKey = vectorSource[4].on('change', function(e) {
+  if (vectorSource[4].getState() == 'ready') {
+
+    //console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+
+
+    let features = vectorSource[4].getFeatures();
+    let featuresNew =[];
+//console.log (features.length);
+
+
+for (let i = 0; i < features.length; ++i) {
+  console.log (features[i]);
+    const feature = new ol.Feature({
+      geometry: new ol.geom.Point([
+      features[i].getGeometry()
+      ])
+    });
+    const style = [new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 2,
+        fill: new ol.style.Fill({color: 'red'})
+      })
+    })];
+    feature.setStyle(style);
+
+    feature.setId(e * Math.random());
+    featuresNew.push(feature);
+}
+
+
+
+vectorSource[44].addFeatures(features);
+map.removeLayer(vectorLayer[4]);
+vectorLayer[44] = new ol.layer.Vector({
+  style: styleFunctionPrimitive,
+  source: vectorSource[44],
+});
+vectorLayer[44].set('altitudeMode', 'clampToGround');
+
+
+
+
+
+map.addLayer(vectorLayer[44]);
+console.log(scene._primitives._primitives)
+  }
+});
+
+
+
+
+
 vectorLayer[4] = new ol.layer.Vector({
   style: styleFunctionPrimitive,
   source: vectorSource[4],
 });
 vectorLayer[4].set('altitudeMode', 'clampToGround');
-vectorLayer[4].set('distanceDisplayCondition','new Cesium.DistanceDisplayCondition(0.0, 500.0)');
 
 map.addLayer(vectorLayer[4]);
 
