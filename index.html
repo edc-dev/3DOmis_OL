@@ -545,9 +545,9 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
 
                 DataSourcesC.add(dataSource);
                 let entities = dataSource.entities.values;
-                const prikLabCollection = new Cesium.LabelCollection();
                 let prikljucakID;
-
+console.log(DataSourcesC);
+console.log(entities);
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
                   if (typeof entity.properties.device_id == "undefined") {
