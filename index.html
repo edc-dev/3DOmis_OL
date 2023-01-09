@@ -530,46 +530,52 @@ const prikljCollection3D = scene.primitives.add(
         })
       );
       const prikLabCollection = new Cesium.LabelCollection();
+const DataSourcesC =  new Cesium.DataSourceCollection();
 
       var listenerKey = vectorSource[4].on('change', function(e) {
   if (vectorSource[4].getState() == 'ready') {
+    const  promised = Cesium.GeoJsonDataSource.load(
+            Object.values(dataSources)[4],
+            { clampToGround: true }
+          );
 
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
 
+  
+          promised.then(function (dataSource) {
 
-    let entities = vectorSource[4].getFeatures();
-
+                DataSourcesC.add(dataSource);
+                let entities = dataSource.entities.values;
+                const prikLabCollection = new Cesium.LabelCollection();
                 let prikljucakID;
 
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
-                 // console.log(entity.get('device_id'));
-                 // console.log(entity.getKeys());
-                  if (typeof entity.get('device_id') == "undefined") {
+                  if (typeof entity.properties.device_id == "undefined") {
                     prikljucakID = -99;
                   } else {
-                    prikljucakID = entity.get('device_id');
+                    prikljucakID = entity.properties.device_id.getValue();
                   }
-console.log(entity.get('geometry').flatCoordinates);
+
 
                   prikljCollection3D.add({
-                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.MAGENTA,
-                    pixelSize: 50000,
+                    position: entity.position.getValue(),
+                    color: Cesium.Color.BLACK,
+                    pixelSize: 5,
                     disableDepthTestDistance: 1000,
                     billboard: (entity.billboard = undefined),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
                     distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
+                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
                     allowPicking: true,
                     id: prikljucakID,
                   });
- 
-  }
+
+
+                }
+              });
   
   
 
-  console.log(vectorSource[prikljCollection3D]);
+  console.log("R");
 
 
 
@@ -579,7 +585,7 @@ console.log(entity.get('geometry').flatCoordinates);
 
 map.removeLayer(vectorLayer[4]);
 
-console.log(scene._primitives._primitives)
+//console.log(scene._primitives._primitives)
 
   }
 });
