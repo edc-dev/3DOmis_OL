@@ -466,10 +466,14 @@ const edcVSMosor = new Cesium.Resource({
    retryAttempts: 5
 });
 
+
 scene.terrainProvider = new Cesium.CesiumTerrainProvider({
   url:edcTerrain});  //url: Cesium.IonResource.fromAssetId(1103401)});
+
           scene.globe.depthTestAgainstTerrain=true;
+
 scene.requestRenderMode=true; // default već postavljen u cesiumu ??
+
 ol3d.setEnabled(true);
 //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
 
@@ -495,8 +499,7 @@ ovo je starija verzija koja čeka source 4 da se loada
 
                 for (let i = 0; i < entities.length; i++) {
                   let entity = entities[i];
-                 // console.log(entity.get('device_id'));
-                 // console.log(entity.getKeys());
+
                   if (typeof entity.get('device_id') == "undefined") {
                     prikljucakID = -99;
                   } else {
@@ -635,7 +638,7 @@ var listenerKey = vectorSource[4].on('change', function(e) {
 
 
 for (let i = 0; i < features.length; ++i) {
-  console.log (features[i]);
+
     const feature = new ol.Feature({
       geometry: new ol.geom.Point([
       features[i].getGeometry()
@@ -656,11 +659,10 @@ for (let i = 0; i < features.length; ++i) {
 
 
 vectorSource[44].addFeatures(features);
-map.removeLayer(vectorLayer[4]);
+//map.removeLayer(vectorLayer[4]);
 vectorLayer[44] = new ol.layer.Vector({
   style: styleFunctionPrimitive,
-  source: vectorSource[44],
-  minZoom: 4,
+  source: vectorSource[44]
 });
 vectorLayer[44].set('altitudeMode', 'clampToGround');
 
@@ -668,8 +670,8 @@ vectorLayer[44].set('altitudeMode', 'clampToGround');
 
 
 
-map.addLayer(vectorLayer[44]);
-console.log(scene._primitives._primitives)
+//map.addLayer(vectorLayer[44]);
+//console.log(scene._primitives._primitives)
   }
 });
 
