@@ -1,629 +1,467 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <!--instaliran GIT proba 1234567-->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hr" lang="hr">
-
-
-<!--To do:
+  <!--To do:
 stilizacija
 mjerenje
 visine
 prikaz podataka
 query sa lociranjem-->
 
-<head>
-
+  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="robots" content="index, all" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <title>IMAGIS Vodovod Omiš 3D</title>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
 
-
-
-
-
-
-
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" crossorigin="anonymous" type="text/css">
-
+<!--
+    <script
+      src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css"
+      crossorigin="anonymous"
+      type="text/css"
+    />
+-->
     <script src="ol-cesium-v2.13//olcesium.js"></script>
-    <link rel="stylesheet" href="ol-cesium-v2.13/olcs.css" type="text/css">
-    
-   
-    <script src="https://cdn.jsdelivr.net/npm/cesium@1.81.0/Build/CesiumUnminified/Cesium.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="ol-cesium-v2.13/olcs.css" type="text/css" />
 
-   <!-- <script src="./proj4js-2.8.0/dist/proj4.js"></script>-->
+    <script
+      src="https://cdn.jsdelivr.net/npm/cesium@1.81.0/Build/CesiumUnminified/Cesium.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- <script src="./proj4js-2.8.0/dist/proj4.js"></script>-->
 
     <script src="config.js"></script>
 
-    <link rel="stylesheet" href="w3.css" type="text/css"/>
+    <link rel="stylesheet" href="w3.css" type="text/css" />
     <link rel="stylesheet" href="style.css" type="text/css" />
-   <!--<link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Widgets/widgets.css" type="text/css" />-->
-      <!--<<link rel="stylesheet" href="https://sandcastle.cesium.com/templates/bucket.css" type="text/css" />-->
-
-<style>.cesium-credit-logoContainer { display: hide;}</style>
-<style>.cesium-credit-textContainer { display: inline-block; font-size: 100%; line-height: 100%;}</style>
-
+    <!--<link rel="stylesheet" href="./openlayers-ol-cesium-ee97068/node_modules/cesium/Build/Cesium/Widgets/widgets.css" type="text/css" />-->
+    <!--<<link rel="stylesheet" href="https://sandcastle.cesium.com/templates/bucket.css" type="text/css" />-->
   </head>
   <body>
-   
-     <div id="viewLeft" style="width:800px;height:600px;float:left;">
-    </div>
-     <div class="toolbar-left" id="toolbar-left">
-      <input id="btnPogledL" type="button" onclick="buttonChange()" value="2D/3D"/>
-    </div>
-   
-    <div id="viewRight" style="width:800px;height:600px;float:left;position:relative;">
-   </div>
-
-    
-    <div id="viewStyle" style="width:800px;height:600px;float:left;position:relative;display:none">
-
-      <div><input id="enable" type="button" value="Enable/disable Cesium" />
-      </div>
-      <div><input type="button" value="Toggle depth test" onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()" />
-      </div>
-      <div><input type="button" value="Add/remove one vector layer" onclick="javascript:addOrRemoveOneVectorLayer()" />
-      </div>
-      <div><input type="button" value="Toggle clampToGround mode" onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()" />
-      </div>
-      <div><input id="framerate" type="number" min="0" step="10" value="10"/>
-      <input type="button" value="Set the target rendering frame rate" onclick="javascript:setTargetFrameRate()" /></div>
+    <div id="viewLeft" style="width: 800px; height: 600px; float: left"></div>
+    <div class="toolbar-left" id="toolbar-left">
+      <input
+        id="btnPogledL"
+        type="button"
+        onclick="buttonChange()"
+        value="2D/3D"
+      />
     </div>
 
-    <div class="toolbar-right" id="toolbar-right">    </div>
-    
+    <div
+      id="viewRight"
+      style="width: 800px; height: 600px; float: left; position: relative"
+    ></div>
 
+    <div
+      id="viewStyle"
+      style="
+        width: 800px;
+        height: 600px;
+        float: left;
+        position: relative;
+        display: none;
+      "
+    >
+      <div>
+        <input id="enable" type="button" value="Enable/disable Cesium" />
+      </div>
+      <div>
+        <input
+          type="button"
+          value="Toggle depth test"
+          onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()"
+        />
+      </div>
+      <div>
+        <input
+          type="button"
+          value="Add/remove one vector layer"
+          onclick="javascript:addOrRemoveOneVectorLayer()"
+        />
+      </div>
+      <div>
+        <input
+          type="button"
+          value="Toggle clampToGround mode"
+          onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()"
+        />
+      </div>
+      <div>
+        <input id="framerate" type="number" min="0" step="10" value="10" />
+        <input
+          type="button"
+          value="Set the target rendering frame rate"
+          onclick="javascript:setTargetFrameRate()"
+        />
+      </div>
+    </div>
 
+    <div class="toolbar-right" id="toolbar-right"></div>
 
-       <!--
+    <!--
       Vectors are synchronized from the OpenLayers map to the Cesium scene.
       3D positioning and some styling is supported.
       The render loop is automatically stopped when idle.
     -->
- 
-  
 
-<script>
+    <script>
+      var btnCounter = 0;
 
-  
-     var btnCounter = 0;
-  
+      function buttonChange() {
+        if (btnCounter >= 3) {
+          btnCounter = 0;
+        } else {
+          btnCounter = btnCounter + 1;
+        }
+
+        switch (btnCounter) {
+          case 0:
+            document.getElementById("btnPogledR").remove();
+            let btnPogledL = document.createElement("input");
+            btnPogledL.type = "button";
+            btnPogledL.id = "btnPogledL";
+            btnPogledL.value = "2D/3D";
+            btnPogledL.onclick = function () {
+              buttonChange();
+            };
+            document.getElementById("toolbar-left").append(btnPogledL);
+            document.getElementById("viewLeft").style.display = "inline-flex";
+            document.getElementById("viewRight").style.display = "inline-flex";
+            document.getElementById("viewStyle").style.display = "none";
+            break;
+          case 1:
+            document.getElementById("btnPogledL").value = "2D";
+            document.getElementById("viewLeft").style.display = "inline-flex";
+            document.getElementById("viewRight").style.display = "none";
+            document.getElementById("viewStyle").style.display = "none";
+            break;
+          case 2:
+            document.getElementById("viewLeft").style.display = "none";
+            document.getElementById("viewRight").style.display = "inline-flex";
+            document.getElementById("viewStyle").style.display = "none";
+            document.getElementById("btnPogledL").remove();
+            let btnPogledR = document.createElement("input");
+            btnPogledR.type = "button";
+            btnPogledR.id = "btnPogledR";
+            btnPogledR.value = "3D";
+            btnPogledR.onclick = function () {
+              buttonChange();
+            };
+            document.getElementById("toolbar-right").append(btnPogledR);
+            break;
+          case 3:
+            document.getElementById("btnPogledR").value = "3D/Style";
+            document.getElementById("viewLeft").style.display = "none";
+            document.getElementById("viewRight").style.display = "inline-flex";
+            document.getElementById("viewStyle").style.display = "inline-block";
+        }
+      }
       
-  function buttonChange() {
+      // meh... LAZY_CESIUM = true;
+      const OLCS_ION_TOKEN =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZWVhYmU0Mi1jNTZkLTQ3OGItYmUxYS00YTMyMDQyZTMwNDkiLCJpZCI6NjQ1LCJpYXQiOjE2MDYxMjE2OTF9.zQibbf5P0-moQ8KiV_K7KMtyLHbR-VlPghj8lyqWduU";
+      const SHIME_ION_TOKEN =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZDIxNzFlNS0wYWQ2LTQ5NTYtYTBmNy1iMWRkNGQ2MWRlYWEiLCJpZCI6OTUxNjcsImlhdCI6MTY1MzQ4MTEwNH0.oLUjSWc9t2PWYdfrKrg67-HMgXa3RtiUDcBtpWXFB7w";
 
+      Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
 
+      const image = new ol.style.Circle({
+        radius: 3,
+        fill: new ol.style.Fill({
+          color: "red",
+        }),
+        stroke: new ol.style.Stroke({ color: "red", width: 1 }),
+      });
 
-    if (btnCounter >= 3) {
-      btnCounter = 0;
-    } else {
-      btnCounter = btnCounter + 1;
-    }
+      const styles = {
+        Point: [
+          new ol.style.Style({
+            image,
+          }),
+        ],
+        LineString: [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: "blue",
+              //  lineDash: [0],
+              width: 3,
+            }),
+          }),
+        ],
+        MultiLineString: [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: "green",
+              width: 10,
+            }),
+          }),
+        ],
+        MultiPoint: [
+          new ol.style.Style({
+            image,
+            text: new ol.style.Text({
+              text: "MP",
+              stroke: new ol.style.Stroke({
+                color: "purple",
+              }),
+            }),
+          }),
+        ],
+        MultiPolygon: [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: "yellow",
+              width: 1,
+            }),
+            fill: new ol.style.Fill({
+              color: "rgba(255, 255, 0, 0.1)",
+            }),
+          }),
+        ],
+        Polygon: [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: "blue",
+              lineDash: [4],
+              width: 3,
+            }),
+            fill: new ol.style.Fill({
+              color: "rgba(0, 0, 255, 0.1)",
+            }),
+          }),
+        ],
+        GeometryCollection: [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: "magenta",
+              width: 2,
+            }),
+            fill: new ol.style.Fill({
+              color: "magenta",
+            }),
+            image: new ol.style.Circle({
+              radius: 10, // pixels
+              fill: null,
+              stroke: new ol.style.Stroke({
+                color: "magenta",
+              }),
+            }),
+          }),
+        ],
+        Circle: [
+          new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: "red",
+              width: 2,
+            }),
+            fill: new ol.style.Fill({
+              color: "rgba(255,0,0,0.2)",
+            }),
+          }),
+        ],
+      };
 
-    
+      //kako napraviti listu stilova, programski prepoznati ili zadati klasu objekta u layeru i adekvatno stilizirati prema listi stilova
 
-    
-    switch (btnCounter) {
+      const styleFunction = function (feature, resolution) {
+        const geo = feature.getGeometry();
 
-      case 0:
+        // always assign a style to prevent feature skipping
+        return geo ? styles[geo.getType()] : ""; // : styles['Point'];
+      };
 
-   
-   
-   
+      const styleFunctionPrimitive = function (feature, resolution) {
+        return new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 2,
+            fill: new ol.style.Fill({
+              color: "black",
+            }),
+            stroke: new ol.style.Stroke({ color: "red", width: 1 }),
+          }),
+        });
+      };
 
-      document.getElementById("btnPogledR").remove();
-        let btnPogledL = document.createElement("input");
-        btnPogledL.type = "button";
-        btnPogledL.id = "btnPogledL";
-        btnPogledL.value = "2D/3D";
-        btnPogledL.onclick = function () {
-          buttonChange();
-        };
-        document.getElementById("toolbar-left").append(btnPogledL);
-        document.getElementById("viewLeft").style.display = "inline-flex";
-        document.getElementById("viewRight").style.display = "inline-flex";
-        document.getElementById("viewStyle").style.display = "none";
-        break;
-      case 1:
-      document.getElementById("btnPogledL").value = "2D";
-        document.getElementById("viewLeft").style.display = "inline-flex";
-        document.getElementById("viewRight").style.display = "none";
-        document.getElementById("viewStyle").style.display = "none";
-         break;
-      case 2:
-      document.getElementById("viewLeft").style.display = "none";
-      document.getElementById("viewRight").style.display = "inline-flex";
-      document.getElementById("viewStyle").style.display = "none";
-      document.getElementById("btnPogledL").remove();
-        let btnPogledR = document.createElement("input");
-        btnPogledR.type = "button";
-        btnPogledR.id = "btnPogledR";
-        btnPogledR.value = "3D";
-        btnPogledR.onclick = function () {
-          buttonChange();
-        };
-        document.getElementById("toolbar-right").append(btnPogledR);
-        break;
-      case 3:
-      document.getElementById("btnPogledR").value = "3D/Style";
-      document.getElementById("viewLeft").style.display = "none";
-      document.getElementById("viewRight").style.display = "inline-flex";
-      document.getElementById("viewStyle").style.display = "inline-block";
-      }}
+      var vectorSource = [];
+      var vectorLayer = [];
 
-       
-          
+      vectorSource[0] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[0],
+      });
+      vectorLayer[0] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[0],
+      });
+      vectorLayer[0].set("altitudeMode", "clampToGround");
 
-const OLCS_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZWVhYmU0Mi1jNTZkLTQ3OGItYmUxYS00YTMyMDQyZTMwNDkiLCJpZCI6NjQ1LCJpYXQiOjE2MDYxMjE2OTF9.zQibbf5P0-moQ8KiV_K7KMtyLHbR-VlPghj8lyqWduU';      
-const SHIME_ION_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZDIxNzFlNS0wYWQ2LTQ5NTYtYTBmNy1iMWRkNGQ2MWRlYWEiLCJpZCI6OTUxNjcsImlhdCI6MTY1MzQ4MTEwNH0.oLUjSWc9t2PWYdfrKrg67-HMgXa3RtiUDcBtpWXFB7w';
-     
+      vectorSource[1] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[1],
+      });
+      vectorLayer[1] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[1],
+      });
+      vectorLayer[1].set("altitudeMode", "clampToGround");
 
+      vectorSource[2] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[2],
+      });
+      vectorLayer[2] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[2],
+      });
+      vectorLayer[2].set("altitudeMode", "clampToGround");
 
+      vectorSource[3] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[3],
+      });
+      vectorLayer[3] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[3],
+      });
+      vectorLayer[3].set("altitudeMode", "clampToGround");
 
+      vectorSource[4] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[4],
+      });
+      vectorLayer[4] = new ol.layer.Vector({
+        style: styleFunctionPrimitive,
+        source: vectorSource[4],
+      });
+      vectorLayer[4].set("altitudeMode", "clampToGround");
 
+      vectorSource[5] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[5],
+      });
+      vectorLayer[5] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[5],
+      });
+      vectorLayer[5].set("altitudeMode", "clampToGround");
 
-const image = new ol.style.Circle({
-  radius: 3,
-  fill: new ol.style.Fill({
-      color: 'red',
-    }),
-  stroke: new ol.style.Stroke({color: 'red', width: 1})
-});
+      vectorSource[6] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[6],
+      });
+      vectorLayer[6] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[6],
+      });
+      vectorLayer[6].set("altitudeMode", "clampToGround");
 
-/*const pointSimbol = new Cesium.PointGraphics({
-  color:'white',
-  pixelSize:3
-})*/
+      vectorSource[7] = new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: Object.values(dataSources)[7],
+      });
+      vectorLayer[7] = new ol.layer.Vector({
+        style: styleFunction,
+        source: vectorSource[7],
+      });
+      vectorLayer[7].set("altitudeMode", "clampToGround");
 
-const styles = {
-  'Point': [new ol.style.Style({
-image
-  })],
-  'LineString': [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'blue',
-    //  lineDash: [0],
-      width: 3
-    })
-  })],
-  'MultiLineString': [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'green',
-      width: 10
-    })
-  })],
-  'MultiPoint': [new ol.style.Style({
-    image,
-    text: new ol.style.Text({
-      text: 'MP',
-      stroke: new ol.style.Stroke({
-        color: 'purple'
-      })
-    })
-  })],
-  'MultiPolygon': [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'yellow',
-      width: 1
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(255, 255, 0, 0.1)'
-    })
-  })],
-  'Polygon': [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'blue',
-      lineDash: [4],
-      width: 3
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 0, 255, 0.1)'
-    })
-  })],
-  'GeometryCollection': [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'magenta',
-      width: 2
-    }),
-    fill: new ol.style.Fill({
-      color: 'magenta'
-    }),
-    image: new ol.style.Circle({
-      radius: 10, // pixels
-      fill: null,
-      stroke: new ol.style.Stroke({
-        color: 'magenta'
-      })
-    })
-  })],
-  'Circle': [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'red',
-      width: 2
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(255,0,0,0.2)'
-    })
-  })]
-};
+      //
 
+      const map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM(),
+          }),
+          vectorLayer[0],
+          vectorLayer[1],
+          vectorLayer[2],
+          vectorLayer[3],
+          vectorLayer[4],
+          vectorLayer[5],
+          vectorLayer[6],
+          vectorLayer[7],
+        ],
+        target: "viewLeft",
+     //   controls: ol.control.defaults({
+      //    attributionOptions: {
+    //        collapsible: false,
+      //    },
+    //    }),
+        view: new ol.View({
+          center: [0, 0],
+          zoom: 2,
+        }),
+      });
 
+      const ol3d = new olcs.OLCesium({ map, target: "viewRight" }); //
 
-//kako napraviti listu stilova, programski prepoznati ili zadati klasu objekta u layeru i adekvatno stilizirati prema listi stilova
+      const scene = ol3d.getCesiumScene();
 
-const styleFunction = function(feature, resolution) {
-  const geo = feature.getGeometry();
+      const edcTerrain = new Cesium.Resource({
+        url: "data/teren3dtest/",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+        retryAttempts: 5,
+      });
 
-  // always assign a style to prevent feature skipping
-  return geo ? styles[geo.getType()]:'';// : styles['Point'];
-};
+      const edcVSMosor = new Cesium.Resource({
+        url: "data/VSMosor/tileset.json",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+        retryAttempts: 5,
+      });
 
-const styleFunctionPrimitive = function(feature, resolution) {
-  // always assign a style to prevent feature skipping
- return  new ol.style.Style({
-  image: new ol.style.Circle({
-  radius: 2,
-  fill: new ol.style.Fill({
-      color: 'red',
-    }),
-  stroke: new ol.style.Stroke({color: 'red', width: 1})
-})
-        })
+      scene.terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: edcTerrain,
+      }); 
+     // console.log(scene._primitives._primitives);
 
-    
-};
-
-/*
-  style: new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'blue',
-      lineDash: [4],
-      width: 3
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 0, 255, 0.1)'
-    })
-  }),
-  */
-
-var vectorSource=[];
-var vectorLayer=[];
-
-
-
-
-
-
-
-
-vectorSource[0] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[0],
-  
-});
-vectorLayer[0] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[0],
-});
-vectorLayer[0].set('altitudeMode', 'clampToGround');
-
-vectorSource[1] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[1],
-});
-vectorLayer[1] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[1],
-});
-vectorLayer[1].set('altitudeMode', 'clampToGround');
-
-vectorSource[2] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[2],
-});
-vectorLayer[2] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[2],
-});
-vectorLayer[2].set('altitudeMode', 'clampToGround');
-
-vectorSource[3] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[3],
-});
-vectorLayer[3] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[3],
-});
-vectorLayer[3].set('altitudeMode', 'clampToGround');
-
-// 4 je dolje niže
-
-vectorSource[5] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[5],
-});
-vectorLayer[5] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[5],
-});
-vectorLayer[5].set('altitudeMode', 'clampToGround');
-
-vectorSource[6] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[6],
-});
-vectorLayer[6] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[6],
-});
-vectorLayer[6].set('altitudeMode', 'clampToGround');
-
-vectorSource[7] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[7],
-});
-vectorLayer[7] = new ol.layer.Vector({
-  style: styleFunction,
-  source: vectorSource[7],
-});
-vectorLayer[7].set('altitudeMode', 'clampToGround');
-
-
-
-//
-
-const dragAndDropInteraction = new ol.interaction.DragAndDrop({
-  formatConstructors: [
-    ol.format.GPX,
-    ol.format.GeoJSON,
-    ol.format.IGC,
-    ol.format.KML,
-    ol.format.TopoJSON
-  ]
-});
-
-const map = new ol.Map({
-  interactions: ol.interaction.defaults().extend([dragAndDropInteraction]),
-  layers: [
-    new ol.layer.Tile({
-      source: new ol.source.OSM()
-    }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],
-  ],
-  target: 'viewLeft',
-  controls: ol.control.defaults({
-    attributionOptions: {
-      collapsible: false
-    }
-  }),
-  view: new ol.View({
-    center: [0, 0],
-    zoom: 2
+const tileset = scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: edcVSMosor,
   })
-});
+);
 
+      scene.globe.depthTestAgainstTerrain = true;
 
+   //   scene.requestRenderMode = true; // default već postavljen u cesiumu ??
 
+      ol3d.setEnabled(true);
+      //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
 
+      //radi RADI RADIIIIII !!!
 
-
-Cesium.Ion.defaultAccessToken = SHIME_ION_TOKEN;
-const ol3d = new olcs.OLCesium({map, target: 'viewRight'});
-
-const scene = ol3d.getCesiumScene();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-dragAndDropInteraction.on('addfeatures', (event) => {
-  const vectorSource = new ol.source.Vector({
-    features: event.features,
-    projection: event.projection
-  });
-  map.getLayers().push(new ol.layer.Vector({
-    source: vectorSource,
-    style: styleFunction
-  }));
-  const view = map.getView();
-  view.fitExtent(
-      vectorSource.getExtent(), /** @type {ol.Size} */ (map.getSize()));
-});
-
-
-
-
-
-
-
-const edcTerrain = new Cesium.Resource({
-   url: 'data/teren3dtest/',
-   headers: {
-     'Access-Control-Allow-Origin': '*'
-   },
-   retryAttempts: 5
-});
-
-const edcVSMosor = new Cesium.Resource({
-   url: 'data/VSMosor/tileset.json',
-   headers: {
-     'Access-Control-Allow-Origin': '*'
-   },
-   retryAttempts: 5
-});
-
-
-scene.terrainProvider = new Cesium.CesiumTerrainProvider({
-  url:edcTerrain});  //url: Cesium.IonResource.fromAssetId(1103401)});
-
-          scene.globe.depthTestAgainstTerrain=true;
-
-scene.requestRenderMode=true; // default već postavljen u cesiumu ??
-
-ol3d.setEnabled(true);
-//ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
-
-//radi RADI RADIIIIII !!!
-
-
-
-
-/*
-
-ovo je starija verzija koja čeka source 4 da se loada
-
-
-      var listenerKey = vectorSource[4].on('change', function(e) {
+ /*     
+var listenerKey = vectorSource[4].on('change', function(e) {
   if (vectorSource[4].getState() == 'ready') {
 
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+console.log('loaded');
 
 
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
-
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-console.log(entity.get('geometry').flatCoordinates);
-
-                  prikljCollection3D.add({
-                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 500,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
- 
-  }
-  
-  
-
-  console.log(vectorSource[prikljCollection3D]);
-
-
-
-    ol.Observable.unByKey(listenerKey);
-   
-
-
-map.removeLayer(vectorLayer[4]);
-
-console.log(scene._primitives._primitives)
 
   }
 });
-
-
-
-ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... ali radi dobro jer je natur cesium, samo u 3d
-
-
-const prikljCollection3D = scene.primitives.add(
-        new Cesium.PointPrimitiveCollection({
-          modelMatrix: Cesium.Matrix4.IDENTITY,
-        })
-      );
-      const prikLabCollection = new Cesium.LabelCollection();
-const DataSourcesC =  new Cesium.DataSourceCollection();
-
-
-    const  promised = Cesium.GeoJsonDataSource.load(
-            Object.values(dataSources)[4],
-            { clampToGround: true }
-          );
-          let prikljucakID;
-
-  
-          promised.then(function (dataSource) {
-
-                DataSourcesC.add(dataSource);
-                let entities = dataSource.entities.values;
-
-//console.log(DataSourcesC);
-//console.log(entities.length);
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-                 
-
-
-                  if (typeof entity.properties.device_id == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.properties.device_id.getValue();
-                   
-                  }
-            //     console.log(prikljucakID);
-            //     console.log("P:", entity._position._value);
-
-                  prikljCollection3D.add({
-                    position: entity._position._value,
-                    color: Cesium.Color.GREEN,
-                    pixelSize: 5,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
-                  
-                  
-
-
-                }
-              });
-  
-  
-
-  console.log("R",prikljCollection3D);
-
 */
 
-
-   
-
-
-//map.removeLayer(vectorLayer[4]);
-
-//console.log(scene._primitives._primitives)
-
-
-
-
-
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
-
-
-vectorSource[44] = new ol.source.Vector({});
+/*
+for (let i=0; i<8; i++){
+map.addLayer(vectorLayer[i]);// utječe li ovo na postojanost učitanih točaka priključaka ???? 
+}
+*/
 
 
 var listenerKey = vectorSource[4].on('change', function(e) {
@@ -637,6 +475,10 @@ var listenerKey = vectorSource[4].on('change', function(e) {
 //console.log (features.length);
 
 
+let cnt = 0;
+var vectorSourceX = [];
+var vectorLayerX = [];
+vectorSourceTemp = new ol.source.Vector({});
 for (let i = 0; i < features.length; ++i) {
 
     const feature = new ol.Feature({
@@ -653,25 +495,27 @@ for (let i = 0; i < features.length; ++i) {
     feature.setStyle(style);
 
     feature.setId(e * Math.random());
+    //console.log(cnt,i)
     featuresNew.push(feature);
+   // console.log ('cnt',featuresNew);
 }
 
+map.removeLayer(vectorLayer[4]);
 
-
-vectorSource[44].addFeatures(features);
-//map.removeLayer(vectorLayer[4]);
-vectorLayer[44] = new ol.layer.Vector({
+vectorSourceTemp.addFeatures(featuresNew)
+vectorLayerX.splice(cnt,0,vectorSourceTemp);
+//console.log ('r:',vectorSourceX[0]);
+vectorLayerX[0] = new ol.layer.Vector({
   style: styleFunctionPrimitive,
-  source: vectorSource[44]
+  source: vectorSource[4]
 });
-vectorLayer[44].set('altitudeMode', 'clampToGround');
 
 
+vectorLayerX[0].set('altitudeMode', 'clampToGround');
 
 
-
-//map.addLayer(vectorLayer[44]);
-//console.log(scene._primitives._primitives)
+map.addLayer(vectorLayerX[0]);
+//console.log("c:",vectorLayerX[0])
   }
 });
 
@@ -679,118 +523,12 @@ vectorLayer[44].set('altitudeMode', 'clampToGround');
 
 
 
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunctionPrimitive,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-map.addLayer(vectorLayer[4]);
-
-
-console.log(scene._primitives._primitives)
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const tileset = scene.primitives.add(
-  new Cesium.Cesium3DTileset({
-    url: edcVSMosor,
-  })
-);
-
-
-
-
-// Adding a feature after the layer has been synchronized.
-
-let hasTheVectorLayer = true;
-window['addOrRemoveOneVectorLayer'] = function() {
-  if (hasTheVectorLayer) {
-    map.getLayers().remove(vectorLayer);
-  } else {
-    map.getLayers().insertAt(1, vectorLayer);
-  }
-  hasTheVectorLayer = !hasTheVectorLayer;
-
-};
-
-
-
-let oldStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: 'blue',
-    width: 2
-  }),
-  fill: new ol.style.Fill({
-    color: 'green'
-  })
-});
-
-window['toggleStyle'] = function() {
-  const swap = theCircle.getStyle();
-  theCircle.setStyle(oldStyle);
-  oldStyle = swap;
-};
-
-window['toggleClampToGround'] = function() {
-  let altitudeMode;
-  if (!vectorLayer.get('altitudeMode')) {
-    altitudeMode = 'clampToGround';
-  }
-  vectorLayer.set('altitudeMode', altitudeMode);
-  //vectorLayer2.set('altitudeMode', altitudeMode);
-  map.removeLayer(vectorLayer);
-  //map.removeLayer(vectorLayer2);
-  map.addLayer(vectorLayer);
-  //map.addLayer(vectorLayer2);
-};
-
-window['setTargetFrameRate'] = function() {
-  let fps;
-  const fpsEl = document.querySelector('#framerate');
-  if (fpsEl) {
-    fps = Number(fpsEl.value);
-    ol3d.setTargetFrameRate(fps);
-  }
-};
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-   
-
-
-    function toDegrees(cartesian3Pos) {
+      function toDegrees(cartesian3Pos) {
         let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
         let lng = (pos.longitude / Math.PI) * 180;
         let ltt = (pos.latitude / Math.PI) * 180;
@@ -801,143 +539,69 @@ window['setTargetFrameRate'] = function() {
         alert(lat + "\n" + lon + "\n" + elev);
       }
 
+      function convertScreenPixelToLocation(canvasPosition) {
+        //canvas position dobiti eventom clicka miša ili drukčije
+        const terrPro = scene.terrainProvider;
+        const ellipsoid = scene.globe.ellipsoid;
+        const mousePosition = scene.camera.pickEllipsoid(
+          canvasPosition,
+          ellipsoid
+        );
+        if (mousePosition) {
+          const cartographic = ellipsoid.cartesianToCartographic(mousePosition);
 
-   
-function convertScreenPixelToLocation(canvasPosition) { //canvas position dobiti eventom clicka miša ili drukčije
-    const terrPro = scene.terrainProvider;
-    const ellipsoid =  scene.globe.ellipsoid;
-    const mousePosition = scene.camera.pickEllipsoid(canvasPosition, ellipsoid);
-    if (mousePosition) {
-      const cartographic = ellipsoid.cartesianToCartographic(mousePosition);
+          return cartographic;
+        } else {
+          return null;
+        }
+      }
 
-      return cartographic;
-   
-    } else {
-      return null;
-    }
+      var lhtext;
 
-} 
+      var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 
-var lhtext
+      handler.setInputAction(function (event) {
+        scene.terrainProvider.readyPromise.then(function () {
+          var ray = scene.camera.getPickRay(event.endPosition);
+          var mousePosition = scene.globe.pick(ray, scene);
+          if (Cesium.defined(mousePosition)) {
+            var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
+            var latitudeString = Cesium.Math.toDegrees(
+              cartographic.latitude
+            ).toFixed(6);
+            var longitudeString = Cesium.Math.toDegrees(
+              cartographic.longitude
+            ).toFixed(6);
+            var heightString = cartographic.height.toFixed(2);
+            lhtext = `Lat: ${latitudeString.slice(
+              -9
+            )}, Lon: ${longitudeString.slice(-9)}, Alt: ${heightString.slice(
+              -7
+            )}`;
+          }
+        });
+      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-
-handler.setInputAction(function (event) {
-  scene.terrainProvider.readyPromise.then(function () {
-  var ray = scene.camera.getPickRay(event.endPosition);
-  var mousePosition = scene.globe.pick(ray, scene);
-    if (Cesium.defined(mousePosition)) {
-        var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
-        var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(6);
-        var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(6);
-        var heightString = cartographic.height.toFixed(2);
-         lhtext =
-            `Lat: ${(latitudeString).slice(-9)}, Lon: ${(longitudeString).slice(-9)}, Alt: ${(heightString).slice(-7)}`;
-
-       // console.log(lhtext);
-     //  console.log(mousePosition); //svijet
-      // console.log(cartographic); //radian
-    //   console.log(scene.camera.position.z); //visina
-    }
-  });
-
-}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
- scene.canvas.addEventListener("contextmenu", (event) => {
+      scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
-     scene.requestRender();
+        scene.requestRender();
 
-
-
-if (scene.camera.position.z<4364500 && scene.camera.position.z > 0 ){
-alert(lhtext);
-}
-
-
-});
-
-
-
-
-
-
-
-
-
-
-ol3d.enableAutoRenderLoop();
-
-
-document.getElementById('enable').addEventListener('click', () => ol3d.setEnabled(!ol3d.getEnabled()));
-window['ol3d'] = ol3d;
-window['scene'] = scene;
-
-/*
-
-        var extent = Cesium.Rectangle.fromDegrees(
-        16.6796,
-        43.436044,
-        16.694768,
-        43.453013
-      );
-
-      Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
-
-      view3D.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(16.6821, 43.4303, 800),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-15.0),
-        },
+        if (scene.camera.position.z < 4364500 && scene.camera.position.z > 0) {
+          alert(lhtext);
+        }
       });
 
-*/
-// početni pogled, objekt 'kamera' koji pripada 'sceni' je u pitanju, a pošto radimo na razini scene koja je sinkronizirana između OL i Cesium, pogled radi na oba sustava
+      function pocetniPogled(ppX, ppY, ppZ) {
+        scene.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(ppX, ppY, ppZ),
+          orientation: {
+            heading: Cesium.Math.toRadians(10.0),
+            pitch: Cesium.Math.toRadians(-15.0),
+          },
+        });
+      }
 
-
-function pocetniPogled (ppX,ppY,ppZ){
-      scene.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(ppX,ppY,ppZ),
-        orientation: {
-          heading: Cesium.Math.toRadians(10.0),
-          pitch: Cesium.Math.toRadians(-15.0),
-        },
-      });
-    }
-
-    pocetniPogled (16.6821,43.4303,400);
-
-function sr(){
-  scene.requestRender();
-}  
-  
-    /* kontrola renderinga
-    scene.requestRenderMode=true; (to je postavka da se scena renderira samo na zahtjev, već je postavljeno u kodu a i priča se da je default za scenu)
-    scene.requestRender(); (ovo je kad ideš renderirat scenu na zahtjev)
-    */
-   /*
-    scene.debugShowFramesPerSecond=true;
-   const cfr=new Cesium.FrameRateMonitor.fromScene(scene);
-   */
-      </script>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
- 
-  
-
- 
-    <!--kad zgotovim, počistiti stilove i scriptove...--> 
+      pocetniPogled(16.6821, 43.4303, 400);
+    </script>
   </body>
 </html>
