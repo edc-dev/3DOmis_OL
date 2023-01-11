@@ -10,7 +10,7 @@ const dataSources= {
 "Mjerno Mjesto" : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/gauge.geojson",
 "Telemetrija" : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/telemetry.geojson",
 "Područje Zgrada" : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/podrucjeZgrada.geojson",
-"Omiš - Zgrade 3D" : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/omis_zgrade.geojson"
+"Zgrade3D" : "https://raw.githubusercontent.com/edc-dev/example-geojson/main/omis_zgrade.geojson"
 };
 
 
