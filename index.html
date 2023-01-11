@@ -263,11 +263,11 @@ const styleFunction = function(feature, resolution) {
 const styleFunctionZgrade3D = function(feature, resolution) {
   return  new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'light brown',
+      color: 'orange',
       width: 2
     }),
     fill: new ol.style.Fill({
-      color: 'light brown'
+      color: 'orange'
     })
 
         })
@@ -352,7 +352,15 @@ vectorLayer[3] = new ol.layer.Vector({
 });
 vectorLayer[3].set('altitudeMode', 'clampToGround');
 
-// 4 je dolje niže
+vectorSource[4] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[4],
+});
+vectorLayer[4] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[4],
+});
+vectorLayer[4].set('altitudeMode', 'clampToGround');
 
 vectorSource[5] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
@@ -388,7 +396,6 @@ vectorSource[8] = new ol.source.Vector({
   format: new ol.format.GeoJSON(),
   url: Object.values(dataSources)[8],
 });
-
 vectorLayer[8] = new ol.layer.Vector({
   style: styleFunctionZgrade3D,
   source: vectorSource[8],
@@ -414,7 +421,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],vectorLayer[8],
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],vectorLayer[4],vectorLayer[5],vectorLayer[6],vectorLayer[7],vectorLayer[8],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
@@ -633,73 +640,129 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
 
 //map.removeLayer(vectorLayer[4]);
 
-//console.log(scene._primitives._primitives)
 
 
 
 
 
-vectorSource[4] = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: Object.values(dataSources)[4],
-});
 
 
-vectorSource[44] = new ol.source.Vector({});
 
 
-var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-    //console.log ("gotovo:" , vectorSource[4].getFeatures().length);
 
 
-    let features = vectorSource[4].getFeatures();
-    let featuresNew =[];
-//console.log (features.length);
+var listenerKey = vectorSource[8].on('change', function(e) {
+  if (vectorSource[8].getState() == 'ready') {
 
-
-for (let i = 0; i < features.length; ++i) {
-
-    const feature = new ol.Feature({
-      geometry: new ol.geom.Point([
-      features[i].getGeometry()
-      ])
-    });
-    const style = [new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 2,
-        fill: new ol.style.Fill({color: 'red'})
-      })
-    })];
-    feature.setStyle(style);
-
-    feature.setId(e * Math.random());
-    featuresNew.push(feature);
+   // console.log("P:",scene.primitives.length)
+    //console.log("Z:",scene.primitives._primitives[0]._primitives[8]._primitives.length)
+for (let i=0; i<scene.primitives._primitives[0]._primitives[8]._primitives.length; i++){
+ // console.log (scene.primitives._primitives[0]._primitives[8].get(i));
+  
 }
+scene.primitives._primitives[0]._primitives[8].removeAll();
 
 
 
-vectorSource[44].addFeatures(features);
-//map.removeLayer(vectorLayer[4]);
-vectorLayer[44] = new ol.layer.Vector({
-  style: styleFunctionPrimitive,
-  source: vectorSource[44]
+const Zgrade3D = scene.primitives.add(
+        new Cesium.PointPrimitiveCollection({
+          modelMatrix: Cesium.Matrix4.IDENTITY,
+        })
+      );
+const DataSourcesC =  new Cesium.DataSourceCollection();
+
+const  promised = Cesium.GeoJsonDataSource.load(
+            Object.values(dataSources)[8],
+            { clampToGround: true }
+          );
+
+          promised.then(function (dataSource) {
+
+DataSourcesC.add(dataSource);
+let entities = dataSource.entities.values;
+
+//console.log(DataSourcesC);
+//console.log(entities.length);
+for (let i = 0; i < entities.length; i++) {
+  let entity = entities[i];
+ console.log (entity);
+
+
+ let zoneColor;
+                  //   zoneCollection.add(entity);
+                  let naziv = entity.properties.naziv.valueOf();
+                  //  console.log(naziv);
+                  if (!entity.properties.prikljucakaPoKm) {
+                    prikPoKm = 99;
+                  } else {
+                    prikPoKm = Number(
+                      Object.values(entity.properties.prikljucakaPoKm)[0]
+                    );
+                  }
+
+                  colorHash(naziv);
+                  // Boja zone se ispravno hasha iz naziva zone. random poslije toga je za svaki slučaj... ak zona nema naziv npr.
+                  zoneColor = new Cesium.Color.fromBytes(
+                    colorA[0],
+                    colorA[1],
+                    colorA[2],
+                    192
+                  );
+
+                  entity.polygon.material = zoneColor;
+                  if (!zoneColor) {
+                    let zoneColor = new Cesium.Color.fromRandom({
+                      alpha: 0.5,
+                    });
+                  }
+
+                  if (!entity.position && entity.polygon) {
+                    var center = Cesium.BoundingSphere.fromPoints(
+                      entity.polygon.hierarchy.valueOf().positions
+                    ).center;
+
+                    Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(
+                      center,
+                      center
+                    );
+
+                    entity.position = new Cesium.ConstantPositionProperty(
+                      center
+                    );
+                  }
+
+                  entity.label = new Cesium.LabelGraphics({
+                    text: naziv,
+                    font: "24px Helvetica",
+                    //height:0,
+                    //style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    fillColor: Cesium.Color.WHITE,
+                    //  outlineColor: Cesium.Color.BLACK,
+                    // outlineWidth: 2,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    // pixelOffset: new Cesium.Cartesian2(0, 0),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    scaleByDistance: new Cesium.NearFarScalar(1500, 0, 500, 1),
+                    show: true,
+                  });
+  
+
+
+}
 });
-vectorLayer[44].set('altitudeMode', 'clampToGround');
 
 
 
+ console.log("P:",scene.primitives)
 
 
-//map.addLayer(vectorLayer[44]);
-//console.log(scene._primitives._primitives)
   }
 });
 
 
 
-
+/** izdvojeno u zaseban projekt test.html
 
 vectorLayer[4] = new ol.layer.Vector({
   style: styleFunctionPrimitive,
@@ -710,7 +773,60 @@ vectorLayer[4].set('altitudeMode', 'clampToGround');
 map.addLayer(vectorLayer[4]);
 
 
+var listenerKey = vectorSource[4].on('change', function(e) {
+  if (vectorSource[4].getState() == 'ready') {
+
+    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+
+
+    let entities = vectorSource[4].getFeatures();
+                const prikLabCollection = new Cesium.LabelCollection();
+                let prikljucakID;
+
+                for (let i = 0; i < entities.length; i++) {
+                  let entity = entities[i];
+
+                  if (typeof entity.get('device_id') == "undefined") {
+                    prikljucakID = -99;
+                  } else {
+                    prikljucakID = entity.get('device_id');
+                  }
+console.log(entity.get('geometry').flatCoordinates);
+
+                  prikljCollection3D.add({
+                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
+                    color: Cesium.Color.BLACK,
+                    pixelSize: 500,
+                    disableDepthTestDistance: 1000,
+                    billboard: (entity.billboard = undefined),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    distanceDisplayCondition:
+                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
+                    allowPicking: true,
+                    id: prikljucakID,
+                  });
+ 
+  }
+  
+  
+
+  console.log(vectorSource[prikljCollection3D]);
+
+
+
+    ol.Observable.unByKey(listenerKey);
+   
+
+
+map.removeLayer(vectorLayer[4]);
+
 console.log(scene._primitives._primitives)
+
+  }
+});
+
+
+**/
 
 
 
