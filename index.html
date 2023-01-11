@@ -371,6 +371,16 @@ vectorLayer[7] = new ol.layer.Vector({
 });
 vectorLayer[7].set('altitudeMode', 'clampToGround');
 
+vectorSource[8] = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: Object.values(dataSources)[8],
+});
+
+vectorLayer[8] = new ol.layer.Vector({
+  style: styleFunction,
+  source: vectorSource[8],
+});
+vectorLayer[8].set('altitudeMode', 'clampToGround');
 
 
 //
@@ -391,7 +401,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
       source: new ol.source.OSM()
     }),
-    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],
+    vectorLayer[0],vectorLayer[1],vectorLayer[2],vectorLayer[3],/*vectorLayer[4],*/vectorLayer[5],vectorLayer[6],vectorLayer[7],vectorLayer[8],
   ],
   target: 'viewLeft',
   controls: ol.control.defaults({
