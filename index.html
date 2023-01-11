@@ -260,6 +260,19 @@ const styleFunction = function(feature, resolution) {
   return geo ? styles[geo.getType()]:'';// : styles['Point'];
 };
 
+const styleFunctionZgrade3D = function(feature, resolution) {
+  return  new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'light brown',
+      width: 2
+    }),
+    fill: new ol.style.Fill({
+      color: 'light brown'
+    })
+
+        })
+};
+
 const styleFunctionPrimitive = function(feature, resolution) {
   // always assign a style to prevent feature skipping
  return  new ol.style.Style({
@@ -377,7 +390,7 @@ vectorSource[8] = new ol.source.Vector({
 });
 
 vectorLayer[8] = new ol.layer.Vector({
-  style: styleFunction,
+  style: styleFunctionZgrade3D,
   source: vectorSource[8],
 });
 vectorLayer[8].set('altitudeMode', 'clampToGround');
