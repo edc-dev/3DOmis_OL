@@ -544,7 +544,7 @@ query sa lociranjem-->
             //  console.log("e:", entity.polygon.hierarchy.valueOf().positions);
 
               var positions = entity.polygon.hierarchy.valueOf().positions;
-//z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu.
+//z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu. Makar crkvu sv. petra apostola sam digao na 25m i ništa..
 var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, positions);
 Cesium.when(promise, function(updatedPositions) {
   var polygonInstance = new Cesium.GeometryInstance({
