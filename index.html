@@ -500,139 +500,14 @@ query sa lociranjem-->
       scene.requestRenderMode = true; // default već postavljen u cesiumu ??
 
       ol3d.setEnabled(true);
-      //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
 
-      //radi RADI RADIIIIII !!!
-
-      /*
-
-ovo je starija verzija koja čeka source 4 da se loada
-
-
-      var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
-
-
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
-
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-console.log(entity.get('geometry').flatCoordinates);
-
-                  prikljCollection3D.add({
-                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 500,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
- 
-  }
-  
-  
-
-  console.log(vectorSource[prikljCollection3D]);
-
-
-
-    ol.Observable.unByKey(listenerKey);
-   
-
-
-map.removeLayer(vectorLayer[4]);
-
-console.log(scene._primitives._primitives)
-
-  }
-});
-
-
-
-ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... ali radi dobro jer je natur cesium, samo u 3d
-
-
-const prikljCollection3D = scene.primitives.add(
-        new Cesium.PointPrimitiveCollection({
+      let naziv = "TEST";
+      let visina;
+      const Zgrade3D = scene.primitives.add(
+        new Cesium.PrimitiveCollection({
           modelMatrix: Cesium.Matrix4.IDENTITY,
         })
       );
-      const prikLabCollection = new Cesium.LabelCollection();
-const DataSourcesC =  new Cesium.DataSourceCollection();
-
-
-    const  promised = Cesium.GeoJsonDataSource.load(
-            Object.values(dataSources)[4],
-            { clampToGround: true }
-          );
-          let prikljucakID;
-
-  
-          promised.then(function (dataSource) {
-
-                DataSourcesC.add(dataSource);
-                let entities = dataSource.entities.values;
-
-//console.log(DataSourcesC);
-//console.log(entities.length);
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-                 
-
-
-                  if (typeof entity.properties.device_id == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.properties.device_id.getValue();
-                   
-                  }
-            //     console.log(prikljucakID);
-            //     console.log("P:", entity._position._value);
-
-                  prikljCollection3D.add({
-                    position: entity._position._value,
-                    color: Cesium.Color.GREEN,
-                    pixelSize: 5,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
-                  
-                  
-
-
-                }
-              });
-  
-  
-
-  console.log("R",prikljCollection3D);
-
-*/
-      let naziv='TEST';
-      let visina;
-      const Zgrade3D = scene.primitives.add(
-            new Cesium.PrimitiveCollection({
-              modelMatrix: Cesium.Matrix4.IDENTITY,
-            })
-          );
       //map.removeLayer(vectorLayer[4]);
 
       var listenerKey = vectorSource[8].on("change", function (e) {
@@ -640,7 +515,6 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
           // console.log("P:",scene.primitives.length)
 
           scene.primitives._primitives[0]._primitives[8].removeAll();
-
 
           const DataSourcesC = new Cesium.DataSourceCollection();
 
@@ -655,7 +529,7 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
 
             for (let i = 0; i < entities.length; i++) {
               let entity = entities[i];
-             // console.log(entity);
+               console.log(entity);
 
               naziv = entity._properties._name.valueOf();
 
@@ -666,108 +540,50 @@ const DataSourcesC =  new Cesium.DataSourceCollection();
               }
 
               //console.log(entity._properties._height.valueOf(), visina);
+
+            //  console.log("e:", entity.polygon.hierarchy.valueOf().positions);
+
+              var positions = entity.polygon.hierarchy.valueOf().positions;
+//z pozicija svakog poligona je 0...
+var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, positions);
+Cesium.when(promise, function(updatedPositions) {
+  var polygonInstance = new Cesium.GeometryInstance({
+                geometry: Cesium.PolygonGeometry.fromPositions({
+                  positions: updatedPositions,
+                  //height: 0,
+                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                  extrudedHeightReference:
+                    Cesium.HeightReference.RELATIVE_TO_GROUND,
+                  extrudedHeight: visina,
+                  vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
+                }),
+                attributes: {
+                  color: Cesium.ColorGeometryInstanceAttribute.fromColor(
+                    Cesium.Color.DARKORANGE
+                  ),
+                },
+              });
+
+              Zgrade3D.add(
+                new Cesium.Primitive({
+                  geometryInstances: polygonInstance,
+                  appearance: new Cesium.PerInstanceColorAppearance({
+                    closed: true,
+                    translucent: false,
+                  }),
+                })
+              );
+  
+});
+        
             }
 
-            const color = new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5); // Both instances must have the same color.
-const polygonInstance = new Cesium.GeometryInstance({
-  geometry : new Cesium.PolygonGeometry({
 
-    polygonHierarchy : new Cesium.PolygonHierarchy(
-    Cesium.Cartesian3.fromDegreesArray([
-    
-    16.6875366, 43.443897, 16.6875566, 43.443877 ,  16.6875364, 43.4438663 ,  16.6876353, 43.4437676 ,  16.68766, 43.4437806 ,  16.6876761, 43.4437646 ,  16.6879207, 43.4438938 ,  16.6879048, 43.4439097 ,  16.6879223, 43.4439189 ,  16.6879046, 43.4439366 ,  16.6878931, 43.443948 ,  16.6879085, 43.4439562 ,  16.6878614, 43.4440032 ,  16.6878466, 43.4439954 ,  16.6878236, 43.4440184 ,  16.6878036, 43.4440078 ,  16.6877836, 43.4440276 ,  16.6875366, 43.443897
-
-
-
-
-    ])
-  )
-   
-
-
-    
-  }),
-  id : 'rectangle',
-  attributes : {
-    color : color
-  }
-});
-
-Zgrade3D.add(new Cesium.GroundPrimitive({
-  geometryInstances : polygonInstance
-}));
-         
           });
 
-          console.log("P:",scene.primitives)
+          console.log("P:", scene.primitives);
         }
       });
-
-      /** izdvojeno u zaseban projekt test.html
-
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunctionPrimitive,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-map.addLayer(vectorLayer[4]);
-
-
-var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
-
-
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
-
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-console.log(entity.get('geometry').flatCoordinates);
-
-                  prikljCollection3D.add({
-                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 500,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
- 
-  }
-  
-  
-
-  console.log(vectorSource[prikljCollection3D]);
-
-
-
-    ol.Observable.unByKey(listenerKey);
-   
-
-
-map.removeLayer(vectorLayer[4]);
-
-console.log(scene._primitives._primitives)
-
-  }
-});
-
-
-**/
 
       const tileset = scene.primitives.add(
         new Cesium.Cesium3DTileset({
@@ -803,18 +619,7 @@ console.log(scene._primitives._primitives)
         oldStyle = swap;
       };
 
-      window["toggleClampToGround"] = function () {
-        let altitudeMode;
-        if (!vectorLayer.get("altitudeMode")) {
-          altitudeMode = "clampToGround";
-        }
-        vectorLayer.set("altitudeMode", altitudeMode);
-        //vectorLayer2.set('altitudeMode', altitudeMode);
-        map.removeLayer(vectorLayer);
-        //map.removeLayer(vectorLayer2);
-        map.addLayer(vectorLayer);
-        //map.addLayer(vectorLayer2);
-      };
+    
 
       window["setTargetFrameRate"] = function () {
         let fps;
@@ -824,7 +629,7 @@ console.log(scene._primitives._primitives)
           ol3d.setTargetFrameRate(fps);
         }
       };
-/*
+      /*
       function toDegrees(cartesian3Pos) {
         let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
         let lng = (pos.longitude / Math.PI) * 180;
@@ -947,6 +752,8 @@ console.log(scene._primitives._primitives)
     scene.debugShowFramesPerSecond=true;
    const cfr=new Cesium.FrameRateMonitor.fromScene(scene);
    */
+
+
     </script>
 
     <!--kad zgotovim, počistiti stilove i scriptove...-->
