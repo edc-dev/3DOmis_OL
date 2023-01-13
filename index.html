@@ -520,7 +520,7 @@ query sa lociranjem-->
 
           const promised = Cesium.GeoJsonDataSource.load(
             Object.values(dataSources)[8],
-            { clampToGround: true }
+         //   { clampToGround: true }
           );
 
           promised.then(function (dataSource) {
@@ -544,14 +544,14 @@ query sa lociranjem-->
             //  console.log("e:", entity.polygon.hierarchy.valueOf().positions);
 
               var positions = entity.polygon.hierarchy.valueOf().positions;
-//z pozicija svakog poligona je 0...
+//z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu.
 var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, positions);
 Cesium.when(promise, function(updatedPositions) {
   var polygonInstance = new Cesium.GeometryInstance({
                 geometry: Cesium.PolygonGeometry.fromPositions({
                   positions: updatedPositions,
                   //height: 0,
-                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                //  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
                   extrudedHeightReference:
                     Cesium.HeightReference.RELATIVE_TO_GROUND,
                   extrudedHeight: visina,
