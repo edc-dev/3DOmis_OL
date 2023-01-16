@@ -508,13 +508,13 @@ query sa lociranjem-->
           modelMatrix: Cesium.Matrix4.IDENTITY,
         })
       );
-      //map.removeLayer(vectorLayer[4]);
+      map.removeLayer(vectorLayer[4]);
 
       var listenerKey = vectorSource[8].on("change", function (e) {
         if (vectorSource[8].getState() == "ready") {
           // console.log("P:",scene.primitives.length)
 
-          scene.primitives._primitives[0]._primitives[8].removeAll();
+          //scene.primitives._primitives[0]._primitives[8].removeAll();
 
           const DataSourcesC = new Cesium.DataSourceCollection();
 
@@ -529,7 +529,7 @@ query sa lociranjem-->
 
             for (let i = 0; i < entities.length; i++) {
               let entity = entities[i];
-               console.log(entity);
+               //console.log(entity);
 
               naziv = entity._properties._name.valueOf();
 
@@ -544,17 +544,20 @@ query sa lociranjem-->
             //  console.log("e:", entity.polygon.hierarchy.valueOf().positions);
 
               var positions = entity.polygon.hierarchy.valueOf().positions;
-//z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu. Makar crkvu sv. petra apostola sam digao na 25m i ništa..
-var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, positions);
+//z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu. Makar crkvu sv. petra apostola sam digao na 25m i ništa..je li problem što nema onog ion terena ??
+var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider,11, positions);
 Cesium.when(promise, function(updatedPositions) {
+  //console.log ("UP:",updatedPositions);
   var polygonInstance = new Cesium.GeometryInstance({
                 geometry: Cesium.PolygonGeometry.fromPositions({
-                  positions: updatedPositions,
-                  //height: 0,
-                //  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                  extrudedHeightReference:
-                    Cesium.HeightReference.RELATIVE_TO_GROUND,
+                  positions: positions,
+                  height: 0,
+                //  perPositionHeight: true,
+                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                  //heightReference: Cesium.HeightReference.NONE,
+                  extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
                   extrudedHeight: visina,
+                 
                   vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
                 }),
                 attributes: {
@@ -567,6 +570,7 @@ Cesium.when(promise, function(updatedPositions) {
               Zgrade3D.add(
                 new Cesium.Primitive({
                   geometryInstances: polygonInstance,
+                 // releaseGeometryInstances:false,
                   appearance: new Cesium.PerInstanceColorAppearance({
                     closed: true,
                     translucent: false,
@@ -581,7 +585,7 @@ Cesium.when(promise, function(updatedPositions) {
 
           });
 
-          console.log("P:", scene.primitives);
+          console.log("P:", scene.primitives._primitives[1]);
         }
       });
 
