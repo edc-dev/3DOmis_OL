@@ -289,7 +289,7 @@ query sa lociranjem-->
             fill: new ol.style.Fill({
               color: "black",
             }),
-            stroke: new ol.style.Stroke({ color: "red", width: 1 }),
+          //  stroke: new ol.style.Stroke({ color: "red", width: 1 }),
           }),
         });
       };
@@ -463,59 +463,59 @@ map.addLayer(vectorLayer[i]);// utječe li ovo na postojanost učitanih točaka 
 }
 */
 
+let cnt = 0;
 
-var listenerKey = vectorSource[4].on('change', function(e) {
+let listenerKey = vectorSource[4].on('change', function(e) {
+let vectorSourceX = [];
+let vectorLayerX = [];
+let featuresTemp=[];
+const vectorSourceTemp = new ol.source.Vector({});
+
   if (vectorSource[4].getState() == 'ready') {
 
-    //console.log ("gotovo:" , vectorSource[4].getFeatures().length);
-
-
     let features = vectorSource[4].getFeatures();
-    let featuresNew =[];
-//console.log (features.length);
+    map.removeLayer(vectorLayer[4]);
 
 
-let cnt = 0;
-var vectorSourceX = [];
-var vectorLayerX = [];
-vectorSourceTemp = new ol.source.Vector({});
 for (let i = 0; i < features.length; ++i) {
 
-    const feature = new ol.Feature({
-      geometry: new ol.geom.Point([
-      features[i].getGeometry()
-      ])
-    });
-    const style = [new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 2,
-        fill: new ol.style.Fill({color: 'red'})
-      })
-    })];
-    feature.setStyle(style);
-
-    feature.setId(e * Math.random());
-    //console.log(cnt,i)
-    featuresNew.push(feature);
-   // console.log ('cnt',featuresNew);
-}
-
-map.removeLayer(vectorLayer[4]);
-
-vectorSourceTemp.addFeatures(featuresNew)
-vectorLayerX.splice(cnt,0,vectorSourceTemp);
-//console.log ('r:',vectorSourceX[0]);
-vectorLayerX[0] = new ol.layer.Vector({
-  style: styleFunctionPrimitive,
-  source: vectorSource[4]
+  const featureT = new ol.Feature({
+  geometry: features[i].geometry,
+  name: 'M',
 });
 
+//featuresTemp.push(features[i])
+//vectorSourceTemp.addFeatures(featuresTemp);
+vectorSourceTemp.addFeature(featureT);
+//console.log(feature)
 
-vectorLayerX[0].set('altitudeMode', 'clampToGround');
+
+  
+
+  if (i>0 && i % 1000 === 0){ 
+
+    
+    vectorSourceX.push(vectorSourceTemp);
+  
+    vectorLayerX.push (new ol.layer.Vector({
+  style: styleFunctionPrimitive,
+  source: vectorSourceX[cnt]
+}));
+vectorLayerX[cnt].set('altitudeMode', 'clampToGround');
+
+map.addLayer(vectorLayerX[cnt]);
+
+++cnt;
+featuresTemp=[];
+vectorSourceTemp.clear();
+  }
+
+}
+vectorSource[4].clear();
 
 
-map.addLayer(vectorLayerX[0]);
-//console.log("c:",vectorLayerX[0])
+
+
   }
 });
 

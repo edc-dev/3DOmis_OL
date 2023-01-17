@@ -490,7 +490,8 @@ query sa lociranjem-->
         },
         retryAttempts: 5,
       });
-
+     /* const cesiumTerrainProvider = Cesium.createWorldTerrain();
+      scene.terrainProvider = cesiumTerrainProvider */
       scene.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: edcTerrain,
       }); //url: Cesium.IonResource.fromAssetId(1103401)});
@@ -516,7 +517,7 @@ query sa lociranjem-->
 
           //scene.primitives._primitives[0]._primitives[8].removeAll();
 
-          const DataSourcesC = new Cesium.DataSourceCollection();
+         // const DataSourcesC = new Cesium.DataSourceCollection();
 
           const promised = Cesium.GeoJsonDataSource.load(
             Object.values(dataSources)[8],
@@ -524,7 +525,7 @@ query sa lociranjem-->
           );
 
           promised.then(function (dataSource) {
-            DataSourcesC.add(dataSource);
+         //   DataSourcesC.add(dataSource);
             let entities = dataSource.entities.values;
 
             for (let i = 0; i < entities.length; i++) {
@@ -551,13 +552,17 @@ Cesium.when(promise, function(updatedPositions) {
   var polygonInstance = new Cesium.GeometryInstance({
                 geometry: Cesium.PolygonGeometry.fromPositions({
                   positions: positions,
-                  height: 0,
+                  
+                  height: visina,
+      heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+      extrudedHeight: 0.0,
+      extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+
                 //  perPositionHeight: true,
-                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+
                   //heightReference: Cesium.HeightReference.NONE,
-                  extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                  extrudedHeight: visina,
-                 
+     
+       
                   vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
                 }),
                 attributes: {
