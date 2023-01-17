@@ -434,7 +434,7 @@ query sa lociranjem-->
           vectorLayer[1],
           vectorLayer[2],
           vectorLayer[3],
-         // vectorLayer[4], da ne usporava, poslije vratiti, po mogućnosti kada uspije TEST razbijanja na više layera po 1000 ent
+          vectorLayer[4],
           vectorLayer[5],
           vectorLayer[6],
           vectorLayer[7],
@@ -502,81 +502,87 @@ query sa lociranjem-->
 
       ol3d.setEnabled(true);
 
-    let naziv;
+      let naziv = "TEST";
       let visina;
-
-      
+      const Zgrade3D = scene.primitives.add(
+        new Cesium.PrimitiveCollection({
+          modelMatrix: Cesium.Matrix4.IDENTITY,
+        })
+      );
+      map.removeLayer(vectorLayer[4]);
 
       var listenerKey = vectorSource[8].on("change", function (e) {
         if (vectorSource[8].getState() == "ready") {
+          // console.log("P:",scene.primitives.length)
 
-    map.removeLayer(vectorLayer[8]);
+          //scene.primitives._primitives[0]._primitives[8].removeAll();
 
+         // const DataSourcesC = new Cesium.DataSourceCollection();
 
           const promised = Cesium.GeoJsonDataSource.load(
             Object.values(dataSources)[8],
-            { clampToGround: true }
+         //   { clampToGround: true }
           );
 
-          promised.then(function (Zgrade3D) {
+          promised.then(function (dataSource) {
          //   DataSourcesC.add(dataSource);
-            let entities = Zgrade3D.entities.values;
+            let entities = dataSource.entities.values;
 
             for (let i = 0; i < entities.length; i++) {
               let entity = entities[i];
                //console.log(entity);
-    
-
-
 
               naziv = entity._properties._name.valueOf();
 
-              if (entity._properties._height.valueOf() == null||entity._properties._height.valueOf() <0) {
+              if (entity._properties._height.valueOf() == null) {
                 visina = 9;
               } else {
-                visina = entity._properties._height.valueOf();
+                visina = entity._properties._height.valueOf() * 3;
               }
-              let positions = entity.polygon.hierarchy.valueOf().positions;
-let center;
-         
 
-             
+              //console.log(entity._properties._height.valueOf(), visina);
+
+            //  console.log("e:", entity.polygon.hierarchy.valueOf().positions);
+
+              var positions = entity.polygon.hierarchy.valueOf().positions;
 //z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu. Makar crkvu sv. petra apostola sam digao na 25m i ništa..je li problem što nema onog ion terena ??
 var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider,11, positions);
 Cesium.when(promise, function(updatedPositions) {
+  //console.log ("UP:",updatedPositions);
+  var polygonInstance = new Cesium.GeometryInstance({
+                geometry: Cesium.PolygonGeometry.fromPositions({
+                  positions: positions,
+                  
+                  height: visina,
+      heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+      extrudedHeight: 0.0,
+      extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
 
-  if (!entity.position && entity.polygon) {
-                     center = Cesium.BoundingSphere.fromPoints(
-                      entity.polygon.hierarchy.valueOf().positions
-                    ).center;
+                //  perPositionHeight: true,
 
-                    Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(
-                      center,
-                      center
-                    );
+                  //heightReference: Cesium.HeightReference.NONE,
+     
+       
+                  vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
+                }),
+                attributes: {
+                  color: Cesium.ColorGeometryInstanceAttribute.fromColor(
+                    Cesium.Color.DARKORANGE
+                  ),
+                },
+              });
 
-                    entity.position = new Cesium.ConstantPositionProperty(
-                      center
-                    );
-                  }
-
-  ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
-    name : naziv,
-    polygon: {
-    hierarchy: positions,
-    height:entity.position.valueOf()._value.z,
-    material: Cesium.Color.DARKORANGE,
-    extrudedHeight: 9,// visina,
-   // perPositionHeight:true,
-    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-    extrudedHeightReference:Cesium.HeightReference.CLAMP_TO_GROUND,
-  },
-   
-})
-
-console.log(visina);
-
-
+              Zgrade3D.add(
+                new Cesium.Primitive({
+                  geometryInstances: polygonInstance,
+                 // releaseGeometryInstances:false,
+                  appearance: new Cesium.PerInstanceColorAppearance({
+                    closed: true,
+                    translucent: false,
+                  }),
+                })
+              );
+  
 });
         
             }
@@ -584,14 +590,10 @@ console.log(visina);
 
           });
 
-
+          console.log("P:", scene.primitives._primitives[1]);
         }
       });
 
-
-
-
-  
       const tileset = scene.primitives.add(
         new Cesium.Cesium3DTileset({
           url: edcVSMosor,
