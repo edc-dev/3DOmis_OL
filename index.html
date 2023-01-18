@@ -123,7 +123,7 @@ query sa lociranjem-->
 
         switch (btnCounter) {
           case 0:
-            document.getElementById("btnPogledR").remove();
+            document.getElementById("btnPogledR").remove(); 
             let btnPogledL = document.createElement("input");
             btnPogledL.type = "button";
             btnPogledL.id = "btnPogledL";
@@ -177,10 +177,7 @@ query sa lociranjem-->
         stroke: new ol.style.Stroke({ color: "red", width: 1 }),
       });
 
-      /*const pointSimbol = new Cesium.PointGraphics({
-  color:'white',
-  pixelSize:3
-})*/
+
 
       const styles = {
         Point: [
@@ -270,13 +267,12 @@ query sa lociranjem-->
         ],
       };
 
-      //kako napraviti listu stilova, programski prepoznati ili zadati klasu objekta u layeru i adekvatno stilizirati prema listi stilova
+  
 
       const styleFunction = function (feature, resolution) {
         const geo = feature.getGeometry();
 
-        // always assign a style to prevent feature skipping
-        return geo ? styles[geo.getType()] : ""; // : styles['Point'];
+        return geo ? styles[geo.getType()] : ""; 
       };
 
       const styleFunctionZgrade3D = function (feature, resolution) {
@@ -296,26 +292,14 @@ query sa lociranjem-->
         return new ol.style.Style({
           image: new ol.style.Circle({
             radius: 2,
-            fill: new ol.style.Fill({
-              color: "red",
-            }),
-            stroke: new ol.style.Stroke({ color: "red", width: 1 }),
+           // fill: new ol.style.Fill({
+            //  color: "red",
+         //   }),
+            stroke: new ol.style.Stroke({ color: "black", width: 1 }),
           }),
         });
       };
 
-      /*
-  style: new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'blue',
-      lineDash: [4],
-      width: 3
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 0, 255, 0.1)'
-    })
-  }),
-  */
 
       var vectorSource = [];
       var vectorLayer = [];
@@ -365,7 +349,7 @@ query sa lociranjem-->
         url: Object.values(dataSources)[4],
       });
       vectorLayer[4] = new ol.layer.Vector({
-        style: styleFunction,
+        style: styleFunctionPrimitive,
         source: vectorSource[4],
       });
       vectorLayer[4].set("altitudeMode", "clampToGround");
@@ -434,7 +418,7 @@ query sa lociranjem-->
           vectorLayer[1],
           vectorLayer[2],
           vectorLayer[3],
-         // vectorLayer[4], da ne usporava, poslije vratiti, po mogućnosti kada uspije TEST razbijanja na više layera po 1000 ent
+          vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
           vectorLayer[5],
           vectorLayer[6],
           vectorLayer[7],
@@ -490,7 +474,9 @@ query sa lociranjem-->
         },
         retryAttempts: 5,
       });
-     /* const cesiumTerrainProvider = Cesium.createWorldTerrain();
+     
+     
+      /* const cesiumTerrainProvider = Cesium.createWorldTerrain();
       scene.terrainProvider = cesiumTerrainProvider */
       scene.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: edcTerrain,
@@ -498,7 +484,7 @@ query sa lociranjem-->
 
       scene.globe.depthTestAgainstTerrain = true;
 
-      scene.requestRenderMode = true; // default već postavljen u cesiumu ??
+      scene.requestRenderMode = true; 
 
       ol3d.setEnabled(true);
 
@@ -510,7 +496,7 @@ query sa lociranjem-->
       var listenerKey = vectorSource[8].on("change", function (e) {
         if (vectorSource[8].getState() == "ready") {
 
-    map.removeLayer(vectorLayer[8]);
+    // map.removeLayer(vectorLayer[8]);
 
 
           const promised = Cesium.GeoJsonDataSource.load(
@@ -569,12 +555,12 @@ Cesium.when(promise, function(updatedPositions) {
     extrudedHeight:  visina,
    // perPositionHeight:true,
     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-   // extrudedHeightReference:Cesium.HeightReference.RELATIVE_TO_GROUND,
+    //extrudedHeightReference:Cesium.HeightReference.NONE,
   },
    
 })
 
-console.log(visina);
+//console.log(visina);
 
 
 });
