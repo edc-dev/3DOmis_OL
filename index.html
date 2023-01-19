@@ -418,7 +418,7 @@ query sa lociranjem-->
           vectorLayer[1],
           vectorLayer[2],
           vectorLayer[3],
-          vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
+         // vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
           vectorLayer[5],
           vectorLayer[6],
           vectorLayer[7],
@@ -496,12 +496,12 @@ query sa lociranjem-->
       var listenerKey = vectorSource[8].on("change", function (e) {
         if (vectorSource[8].getState() == "ready") {
 
-    // map.removeLayer(vectorLayer[8]);
+     map.removeLayer(vectorLayer[8]);// bilo bi dobro extrudirati postojeće elemente koji su ušli kroz olcs
 
 
           const promised = Cesium.GeoJsonDataSource.load(
             Object.values(dataSources)[8],
-            { clampToGround: true }
+          //  { clampToGround: true } dešava se na razini entiteta
           );
 
           promised.then(function (Zgrade3D) {
@@ -526,14 +526,14 @@ query sa lociranjem-->
 let center;
          
 
-             
+         
 //z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu. Makar crkvu sv. petra apostola sam digao na 25m i ništa..je li problem što nema onog ion terena ??
-var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider,11, positions);
+var promise = Cesium.sampleTerrainMostDetailed(scene.terrainProvider, positions);
 Cesium.when(promise, function(updatedPositions) {
 
-  if (!entity.position && entity.polygon) {
+ /* if (!entity.position && entity.polygon) {
                      center = Cesium.BoundingSphere.fromPoints(
-                      entity.polygon.hierarchy.valueOf().positions
+                      positions
                     ).center;
 
                     Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(
@@ -544,18 +544,18 @@ Cesium.when(promise, function(updatedPositions) {
                     entity.position = new Cesium.ConstantPositionProperty(
                       center
                     );
-                  }
+                  }*/ //sve skup ne treba jer ipak klampamo na graund
 
   ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
     name : naziv,
     polygon: {
     hierarchy: positions,
-    height:entity.position.valueOf()._value.z,
     material: Cesium.Color.DARKORANGE,
     extrudedHeight:  visina,
-   // perPositionHeight:true,
     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-    //extrudedHeightReference:Cesium.HeightReference.NONE,
+    height:0,
+    //perPositionHeight:true,
+    //extrudedHeightReference:Cesium.HeightReference.REFERENCE_TO_GROUND,
   },
    
 })
@@ -636,7 +636,12 @@ Cesium.when(promise, function(updatedPositions) {
 */
       function convertScreenPixelToLocation(canvasPosition) {
         //canvas position dobiti eventom clicka miša ili drukčije
-        const terrPro = scene.terrainProvider;
+
+
+  
+
+
+
         const ellipsoid = scene.globe.ellipsoid;
         const mousePosition = scene.camera.pickEllipsoid(
           canvasPosition,
