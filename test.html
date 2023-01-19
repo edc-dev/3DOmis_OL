@@ -15,11 +15,13 @@ query sa lociranjem-->
 
     <title>IMAGIS Vodovod Omiš 3D</title>
 
-
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.2.2/dist/ol.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css"
+    />
 
-<!--
+    <!--
     <script
       src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"
       crossorigin="anonymous"
@@ -168,7 +170,7 @@ query sa lociranjem-->
             document.getElementById("viewStyle").style.display = "inline-block";
         }
       }
-      
+
       // meh... LAZY_CESIUM = true;
       const OLCS_ION_TOKEN =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZWVhYmU0Mi1jNTZkLTQ3OGItYmUxYS00YTMyMDQyZTMwNDkiLCJpZCI6NjQ1LCJpYXQiOjE2MDYxMjE2OTF9.zQibbf5P0-moQ8KiV_K7KMtyLHbR-VlPghj8lyqWduU";
@@ -289,7 +291,7 @@ query sa lociranjem-->
             fill: new ol.style.Fill({
               color: "black",
             }),
-          //  stroke: new ol.style.Stroke({ color: "red", width: 1 }),
+            //  stroke: new ol.style.Stroke({ color: "red", width: 1 }),
           }),
         });
       };
@@ -394,11 +396,11 @@ query sa lociranjem-->
           vectorLayer[7],
         ],
         target: "viewLeft",
-     //   controls: ol.control.defaults({
-      //    attributionOptions: {
-    //        collapsible: false,
-      //    },
-    //    }),
+        //   controls: ol.control.defaults({
+        //    attributionOptions: {
+        //        collapsible: false,
+        //    },
+        //    }),
         view: new ol.View({
           center: [0, 0],
           zoom: 2,
@@ -427,106 +429,59 @@ query sa lociranjem-->
 
       scene.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: edcTerrain,
-      }); 
-     // console.log(scene._primitives._primitives);
+      });
+      // console.log(scene._primitives._primitives);
 
-const tileset = scene.primitives.add(
-  new Cesium.Cesium3DTileset({
-    url: edcVSMosor,
-  })
-);
+      const tileset = scene.primitives.add(
+        new Cesium.Cesium3DTileset({
+          url: edcVSMosor,
+        })
+      );
 
       scene.globe.depthTestAgainstTerrain = true;
 
-   //   scene.requestRenderMode = true; // default već postavljen u cesiumu ??
+      //   scene.requestRenderMode = true; // default već postavljen u cesiumu ??
 
       ol3d.setEnabled(true);
-      //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
-
-      //radi RADI RADIIIIII !!!
-
- /*     
-var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-console.log('loaded');
 
 
+      var listenerKey = vectorSource[4].on("change", function (e) {
+        if (vectorSource[4].getState() == "ready") {
+          map.removeLayer(vectorLayer[4]);
+          const promised = Cesium.GeoJsonDataSource.load(
+            Object.values(dataSources)[4]
+          );
 
-  }
-});
-*/
+          promised.then(function (PMO) {
+            let entities = PMO.entities.values;
 
-/*
-for (let i=0; i<8; i++){
-map.addLayer(vectorLayer[i]);// utječe li ovo na postojanost učitanih točaka priključaka ???? 
-}
-*/
+            for (let i = 0; i < entities.length; i++) {
+              let entity = entities[i];
 
-let cnt = 0;
+              device_id = entity.properties.device_id.valueOf();
 
-let listenerKey = vectorSource[4].on('change', function(e) {
-let vectorSourceX = [];
-let vectorLayerX = [];
-let featuresTemp=[];
-const vectorSourceTemp = new ol.source.Vector({});
+              let position = entity.position.valueOf();
 
-  if (vectorSource[4].getState() == 'ready') {
+              var promise = Cesium.sampleTerrainMostDetailed(
+                scene.terrainProvider,
+                position
+              );
+              Cesium.when(promise, function (updatedPosition) {
+                ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
+                  position: position,
 
-    let features = vectorSource[4].getFeatures();
-    map.removeLayer(vectorLayer[4]);
-
-
-for (let i = 0; i < features.length; ++i) {
-
-  const featureT = new ol.Feature({
-  geometry: features[i].geometry,
-  name: 'M',
-});
-
-//featuresTemp.push(features[i])
-//vectorSourceTemp.addFeatures(featuresTemp);
-vectorSourceTemp.addFeature(featureT);
-//console.log(feature)
-
-
-  
-
-  if (i>0 && i % 1000 === 0){ 
-
-    
-    vectorSourceX.push(vectorSourceTemp);
-  
-    vectorLayerX.push (new ol.layer.Vector({
-  style: styleFunctionPrimitive,
-  source: vectorSourceX[cnt]
-}));
-vectorLayerX[cnt].set('altitudeMode', 'clampToGround');
-
-map.addLayer(vectorLayerX[cnt]);
-
-++cnt;
-featuresTemp=[];
-vectorSourceTemp.clear();
-  }
-
-}
-vectorSource[4].clear();
-
-
-
-
-  }
-});
-
-
-
-
-
-
-
-
-
+                  point: {
+                    pixelSize: 5,
+                    color: Cesium.Color.BLACK,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    // height:0,
+                  },
+                });
+              });
+            }
+          });
+        }
+      });
 
       function toDegrees(cartesian3Pos) {
         let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
