@@ -495,9 +495,45 @@ query sa lociranjem-->
 
 
       const promisedPMO = Cesium.GeoJsonDataSource.load(
-          Object.values(dataSources)[4]
+          Object.values(dataSources)[4],
+
         );
-      promisedPMO.then(function (PMO) {
+
+
+
+        promisedPMO.then(function (PMO) {
+                    let entities = PMO.entities.values;
+                    
+    let pmoPrim = scene.primitives.add(new Cesium.PointPrimitiveCollection());
+
+     for (let i = 0; i < entities.length; i++) {
+            let entity = entities[i];
+            device_id = entity.properties.device_id.valueOf();
+let position = entity.position._value;
+console.log(scene.primitives,entity,device_id,position);
+
+
+
+
+        var promise = Cesium.sampleTerrainMostDetailed(
+                scene.terrainProvider,
+                position
+              );
+              Cesium.when(promise, function (updatedPosition) { ///visine tereeeeennnnaaaaaaaaa 
+                pmoPrim.add({
+            position : position,
+            disableDepthTestDistance: 1000,
+            pixelSize: 5,
+            color : Cesium.Color.BLACK,
+        });
+              });
+    
+
+     }
+     
+    });
+
+  /*      promisedPMO.then(function (PMO) {
           let entities = PMO.entities.values;
 
           for (let i = 0; i < entities.length; i++) {
@@ -517,7 +553,7 @@ query sa lociranjem-->
               },
             });
           }
-        });
+        });*/
 
 
 
@@ -533,7 +569,6 @@ query sa lociranjem-->
       var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 
       handler.setInputAction(function (event) {
-        sr();
         scene.terrainProvider.readyPromise.then(function () {
           var ray = scene.camera.getPickRay(event.endPosition);
           var mousePosition = scene.globe.pick(ray, scene);
@@ -557,7 +592,7 @@ query sa lociranjem-->
 
       scene.canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
-        scene.requestRender();
+        sr();
 
         if (scene.camera.position.z < 4364500 && scene.camera.position.z > 0) {
           alert(lhtext);
