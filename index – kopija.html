@@ -79,28 +79,6 @@ query sa lociranjem-->
           onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()"
         />
       </div>
-      <div>
-        <input
-          type="button"
-          value="Add/remove one vector layer"
-          onclick="javascript:addOrRemoveOneVectorLayer()"
-        />
-      </div>
-      <div>
-        <input
-          type="button"
-          value="Toggle clampToGround mode"
-          onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()"
-        />
-      </div>
-      <div>
-        <input id="framerate" type="number" min="0" step="10" value="10" />
-        <input
-          type="button"
-          value="Set the target rendering frame rate"
-          onclick="javascript:setTargetFrameRate()"
-        />
-      </div>
     </div>
 
     <div class="toolbar-right" id="toolbar-right"></div>
@@ -176,11 +154,6 @@ query sa lociranjem-->
         }),
         stroke: new ol.style.Stroke({ color: "red", width: 1 }),
       });
-
-      /*const pointSimbol = new Cesium.PointGraphics({
-  color:'white',
-  pixelSize:3
-})*/
 
       const styles = {
         Point: [
@@ -270,13 +243,10 @@ query sa lociranjem-->
         ],
       };
 
-      //kako napraviti listu stilova, programski prepoznati ili zadati klasu objekta u layeru i adekvatno stilizirati prema listi stilova
-
       const styleFunction = function (feature, resolution) {
         const geo = feature.getGeometry();
 
-        // always assign a style to prevent feature skipping
-        return geo ? styles[geo.getType()] : ""; // : styles['Point'];
+        return geo ? styles[geo.getType()] : "";
       };
 
       const styleFunctionZgrade3D = function (feature, resolution) {
@@ -296,26 +266,13 @@ query sa lociranjem-->
         return new ol.style.Style({
           image: new ol.style.Circle({
             radius: 2,
-            fill: new ol.style.Fill({
-              color: "red",
-            }),
-            stroke: new ol.style.Stroke({ color: "red", width: 1 }),
+            // fill: new ol.style.Fill({
+            //  color: "red",
+            //   }),
+            stroke: new ol.style.Stroke({ color: "black", width: 1 }),
           }),
         });
       };
-
-      /*
-  style: new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'blue',
-      lineDash: [4],
-      width: 3
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 0, 255, 0.1)'
-    })
-  }),
-  */
 
       var vectorSource = [];
       var vectorLayer = [];
@@ -360,15 +317,15 @@ query sa lociranjem-->
       });
       vectorLayer[3].set("altitudeMode", "clampToGround");
 
-      vectorSource[4] = new ol.source.Vector({
+      /*  vectorSource[4] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         url: Object.values(dataSources)[4],
       });
       vectorLayer[4] = new ol.layer.Vector({
-        style: styleFunction,
+        style: styleFunctionPrimitive,
         source: vectorSource[4],
       });
-      vectorLayer[4].set("altitudeMode", "clampToGround");
+      vectorLayer[4].set("altitudeMode", "clampToGround");*/
 
       vectorSource[5] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
@@ -400,7 +357,7 @@ query sa lociranjem-->
       });
       vectorLayer[7].set("altitudeMode", "clampToGround");
 
-      vectorSource[8] = new ol.source.Vector({
+      /*  vectorSource[8] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         url: Object.values(dataSources)[8],
       });
@@ -408,7 +365,7 @@ query sa lociranjem-->
         style: styleFunctionZgrade3D,
         source: vectorSource[8],
       });
-      vectorLayer[8].set("altitudeMode", "clampToGround");
+      vectorLayer[8].set("altitudeMode", "clampToGround");*/
 
       //
 
@@ -434,11 +391,11 @@ query sa lociranjem-->
           vectorLayer[1],
           vectorLayer[2],
           vectorLayer[3],
-          vectorLayer[4],
+          //  vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
           vectorLayer[5],
           vectorLayer[6],
           vectorLayer[7],
-          vectorLayer[8],
+          //   vectorLayer[8],
         ],
         target: "viewLeft",
         controls: ol.control.defaults({
@@ -457,23 +414,14 @@ query sa lociranjem-->
 
       const scene = ol3d.getCesiumScene();
 
-      dragAndDropInteraction.on("addfeatures", (event) => {
-        const vectorSource = new ol.source.Vector({
-          features: event.features,
-          projection: event.projection,
-        });
-        map.getLayers().push(
-          new ol.layer.Vector({
-            source: vectorSource,
-            style: styleFunction,
-          })
-        );
-        const view = map.getView();
-        view.fitExtent(
-          vectorSource.getExtent(),
-          /** @type {ol.Size} */ (map.getSize())
-        );
-      });
+      scene.globe.tileCacheSize = 5000;
+      //scene.globe.maximumScreenSpaceError = 10; bzvz
+
+      scene.globe.depthTestAgainstTerrain = true;
+
+      scene.requestRenderMode = true;
+
+      ol3d.setEnabled(true);
 
       const edcTerrain = new Cesium.Resource({
         url: "data/teren3dtest/",
@@ -491,283 +439,88 @@ query sa lociranjem-->
         retryAttempts: 5,
       });
 
+      /* const cesiumTerrainProvider = Cesium.createWorldTerrain();
+      scene.terrainProvider = cesiumTerrainProvider */
       scene.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: edcTerrain,
       }); //url: Cesium.IonResource.fromAssetId(1103401)});
 
-      scene.globe.depthTestAgainstTerrain = true;
-
-      scene.requestRenderMode = true; // default već postavljen u cesiumu ??
-
-      ol3d.setEnabled(true);
-      //ol3d.baseLayerPicker=true; jel ovo treba? kak dobit koordinate?
-
-      //radi RADI RADIIIIII !!!
-
-      /*
-
-ovo je starija verzija koja čeka source 4 da se loada
-
-
-      var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
-
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
-
-
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
-
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-console.log(entity.get('geometry').flatCoordinates);
-
-                  prikljCollection3D.add({
-                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 500,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
- 
-  }
-  
-  
-
-  console.log(vectorSource[prikljCollection3D]);
-
-
-
-    ol.Observable.unByKey(listenerKey);
-   
-
-
-map.removeLayer(vectorLayer[4]);
-
-console.log(scene._primitives._primitives)
-
-  }
-});
-
-
-
-ovo u bloku nije sinkronizirano sa ol map 2D tak da se fino mogu j..... ali radi dobro jer je natur cesium, samo u 3d
-
-
-const prikljCollection3D = scene.primitives.add(
-        new Cesium.PointPrimitiveCollection({
-          modelMatrix: Cesium.Matrix4.IDENTITY,
-        })
-      );
-      const prikLabCollection = new Cesium.LabelCollection();
-const DataSourcesC =  new Cesium.DataSourceCollection();
-
-
-    const  promised = Cesium.GeoJsonDataSource.load(
-            Object.values(dataSources)[4],
-            { clampToGround: true }
-          );
-          let prikljucakID;
-
-  
-          promised.then(function (dataSource) {
-
-                DataSourcesC.add(dataSource);
-                let entities = dataSource.entities.values;
-
-//console.log(DataSourcesC);
-//console.log(entities.length);
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-                 
-
-
-                  if (typeof entity.properties.device_id == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.properties.device_id.getValue();
-                   
-                  }
-            //     console.log(prikljucakID);
-            //     console.log("P:", entity._position._value);
-
-                  prikljCollection3D.add({
-                    position: entity._position._value,
-                    color: Cesium.Color.GREEN,
-                    pixelSize: 5,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 500.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
-                  
-                  
-
-
-                }
-              });
-  
-  
-
-  console.log("R",prikljCollection3D);
-
-*/
-      let naziv='TEST';
+      let naziv;
       let visina;
-      const Zgrade3D = scene.primitives.add(
-            new Cesium.PrimitiveCollection({
-              modelMatrix: Cesium.Matrix4.IDENTITY,
-            })
-          );
-      //map.removeLayer(vectorLayer[4]);
 
-      var listenerKey = vectorSource[8].on("change", function (e) {
-        if (vectorSource[8].getState() == "ready") {
-          // console.log("P:",scene.primitives.length)
+      scene.terrainProvider.readyPromise.then(function () {
+        console.log("Teren je učitan!");
 
-          scene.primitives._primitives[0]._primitives[8].removeAll();
+//potrpati loader za zgrade i pmo ovdje ukoliko želimo manju brzinu ali nalijeganje "skori" iz prve...
 
-
-          const DataSourcesC = new Cesium.DataSourceCollection();
-
-          const promised = Cesium.GeoJsonDataSource.load(
-            Object.values(dataSources)[8],
-            { clampToGround: true }
-          );
-
-          promised.then(function (dataSource) {
-            DataSourcesC.add(dataSource);
-            let entities = dataSource.entities.values;
-
-            for (let i = 0; i < entities.length; i++) {
-              let entity = entities[i];
-             // console.log(entity);
-
-              naziv = entity._properties._name.valueOf();
-
-              if (entity._properties._height.valueOf() == null) {
-                visina = 9;
-              } else {
-                visina = entity._properties._height.valueOf() * 3;
-              }
-
-              //console.log(entity._properties._height.valueOf(), visina);
-            }
-
-            const color = new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5); // Both instances must have the same color.
-const polygonInstance = new Cesium.GeometryInstance({
-  geometry : new Cesium.PolygonGeometry({
-
-    polygonHierarchy : new Cesium.PolygonHierarchy(
-    Cesium.Cartesian3.fromDegreesArray([
-    
-    16.6875366, 43.443897, 16.6875566, 43.443877 ,  16.6875364, 43.4438663 ,  16.6876353, 43.4437676 ,  16.68766, 43.4437806 ,  16.6876761, 43.4437646 ,  16.6879207, 43.4438938 ,  16.6879048, 43.4439097 ,  16.6879223, 43.4439189 ,  16.6879046, 43.4439366 ,  16.6878931, 43.443948 ,  16.6879085, 43.4439562 ,  16.6878614, 43.4440032 ,  16.6878466, 43.4439954 ,  16.6878236, 43.4440184 ,  16.6878036, 43.4440078 ,  16.6877836, 43.4440276 ,  16.6875366, 43.443897
-
-
-
-
-    ])
-  )
-   
-
-
-    
-  }),
-  id : 'rectangle',
-  attributes : {
-    color : color
-  }
-});
-
-Zgrade3D.add(new Cesium.GroundPrimitive({
-  geometryInstances : polygonInstance
-}));
-         
-          });
-
-          console.log("P:",scene.primitives)
-        }
       });
 
-      /** izdvojeno u zaseban projekt test.html
-
-vectorLayer[4] = new ol.layer.Vector({
-  style: styleFunctionPrimitive,
-  source: vectorSource[4],
-});
-vectorLayer[4].set('altitudeMode', 'clampToGround');
-
-map.addLayer(vectorLayer[4]);
 
 
-var listenerKey = vectorSource[4].on('change', function(e) {
-  if (vectorSource[4].getState() == 'ready') {
+      const promisedZg3D = Cesium.GeoJsonDataSource.load(
+          Object.values(dataSources)[8]
+        );
 
-    console.log ("gotovo:" , vectorSource[4].getFeatures().length);
+        promisedZg3D.then(function (Zgrade3D) {
+          console.log("Zgrade su učitane!");
+          let entities = Zgrade3D.entities.values;
 
+          for (let i = 0; i < entities.length; i++) {
+            let entity = entities[i];
 
-    let entities = vectorSource[4].getFeatures();
-                const prikLabCollection = new Cesium.LabelCollection();
-                let prikljucakID;
+            naziv = entity._properties._name.valueOf();
 
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
+            if (
+              entity._properties._height.valueOf() == null ||
+              entity._properties._height.valueOf() < 0
+            ) {
+              visina = 9;
+            } else {
+              visina = entity._properties._height.valueOf();
+            }
+            let positions = entity.polygon.hierarchy.valueOf().positions;
 
-                  if (typeof entity.get('device_id') == "undefined") {
-                    prikljucakID = -99;
-                  } else {
-                    prikljucakID = entity.get('device_id');
-                  }
-console.log(entity.get('geometry').flatCoordinates);
-
-                  prikljCollection3D.add({
-                    position: new Cesium.Cartesian3(parseFloat(entity.get('geometry').flatCoordinates[0]),parseFloat(entity.get('geometry').flatCoordinates[1]),0),
-                    color: Cesium.Color.BLACK,
-                    pixelSize: 500,
-                    disableDepthTestDistance: 1000,
-                    billboard: (entity.billboard = undefined),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    distanceDisplayCondition:
-                      new Cesium.DistanceDisplayCondition(0.0, 50000.0),
-                    allowPicking: true,
-                    id: prikljucakID,
-                  });
- 
-  }
-  
-  
-
-  console.log(vectorSource[prikljCollection3D]);
+            ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
+              name: naziv,
+              polygon: {
+                hierarchy: positions,
+                material: Cesium.Color.DARKORANGE,
+                extrudedHeight: visina,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                height: 0,
+              },
+            });
+          }
+               });
 
 
+      const promisedPMO = Cesium.GeoJsonDataSource.load(
+          Object.values(dataSources)[4]
+        );
+      promisedPMO.then(function (PMO) {
+          let entities = PMO.entities.values;
 
-    ol.Observable.unByKey(listenerKey);
-   
+          for (let i = 0; i < entities.length; i++) {
+            let entity = entities[i];
+
+            device_id = entity.properties.device_id.valueOf();
+
+            let position = entity.position.valueOf();
+
+            ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
+              position: position,
+
+              point: {
+                pixelSize: 5,
+                color: Cesium.Color.BLACK,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              },
+            });
+          }
+        });
 
 
-map.removeLayer(vectorLayer[4]);
 
-console.log(scene._primitives._primitives)
-
-  }
-});
-
-
-**/
 
       const tileset = scene.primitives.add(
         new Cesium.Cesium3DTileset({
@@ -775,89 +528,12 @@ console.log(scene._primitives._primitives)
         })
       );
 
-      // Adding a feature after the layer has been synchronized.
-
-      let hasTheVectorLayer = true;
-      window["addOrRemoveOneVectorLayer"] = function () {
-        if (hasTheVectorLayer) {
-          map.getLayers().remove(vectorLayer);
-        } else {
-          map.getLayers().insertAt(1, vectorLayer);
-        }
-        hasTheVectorLayer = !hasTheVectorLayer;
-      };
-
-      let oldStyle = new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: "blue",
-          width: 2,
-        }),
-        fill: new ol.style.Fill({
-          color: "green",
-        }),
-      });
-
-      window["toggleStyle"] = function () {
-        const swap = theCircle.getStyle();
-        theCircle.setStyle(oldStyle);
-        oldStyle = swap;
-      };
-
-      window["toggleClampToGround"] = function () {
-        let altitudeMode;
-        if (!vectorLayer.get("altitudeMode")) {
-          altitudeMode = "clampToGround";
-        }
-        vectorLayer.set("altitudeMode", altitudeMode);
-        //vectorLayer2.set('altitudeMode', altitudeMode);
-        map.removeLayer(vectorLayer);
-        //map.removeLayer(vectorLayer2);
-        map.addLayer(vectorLayer);
-        //map.addLayer(vectorLayer2);
-      };
-
-      window["setTargetFrameRate"] = function () {
-        let fps;
-        const fpsEl = document.querySelector("#framerate");
-        if (fpsEl) {
-          fps = Number(fpsEl.value);
-          ol3d.setTargetFrameRate(fps);
-        }
-      };
-/*
-      function toDegrees(cartesian3Pos) {
-        let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
-        let lng = (pos.longitude / Math.PI) * 180;
-        let ltt = (pos.latitude / Math.PI) * 180;
-        let height = pos.height;
-        let lon = lng.toFixed(6);
-        let lat = ltt.toFixed(6);
-        let elev = height.toFixed(6);
-        alert(lat + "\n" + lon + "\n" + elev);
-      }
-*/
-      function convertScreenPixelToLocation(canvasPosition) {
-        //canvas position dobiti eventom clicka miša ili drukčije
-        const terrPro = scene.terrainProvider;
-        const ellipsoid = scene.globe.ellipsoid;
-        const mousePosition = scene.camera.pickEllipsoid(
-          canvasPosition,
-          ellipsoid
-        );
-        if (mousePosition) {
-          const cartographic = ellipsoid.cartesianToCartographic(mousePosition);
-
-          return cartographic;
-        } else {
-          return null;
-        }
-      }
-
       var lhtext;
 
       var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 
       handler.setInputAction(function (event) {
+        sr();
         scene.terrainProvider.readyPromise.then(function () {
           var ray = scene.camera.getPickRay(event.endPosition);
           var mousePosition = scene.globe.pick(ray, scene);
@@ -875,11 +551,6 @@ console.log(scene._primitives._primitives)
             )}, Lon: ${longitudeString.slice(-9)}, Alt: ${heightString.slice(
               -7
             )},${mousePosition}`;
-
-            // console.log(lhtext);
-            //  console.log(mousePosition); //svijet
-            // console.log(cartographic); //radian
-            //   console.log(scene.camera.position.z); //visina
           }
         });
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -901,28 +572,6 @@ console.log(scene._primitives._primitives)
       window["ol3d"] = ol3d;
       window["scene"] = scene;
 
-      /*
-
-        var extent = Cesium.Rectangle.fromDegrees(
-        16.6796,
-        43.436044,
-        16.694768,
-        43.453013
-      );
-
-      Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
-
-      view3D.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(16.6821, 43.4303, 800),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-15.0),
-        },
-      });
-
-*/
-      // početni pogled, objekt 'kamera' koji pripada 'sceni' je u pitanju, a pošto radimo na razini scene koja je sinkronizirana između OL i Cesium, pogled radi na oba sustava
-
       function pocetniPogled(ppX, ppY, ppZ) {
         scene.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(ppX, ppY, ppZ),
@@ -937,18 +586,8 @@ console.log(scene._primitives._primitives)
 
       function sr() {
         scene.requestRender();
+        console.log('Render!');
       }
-
-      /* kontrola renderinga
-    scene.requestRenderMode=true; (to je postavka da se scena renderira samo na zahtjev, već je postavljeno u kodu a i priča se da je default za scenu)
-    scene.requestRender(); (ovo je kad ideš renderirat scenu na zahtjev)
-    */
-      /*
-    scene.debugShowFramesPerSecond=true;
-   const cfr=new Cesium.FrameRateMonitor.fromScene(scene);
-   */
     </script>
-
-    <!--kad zgotovim, počistiti stilove i scriptove...-->
   </body>
 </html>
