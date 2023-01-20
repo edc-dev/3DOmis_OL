@@ -79,28 +79,6 @@ query sa lociranjem-->
           onclick="javascript:scene.globe.depthTestAgainstTerrain = !scene.globe.depthTestAgainstTerrain; ol3d.getAutoRenderLoop().restartRenderLoop()"
         />
       </div>
-      <div>
-        <input
-          type="button"
-          value="Add/remove one vector layer"
-          onclick="javascript:addOrRemoveOneVectorLayer()"
-        />
-      </div>
-      <div>
-        <input
-          type="button"
-          value="Toggle clampToGround mode"
-          onclick="javascript:toggleClampToGround(); ol3d.getAutoRenderLoop().restartRenderLoop()"
-        />
-      </div>
-      <div>
-        <input id="framerate" type="number" min="0" step="10" value="10" />
-        <input
-          type="button"
-          value="Set the target rendering frame rate"
-          onclick="javascript:setTargetFrameRate()"
-        />
-      </div>
     </div>
 
     <div class="toolbar-right" id="toolbar-right"></div>
@@ -339,7 +317,7 @@ query sa lociranjem-->
       });
       vectorLayer[3].set("altitudeMode", "clampToGround");
 
-      vectorSource[4] = new ol.source.Vector({
+      /*  vectorSource[4] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         url: Object.values(dataSources)[4],
       });
@@ -347,7 +325,7 @@ query sa lociranjem-->
         style: styleFunctionPrimitive,
         source: vectorSource[4],
       });
-      vectorLayer[4].set("altitudeMode", "clampToGround");
+      vectorLayer[4].set("altitudeMode", "clampToGround");*/
 
       vectorSource[5] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
@@ -379,7 +357,7 @@ query sa lociranjem-->
       });
       vectorLayer[7].set("altitudeMode", "clampToGround");
 
-      vectorSource[8] = new ol.source.Vector({
+      /*  vectorSource[8] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         url: Object.values(dataSources)[8],
       });
@@ -387,7 +365,7 @@ query sa lociranjem-->
         style: styleFunctionZgrade3D,
         source: vectorSource[8],
       });
-      vectorLayer[8].set("altitudeMode", "clampToGround");
+      vectorLayer[8].set("altitudeMode", "clampToGround");*/
 
       //
 
@@ -413,11 +391,11 @@ query sa lociranjem-->
           vectorLayer[1],
           vectorLayer[2],
           vectorLayer[3],
-          vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
+          //  vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
           vectorLayer[5],
           vectorLayer[6],
           vectorLayer[7],
-          vectorLayer[8],
+          //   vectorLayer[8],
         ],
         target: "viewLeft",
         controls: ol.control.defaults({
@@ -436,23 +414,14 @@ query sa lociranjem-->
 
       const scene = ol3d.getCesiumScene();
 
-      dragAndDropInteraction.on("addfeatures", (event) => {
-        const vectorSource = new ol.source.Vector({
-          features: event.features,
-          projection: event.projection,
-        });
-        map.getLayers().push(
-          new ol.layer.Vector({
-            source: vectorSource,
-            style: styleFunction,
-          })
-        );
-        const view = map.getView();
-        view.fitExtent(
-          vectorSource.getExtent(),
-          /** @type {ol.Size} */ (map.getSize())
-        );
-      });
+      scene.globe.tileCacheSize = 5000;
+      //scene.globe.maximumScreenSpaceError = 10; bzvz
+
+      scene.globe.depthTestAgainstTerrain = true;
+
+      scene.requestRenderMode = true;
+
+      ol3d.setEnabled(true);
 
       const edcTerrain = new Cesium.Resource({
         url: "data/teren3dtest/",
@@ -476,123 +445,79 @@ query sa lociranjem-->
         url: edcTerrain,
       }); //url: Cesium.IonResource.fromAssetId(1103401)});
 
-      scene.globe.depthTestAgainstTerrain = true;
-
-      scene.requestRenderMode = true;
-
-      ol3d.setEnabled(true);
-
       let naziv;
       let visina;
 
-      var listenerKey = vectorSource[8].on("change", function (e) {
-        if (vectorSource[8].getState() == "ready") {
-          map.removeLayer(vectorLayer[8]); // bilo bi dobro extrudirati postojeće elemente koji su ušli kroz olcs
+      scene.terrainProvider.readyPromise.then(function () {
+        console.log("Teren je učitan!");
 
-          const promised = Cesium.GeoJsonDataSource.load(
-            Object.values(dataSources)[8]
-            //  { clampToGround: true } dešava se na razini entiteta
-          );
+//potrpati loader za zgrade i pmo ovdje ukoliko želimo manju brzinu ali nalijeganje "skori" iz prve...
 
-          promised.then(function (Zgrade3D) {
-            //   DataSourcesC.add(dataSource);
-            let entities = Zgrade3D.entities.values;
-
-            for (let i = 0; i < entities.length; i++) {
-              let entity = entities[i];
-              //console.log(entity);
-
-              naziv = entity._properties._name.valueOf();
-
-              if (
-                entity._properties._height.valueOf() == null ||
-                entity._properties._height.valueOf() < 0
-              ) {
-                visina = 9;
-              } else {
-                visina = entity._properties._height.valueOf();
-              }
-              let positions = entity.polygon.hierarchy.valueOf().positions;
-              let center;
-
-              //z pozicija svakog poligona je 0... znači bez ičega ili clamp to ground isto je 0. treba semplirati teren i napucati tu visinu. Makar crkvu sv. petra apostola sam digao na 25m i ništa..je li problem što nema onog ion terena ??
-              var promise = Cesium.sampleTerrainMostDetailed(
-                scene.terrainProvider,
-                positions
-              );
-              Cesium.when(promise, function (updatedPositions) {
-                /* if (!entity.position && entity.polygon) {
-                     center = Cesium.BoundingSphere.fromPoints(
-                      positions
-                    ).center;
-
-                    Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(
-                      center,
-                      center
-                    );
-
-                    entity.position = new Cesium.ConstantPositionProperty(
-                      center
-                    );
-                  }*/ //sve skup ne treba jer ipak klampamo na graund
-
-                ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
-                  name: naziv,
-                  polygon: {
-                    hierarchy: positions,
-                    material: Cesium.Color.DARKORANGE,
-                    extrudedHeight: visina,
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    height: 0,
-                    //perPositionHeight:true,
-                    //extrudedHeightReference:Cesium.HeightReference.REFERENCE_TO_GROUND,
-                  },
-                });
-
-                //console.log(visina);
-              });
-            }
-          });
-        }
       });
 
-      var listenerKey = vectorSource[4].on("change", function (e) {
-        if (vectorSource[4].getState() == "ready") {
-          map.removeLayer(vectorLayer[4]);
-          const promised = Cesium.GeoJsonDataSource.load(
-            Object.values(dataSources)[4]
-          );
 
-          promised.then(function (PMO) {
-            let entities = PMO.entities.values;
 
-            for (let i = 0; i < entities.length; i++) {
-              let entity = entities[i];
+      const promisedZg3D = Cesium.GeoJsonDataSource.load(
+          Object.values(dataSources)[8]
+        );
 
-              device_id = entity.properties.device_id.valueOf();
+        promisedZg3D.then(function (Zgrade3D) {
+          console.log("Zgrade su učitane!");
+          let entities = Zgrade3D.entities.values;
 
-              let position = entity.position.valueOf();
+          for (let i = 0; i < entities.length; i++) {
+            let entity = entities[i];
 
-              var promise = Cesium.sampleTerrainMostDetailed(
-                scene.terrainProvider,
-                position
-              );
-              Cesium.when(promise, function (updatedPosition) {
-                ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
-                  position: position,
+            naziv = entity._properties._name.valueOf();
 
-                  point: {
-                    pixelSize: 5,
-                    color: Cesium.Color.BLACK,
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                    // height:0,
-                  },
-                });
-              });
+            if (
+              entity._properties._height.valueOf() == null ||
+              entity._properties._height.valueOf() < 0
+            ) {
+              visina = 9;
+            } else {
+              visina = entity._properties._height.valueOf();
             }
-          });
-        }
-      });
+            let positions = entity.polygon.hierarchy.valueOf().positions;
+
+            ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
+              name: naziv,
+              polygon: {
+                hierarchy: positions,
+                material: Cesium.Color.DARKORANGE,
+                extrudedHeight: visina,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                height: 0,
+              },
+            });
+          }
+               });
+
+
+      const promisedPMO = Cesium.GeoJsonDataSource.load(
+          Object.values(dataSources)[4]
+        );
+      promisedPMO.then(function (PMO) {
+          let entities = PMO.entities.values;
+
+          for (let i = 0; i < entities.length; i++) {
+            let entity = entities[i];
+
+            device_id = entity.properties.device_id.valueOf();
+
+            let position = entity.position.valueOf();
+
+            ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
+              position: position,
+
+              point: {
+                pixelSize: 5,
+                color: Cesium.Color.BLACK,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              },
+            });
+          }
+        });
 
 
 
@@ -603,76 +528,12 @@ query sa lociranjem-->
         })
       );
 
-      // Adding a feature after the layer has been synchronized.
-
-      let hasTheVectorLayer = true;
-      window["addOrRemoveOneVectorLayer"] = function () {
-        if (hasTheVectorLayer) {
-          map.getLayers().remove(vectorLayer);
-        } else {
-          map.getLayers().insertAt(1, vectorLayer);
-        }
-        hasTheVectorLayer = !hasTheVectorLayer;
-      };
-
-      let oldStyle = new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: "blue",
-          width: 2,
-        }),
-        fill: new ol.style.Fill({
-          color: "green",
-        }),
-      });
-
-      window["toggleStyle"] = function () {
-        const swap = theCircle.getStyle();
-        theCircle.setStyle(oldStyle);
-        oldStyle = swap;
-      };
-
-      window["setTargetFrameRate"] = function () {
-        let fps;
-        const fpsEl = document.querySelector("#framerate");
-        if (fpsEl) {
-          fps = Number(fpsEl.value);
-          ol3d.setTargetFrameRate(fps);
-        }
-      };
-      /*
-      function toDegrees(cartesian3Pos) {
-        let pos = Cesium.Cartographic.fromCartesian(cartesian3Pos);
-        let lng = (pos.longitude / Math.PI) * 180;
-        let ltt = (pos.latitude / Math.PI) * 180;
-        let height = pos.height;
-        let lon = lng.toFixed(6);
-        let lat = ltt.toFixed(6);
-        let elev = height.toFixed(6);
-        alert(lat + "\n" + lon + "\n" + elev);
-      }
-*/
-      function convertScreenPixelToLocation(canvasPosition) {
-        //canvas position dobiti eventom clicka miša ili drukčije
-
-        const ellipsoid = scene.globe.ellipsoid;
-        const mousePosition = scene.camera.pickEllipsoid(
-          canvasPosition,
-          ellipsoid
-        );
-        if (mousePosition) {
-          const cartographic = ellipsoid.cartesianToCartographic(mousePosition);
-
-          return cartographic;
-        } else {
-          return null;
-        }
-      }
-
       var lhtext;
 
       var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 
       handler.setInputAction(function (event) {
+        sr();
         scene.terrainProvider.readyPromise.then(function () {
           var ray = scene.camera.getPickRay(event.endPosition);
           var mousePosition = scene.globe.pick(ray, scene);
@@ -690,11 +551,6 @@ query sa lociranjem-->
             )}, Lon: ${longitudeString.slice(-9)}, Alt: ${heightString.slice(
               -7
             )},${mousePosition}`;
-
-            // console.log(lhtext);
-            //  console.log(mousePosition); //svijet
-            // console.log(cartographic); //radian
-            //   console.log(scene.camera.position.z); //visina
           }
         });
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -716,28 +572,6 @@ query sa lociranjem-->
       window["ol3d"] = ol3d;
       window["scene"] = scene;
 
-      /*
-
-        var extent = Cesium.Rectangle.fromDegrees(
-        16.6796,
-        43.436044,
-        16.694768,
-        43.453013
-      );
-
-      Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
-
-      view3D.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(16.6821, 43.4303, 800),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-15.0),
-        },
-      });
-
-*/
-      // početni pogled, objekt 'kamera' koji pripada 'sceni' je u pitanju, a pošto radimo na razini scene koja je sinkronizirana između OL i Cesium, pogled radi na oba sustava
-
       function pocetniPogled(ppX, ppY, ppZ) {
         scene.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(ppX, ppY, ppZ),
@@ -752,18 +586,8 @@ query sa lociranjem-->
 
       function sr() {
         scene.requestRender();
+        console.log('Render!');
       }
-
-      /* kontrola renderinga
-    scene.requestRenderMode=true; (to je postavka da se scena renderira samo na zahtjev, već je postavljeno u kodu a i priča se da je default za scenu)
-    scene.requestRender(); (ovo je kad ideš renderirat scenu na zahtjev)
-    */
-      /*
-    scene.debugShowFramesPerSecond=true;
-   const cfr=new Cesium.FrameRateMonitor.fromScene(scene);
-   */
     </script>
-
-    <!--kad zgotovim, počistiti stilove i scriptove...-->
   </body>
 </html>
