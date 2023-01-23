@@ -321,10 +321,10 @@ query sa lociranjem-->
       });
       vectorLayer[4] = new ol.layer.Vector({
         style: styleFunctionPrimitive,
+        minZoom:18, // ne konvertira u 3D :-(, niti prenosi cesium DistanceDisplayCondition
         source: vectorSource[4],
       });
       vectorLayer[4].set("altitudeMode", "clampToGround");
-      vectorLayer[4].set("distanceDisplayCondition","new Cesium.DistanceDisplayCondition(0.0, 500.0)");
 
       vectorSource[5] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
