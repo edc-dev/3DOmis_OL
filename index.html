@@ -317,7 +317,7 @@ query sa lociranjem-->
       });
       vectorLayer[3].set("altitudeMode", "clampToGround");
 
-      /*  vectorSource[4] = new ol.source.Vector({
+        vectorSource[4] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         url: Object.values(dataSources)[4],
       });
@@ -325,7 +325,7 @@ query sa lociranjem-->
         style: styleFunctionPrimitive,
         source: vectorSource[4],
       });
-      vectorLayer[4].set("altitudeMode", "clampToGround");*/
+      vectorLayer[4].set("altitudeMode", "clampToGround");
 
       vectorSource[5] = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
@@ -391,7 +391,7 @@ query sa lociranjem-->
           vectorLayer[1],
           vectorLayer[2],
           vectorLayer[3],
-          //  vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
+          vectorLayer[4], // zbog brzine prilikom testiranja priključke treba isključiti
           vectorLayer[5],
           vectorLayer[6],
           vectorLayer[7],
@@ -496,14 +496,14 @@ query sa lociranjem-->
           }
                });
 
-
+/*
       const promisedPMO = Cesium.GeoJsonDataSource.load(
           Object.values(dataSources)[4],{
           clampToGround:true,
         }
         );
 
-/*
+
 
         promisedPMO.then(function (PMO) {
                     let entities = PMO.entities.values;
@@ -534,7 +534,9 @@ color : Cesium.Color.BLACK,
 }
      
     });
+
 */
+
 /*
         promisedPMO.then(function (PMO) {
           let entities = PMO.entities.values;
