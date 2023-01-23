@@ -442,8 +442,11 @@ query sa lociranjem-->
       /* const cesiumTerrainProvider = Cesium.createWorldTerrain();
       scene.terrainProvider = cesiumTerrainProvider */
       scene.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: edcTerrain,
-      }); //url: Cesium.IonResource.fromAssetId(1103401)});
+       // url: edcTerrain,
+       //url: Cesium.IonResource.fromAssetId(1103401), 
+       url: Cesium.IonResource.fromAssetId(1510966),  
+        ellipsoid: Cesium.Ellipsoid.WGS84,
+      }); 
 
       let naziv;
       let visina;
@@ -495,11 +498,12 @@ query sa lociranjem-->
 
 
       const promisedPMO = Cesium.GeoJsonDataSource.load(
-          Object.values(dataSources)[4],
-
+          Object.values(dataSources)[4],{
+          clampToGround:true,
+        }
         );
 
-
+/*
 
         promisedPMO.then(function (PMO) {
                     let entities = PMO.entities.values;
@@ -510,30 +514,29 @@ query sa lociranjem-->
             let entity = entities[i];
             device_id = entity.properties.device_id.valueOf();
 let position = entity.position._value;
-console.log(scene.primitives,entity,device_id,position);
 
-
-
-
-        var promise = Cesium.sampleTerrainMostDetailed(
+        var promise = Cesium.sampleTerrain(
                 scene.terrainProvider,
+                13,
                 position
               );
-              Cesium.when(promise, function (updatedPosition) { ///visine tereeeeennnnaaaaaaaaa 
-                pmoPrim.add({
-            position : position,
-            disableDepthTestDistance: 1000,
-            pixelSize: 5,
-            color : Cesium.Color.BLACK,
-        });
-              });
-    
 
-     }
+              if (Cesium.defined(position)) {
+
+pmoPrim.add({
+position : position,
+disableDepthTestDistance: 1000,
+pixelSize: 5,
+color : Cesium.Color.BLACK,
+});
+}
+
+}
      
     });
-
-  /*      promisedPMO.then(function (PMO) {
+*/
+/*
+        promisedPMO.then(function (PMO) {
           let entities = PMO.entities.values;
 
           for (let i = 0; i < entities.length; i++) {
@@ -546,14 +549,17 @@ console.log(scene.primitives,entity,device_id,position);
             ol3d.getDataSourceDisplay().defaultDataSource.entities.add({
               position: position,
 
-              point: {
-                pixelSize: 5,
-                color: Cesium.Color.BLACK,
-                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              billboard : {
+            image : 'data/9210974.png',
+            scale:0.5,
+            heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
               },
             });
           }
-        });*/
+        });
+
+*/
+
 
 
 
@@ -571,6 +577,7 @@ console.log(scene.primitives,entity,device_id,position);
       handler.setInputAction(function (event) {
         scene.terrainProvider.readyPromise.then(function () {
           var ray = scene.camera.getPickRay(event.endPosition);
+          
           var mousePosition = scene.globe.pick(ray, scene);
           if (Cesium.defined(mousePosition)) {
             var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
@@ -587,7 +594,9 @@ console.log(scene.primitives,entity,device_id,position);
               -7
             )},${mousePosition}`;
           }
+
         });
+        
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
       scene.canvas.addEventListener("contextmenu", (event) => {
